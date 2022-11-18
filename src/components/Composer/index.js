@@ -17,14 +17,6 @@ export default function Composer() {
     ),
   };
 
-  /*console.log(
-    generateCanvasMatrix(
-      parseInstructionsString(
-        "S[0]; H[1]; T+[2]; I[2]; CX[1,2]; X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[0]; S+[0];"
-      )
-    )
-  );*/
-
   return (
     <Box sx={{ userSelect: "none" }}>
       <Grid container>

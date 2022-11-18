@@ -31,7 +31,7 @@ const theme = createTheme({
     },
     MuiButtonBase: {
       defaultProps: {
-        disableTouchRipple: true,
+        disableTouchRipple: false,
       },
     },
     MuiButton: {
@@ -417,7 +417,7 @@ const theme = createTheme({
       scrollMarginTop: "calc(var(--MuiDocs-header-height) + 32px)",
     },
     subtitle1: {
-      fontSize: "1.125rem",
+      fontSize: "1rem",
       lineHeight: 1.3333333333333333,
       letterSpacing: 0,
       fontWeight: 500,

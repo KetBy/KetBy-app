@@ -6,6 +6,7 @@ import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
 import Draggable from "react-draggable";
 import generateCanvasMatrix from "../../utils/generateCanvasMatrix";
+import regenerateCircuit from "../../utils/regenerateCircuit";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -106,11 +107,33 @@ const Circuit = ({ circuit, setCircuit }) => {
 
   const handleDrag = (e, ui) => {
     let delta = convertDeltaToPos(ui.x, ui.y);
+
     console.log(
       "Instruction " +
         ui.node.dataset.instructionIndex +
-        ` moved by {${delta.x}, ${delta.y}}`
+        ` moving by {${delta.x}, ${delta.y}}`
     );
+  };
+
+  const handleStop = (e, ui) => {
+    let delta = convertDeltaToPos(ui.x, ui.y);
+    let instructionIndex = ui.node.dataset.instructionIndex;
+
+    console.log(
+      "Instruction " + instructionIndex + ` moved by {${delta.x}, ${delta.y}}`
+    );
+
+    let newCircuit = regenerateCircuit(
+      circuit,
+      instructionIndex,
+      delta.x,
+      delta.y
+    );
+
+    setCircuit({
+      ...circuit,
+      instructions: newCircuit.instructions,
+    });
   };
 
   return (
@@ -151,6 +174,7 @@ const Circuit = ({ circuit, setCircuit }) => {
               key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
               grid={[parseInt(theme.spacing(6)), parseInt(theme.spacing(5))]}
               onDrag={handleDrag}
+              onStop={handleStop}
               defaultClassNameDragging="dragging"
             >
               <Box
@@ -210,14 +234,19 @@ const Canvas = (props) => {
 
   return (
     <Box>
-      <Box
+      <Grid
+        container
         sx={{
           p: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          height: theme.spacing(6),
         }}
+        alignItems="center"
       >
-        <Typography variant="subtitle1">Quantum Circuit</Typography>
-      </Box>
+        <Grid item xs={12}>
+          <Typography variant="subtitle1">Quantum Circuit</Typography>
+        </Grid>
+      </Grid>
       <Grid
         container
         sx={{
