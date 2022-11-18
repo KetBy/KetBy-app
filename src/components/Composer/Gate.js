@@ -57,6 +57,7 @@ const Gate = (props) => {
         },
         borderRadius: rounded ? "50%" : 0,
       }}
+      className="gate"
     >
       {representation}
     </Box>

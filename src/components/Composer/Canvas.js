@@ -17,6 +17,13 @@ const getInstructionPosition = (row, col) => {
   };
 };
 
+const convertDeltaToPos = (x, y) => {
+  return {
+    x: x / parseInt(theme.spacing(6)),
+    y: y / parseInt(theme.spacing(5)),
+  };
+};
+
 const Left = ({ circuit, setCircuit }) => {
   return (
     <Box
@@ -93,8 +100,19 @@ const Left = ({ circuit, setCircuit }) => {
 
 const Circuit = ({ circuit, setCircuit }) => {
   let matrix = generateCanvasMatrix(circuit.instructions);
-  console.log(matrix);
+
   console.log(circuit.instructions);
+  console.log(matrix);
+
+  const handleDrag = (e, ui) => {
+    let delta = convertDeltaToPos(ui.x, ui.y);
+    console.log(
+      "Instruction " +
+        ui.node.dataset.instructionIndex +
+        ` moved by {${delta.x}, ${delta.y}}`
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -132,6 +150,8 @@ const Circuit = ({ circuit, setCircuit }) => {
             <Draggable
               key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
               grid={[parseInt(theme.spacing(6)), parseInt(theme.spacing(5))]}
+              onDrag={handleDrag}
+              defaultClassNameDragging="dragging"
             >
               <Box
                 sx={{
@@ -140,6 +160,7 @@ const Circuit = ({ circuit, setCircuit }) => {
                   top: `${instructionPos.y}px`,
                   left: `${instructionPos.x}px`,
                 }}
+                {...{ "data-instruction-index": instructionIndex }}
               >
                 <Gate gate={gatesMap[instruction.gate]} />
               </Box>
