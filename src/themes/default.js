@@ -194,7 +194,7 @@ const theme = createTheme({
     orange: { light: "#FFCB70", main: "#FFB433", dark: "#CC8100" },
     grey: { light: "#E8E9ED", main: "#A2A5B9", dark: "#6C7289" },
     darkGrey: {
-      light: "#5A5D72",
+      light: "#666980",
       main: "#484A5B",
       dark: "#24252E",
     },

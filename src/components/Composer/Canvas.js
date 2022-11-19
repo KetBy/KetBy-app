@@ -62,7 +62,7 @@ const Left = ({ circuit, setCircuit }) => {
                 xs={6}
                 sx={{
                   textAlign: "right",
-                  color: theme.palette.primary.dark,
+                  color: theme.palette.darkGrey.main,
                 }}
               >
                 <InlineMath math={`\\mathsf{\\ket{0}}`} />
@@ -107,7 +107,6 @@ const Circuit = ({ circuit, setCircuit }) => {
 
   const handleDrag = (e, ui) => {
     let delta = convertDeltaToPos(ui.x, ui.y);
-
     console.log(
       "Instruction " +
         ui.node.dataset.instructionIndex +
@@ -118,18 +117,15 @@ const Circuit = ({ circuit, setCircuit }) => {
   const handleStop = (e, ui) => {
     let delta = convertDeltaToPos(ui.x, ui.y);
     let instructionIndex = ui.node.dataset.instructionIndex;
-
     console.log(
       "Instruction " + instructionIndex + ` moved by {${delta.x}, ${delta.y}}`
     );
-
     let newCircuit = regenerateCircuit(
       circuit,
       instructionIndex,
       delta.x,
       delta.y
     );
-
     setCircuit({
       ...circuit,
       instructions: newCircuit.instructions,
@@ -150,7 +146,7 @@ const Circuit = ({ circuit, setCircuit }) => {
               position: "absolute",
               width: "100%",
               height: "2px",
-              background: theme.palette.grey[300],
+              background: theme.palette.darkGrey.main,
               left: 0,
               top: `calc(${theme.spacing(
                 rowHeight / 2
@@ -169,6 +165,14 @@ const Circuit = ({ circuit, setCircuit }) => {
           }
           let instruction = circuit.instructions[instructionIndex];
           let instructionPos = getInstructionPosition(rowIndex, colIndex);
+
+          if (instruction.qubits.length > 1) {
+            // If it is a control cell
+            if (instruction.qubits[0] !== rowIndex) {
+              return null;
+            }
+          }
+
           return (
             <Draggable
               key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
@@ -186,7 +190,11 @@ const Circuit = ({ circuit, setCircuit }) => {
                 }}
                 {...{ "data-instruction-index": instructionIndex }}
               >
-                <Gate gate={gatesMap[instruction.gate]} />
+                <Gate
+                  gate={gatesMap[instruction.gate]}
+                  qubits={instruction.qubits}
+                  currentQubit={rowIndex}
+                />
               </Box>
             </Draggable>
           );
@@ -256,7 +264,13 @@ const Canvas = (props) => {
         <Grid item width="auto">
           <Left circuit={circuit} setCircuit={setCircuit} />
         </Grid>
-        <Grid item xs>
+        <Grid
+          item
+          xs
+          sx={{
+            overflow: "auto",
+          }}
+        >
           <Circuit circuit={circuit} setCircuit={setCircuit} />
         </Grid>
         <Grid item width="auto">

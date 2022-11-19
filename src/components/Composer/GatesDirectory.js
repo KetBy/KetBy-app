@@ -120,46 +120,41 @@ const GatesDirectory = (props) => {
                   <Typography variant="subtitle2">{category.name}</Typography>
                 </Grid>
                 {category.gates.map((gate, gateIndex) => {
-                  return (
-                    <>
-                      {display === "default" && (
-                        <Grid
-                          item
-                          key={`gates-${category.name}-${gate.name}-wrapper`}
-                        >
+                  return display === "default" ? (
+                    <Grid
+                      item
+                      key={`gates-${category.name}-${gate.name}-wrapper`}
+                    >
+                      <Gate
+                        gate={gatesMap[gate.name]}
+                        key={`gates-${category.name}-${gate.name}`}
+                        preview
+                      />
+                    </Grid>
+                  ) : (
+                    <Grid
+                      item
+                      key={`gates-${category.name}-${gate.name}-wrapper`}
+                      xs={12}
+                    >
+                      <Grid container alignItems="center">
+                        <Grid item width="auto">
                           <Gate
                             gate={gatesMap[gate.name]}
                             key={`gates-${category.name}-${gate.name}`}
+                            preview
                           />
                         </Grid>
-                      )}
-                      {display === "detailed" && (
                         <Grid
                           item
-                          key={`gates-${category.name}-${gate.name}-wrapper`}
-                          xs={12}
+                          sx={{
+                            pl: 1,
+                          }}
                         >
-                          <Grid container alignItems="center">
-                            <Grid item width="auto">
-                              <Gate
-                                gate={gatesMap[gate.name]}
-                                key={`gates-${category.name}-${gate.name}`}
-                              />
-                            </Grid>
-                            <Grid
-                              item
-                              sx={{
-                                pl: 1,
-                              }}
-                            >
-                              <Typography variant="body2">
-                                {gate.title}
-                              </Typography>
-                            </Grid>
-                          </Grid>
+                          <Typography variant="body2">{gate.title}</Typography>
                         </Grid>
-                      )}
-                    </>
+                      </Grid>
+                    </Grid>
                   );
                 })}
               </Grid>
@@ -169,23 +164,17 @@ const GatesDirectory = (props) => {
       {display === "compact" && (
         <Grid container spacing={1} rowSpacing={1} p={1}>
           {gates.map((category, categoryIndex) => {
-            return (
-              <>
-                {category.gates.map((gate, gateIndex) => {
-                  return (
-                    <Grid
-                      item
-                      key={`gates-${category.name}-${gate.name}-wrapper`}
-                    >
-                      <Gate
-                        gate={gatesMap[gate.name]}
-                        key={`gates-${category.name}-${gate.name}`}
-                      />
-                    </Grid>
-                  );
-                })}
-              </>
-            );
+            return category.gates.map((gate, gateIndex) => {
+              return (
+                <Grid item key={`gates-${category.name}-${gate.name}-wrapper`}>
+                  <Gate
+                    gate={gatesMap[gate.name]}
+                    key={`gates-${category.name}-${gate.name}`}
+                    preview
+                  />
+                </Grid>
+              );
+            });
           })}
         </Grid>
       )}
