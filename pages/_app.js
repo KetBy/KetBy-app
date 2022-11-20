@@ -7,6 +7,8 @@ import { CacheProvider } from "@emotion/react";
 import theme from "../src/themes/default";
 import createEmotionCache from "../src/utils/createEmotionCache";
 import "../src/themes/overrides.scss";
+import Menu from "../src/components/Menu";
+import NextNProgress from "nextjs-progressbar";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -22,6 +24,12 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
+        <NextNProgress
+          color={theme.palette.darkGrey.main}
+          height={4}
+          options={{ showSpinner: false }}
+        />
+        <Menu />
         <Component {...pageProps} />
       </ThemeProvider>
     </CacheProvider>

@@ -3,8 +3,10 @@ import { Box, Grid } from "@mui/material";
 import "katex/dist/katex.min.css";
 import Canvas from "./Canvas";
 import GatesDirectory from "./GatesDirectory";
+import Sidebar from "./Sidebar";
 import parseInstructionsString from "../../utils/parseInstructionsString";
 import generateCanvasMatrix from "../../utils/generateCanvasMatrix";
+import theme from "../../themes/default";
 
 export default function Composer() {
   const startCircuit = {
@@ -18,13 +20,27 @@ export default function Composer() {
   };
 
   return (
-    <Box sx={{ userSelect: "none" }}>
-      <Grid container>
+    <Box
+      sx={{
+        userSelect: "none",
+      }}
+    >
+      <Grid
+        container
+        sx={{
+          height: `calc(100vh - ${theme.constants.menuHeight}px) !important`,
+          display: "flex",
+          alignItems: "stretch",
+        }}
+      >
         <Grid item width="auto">
           <GatesDirectory />
         </Grid>
         <Grid item xs>
           <Canvas startCircuit={startCircuit} />
+        </Grid>
+        <Grid item width="auto">
+          <Sidebar />
         </Grid>
       </Grid>
     </Box>

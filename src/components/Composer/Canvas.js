@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Box, Grid, Typography, ButtonGroup, Button } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  ButtonGroup,
+  Button,
+  Breadcrumbs,
+  Chip,
+  IconButton,
+} from "@mui/material";
 import { InlineMath } from "react-katex";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -7,6 +16,10 @@ import Gate from "./Gate";
 import Draggable from "react-draggable";
 import generateCanvasMatrix from "../../utils/generateCanvasMatrix";
 import regenerateCircuit from "../../utils/regenerateCircuit";
+import KeyboardDoubleArrowLeftRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowLeftRounded";
+import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
+import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
+import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -229,9 +242,7 @@ const Right = ({ circuit }) => {
       sx={{
         width: theme.spacing(5),
       }}
-    >
-      right
-    </Box>
+    ></Box>
   );
 };
 
@@ -251,8 +262,68 @@ const Canvas = (props) => {
         }}
         alignItems="center"
       >
-        <Grid item xs={12}>
-          <Typography variant="subtitle1">Quantum Circuit</Typography>
+        <Grid item xs={8}>
+          <Grid container>
+            <Breadcrumbs separator="›" aria-label="breadcrumb">
+              <Typography variant="subtitle1">New Quantum Project</Typography>
+              <Typography variant="subtitle2">My circuit #1</Typography>
+            </Breadcrumbs>
+            <Chip
+              label="Log in to save"
+              size="small"
+              variant="outlined"
+              sx={{ ml: 2 }}
+            />
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            justifyContent: "right",
+          }}
+        >
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              alignItems: "stretch",
+              justifyContent: "right",
+            }}
+          >
+            <IconButton
+              onClick={() => {}}
+              size="small"
+              sx={{
+                borderRadius: 0,
+              }}
+              disableTouchRipple
+            >
+              <UndoRoundedIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => {}}
+              size="small"
+              sx={{
+                borderRadius: 0,
+              }}
+              disableTouchRipple
+              disabled
+            >
+              <RedoRoundedIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => {}}
+              size="small"
+              sx={{
+                borderRadius: 0,
+              }}
+              disableTouchRipple
+            >
+              <KeyboardDoubleArrowRightRoundedIcon />
+            </IconButton>
+          </Grid>
         </Grid>
       </Grid>
       <Grid

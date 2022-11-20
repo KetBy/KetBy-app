@@ -11,6 +11,9 @@ export const roboto = Roboto({
 
 // Create a theme instance.
 const theme = createTheme({
+  constants: {
+    menuHeight: 64,
+  },
   breakpoints: {
     keys: ["xs", "sm", "md", "lg", "xl"],
     values: {
