@@ -19,8 +19,10 @@ S[0]; H[1]; T+[2];  I[2]; CX[1,2];  X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[
 export default function regenerateCircuit(oldCircuit, index, dx, dy) {
   let newCircuit = oldCircuit;
   if (dx == 0) {
-    // Only swap the qubit
-    newCircuit.instructions[index].qubits[0] += dy;
+    // Only shift the qubits
+    newCircuit.instructions[index].qubits.map((qubit, index) => {
+      newCircuit.instructions[index].qubits[index] += dy;
+    });
   }
   return newCircuit;
 }

@@ -13,9 +13,13 @@ import Latex from "react-latex-next";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
+import PhaseDisk from "./PhaseDisk";
+
 import Draggable from "react-draggable";
+
 import generateCanvasMatrix from "../../utils/generateCanvasMatrix";
 import regenerateCircuit from "../../utils/regenerateCircuit";
+
 import KeyboardDoubleArrowLeftRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowLeftRounded";
 import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
 import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
@@ -24,6 +28,12 @@ import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
 const gatesMap = getGatesMap();
 const rowHeight = 5;
 
+{
+  /**
+   * Given the row and column of the first qubit of an instruction
+   * find the coordinates of the instruction in terms of canvas cells
+   */
+}
 const getInstructionPosition = (row, col) => {
   return {
     x: parseInt(theme.spacing(1)) + col * parseInt(theme.spacing(6)),
@@ -31,71 +41,22 @@ const getInstructionPosition = (row, col) => {
   };
 };
 
-const convertDeltaToPos = (x, y) => {
+{
+  /**
+   * Given the amount of pixels (x, y) by which a gate has been moved,
+   * find out by how many cells the gate has been moved
+   */
+}
+const convertPxToGridDelta = (x, y) => {
   return {
     x: x / parseInt(theme.spacing(6)),
     y: y / parseInt(theme.spacing(5)),
   };
 };
 
-const PhaseDisk = (props) => {
-  const { probability, phase, purity } = props;
-
-  return (
-    <Box
-      sx={{
-        width: theme.spacing(4),
-        height: theme.spacing(4),
-        borderRadius: "50%",
-        background: theme.palette.grey[100],
-        cursor: "pointer",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Display the probability */}
-      <Box
-        sx={{
-          width: theme.spacing(4),
-          height: `${parseInt(theme.spacing(4)) * probability}px`,
-          background: theme.palette.primary.light,
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-        }}
-      />
-      {/* Display the purity */}
-      <Box
-        sx={{
-          position: "absolute",
-          background: "transparent",
-          border: `2px solid ${theme.palette.darkGrey.dark}`,
-          width: `${purity * 100}%`,
-          height: `${purity * 100}%`,
-          top: "50%",
-          left: "50%",
-          borderRadius: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-      {/* Display the phase */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "calc(50% - 1px)",
-          left: "50%",
-          width: "50%",
-          height: "2px",
-          background: theme.palette.darkGrey.dark,
-          transform: `rotate(-${phase}deg)`,
-          transformOrigin: "0px 1px",
-          borderRadius: "2px 0 0 2px",
-        }}
-      />
-    </Box>
-  );
-};
-
+{
+  /** The qubits buttons on the left side of the circuit */
+}
 const Left = ({ circuit, setCircuit }) => {
   return (
     <Box
@@ -173,6 +134,9 @@ const Left = ({ circuit, setCircuit }) => {
   );
 };
 
+{
+  /** The circuit canvas */
+}
 const Circuit = ({ circuit, setCircuit }) => {
   let matrix = generateCanvasMatrix(circuit.instructions);
 
@@ -180,7 +144,7 @@ const Circuit = ({ circuit, setCircuit }) => {
   console.log(matrix);
 
   const handleDrag = (e, ui) => {
-    let delta = convertDeltaToPos(ui.x, ui.y);
+    let delta = convertPxToGridDelta(ui.x, ui.y);
     console.log(
       "Instruction " +
         ui.node.dataset.instructionIndex +
@@ -189,11 +153,12 @@ const Circuit = ({ circuit, setCircuit }) => {
   };
 
   const handleStop = (e, ui) => {
-    let delta = convertDeltaToPos(ui.x, ui.y);
+    let delta = convertPxToGridDelta(ui.x, ui.y);
     let instructionIndex = ui.node.dataset.instructionIndex;
     console.log(
       "Instruction " + instructionIndex + ` moved by {${delta.x}, ${delta.y}}`
     );
+    /*
     let newCircuit = regenerateCircuit(
       circuit,
       instructionIndex,
@@ -204,12 +169,17 @@ const Circuit = ({ circuit, setCircuit }) => {
       ...circuit,
       instructions: newCircuit.instructions,
     });
+    */
   };
 
   return (
     <Box
       sx={{
         position: "relative",
+        height: `calc(${theme.spacing(0.5)} + ${
+          circuit.meta.qubits
+        } * ${theme.spacing(5)})`,
+        padding: theme.spacing(0.5, 1, 2),
       }}
     >
       {/* Display the horizontal stripes */}
@@ -255,6 +225,20 @@ const Circuit = ({ circuit, setCircuit }) => {
               onDrag={handleDrag}
               onStop={handleStop}
               defaultClassNameDragging="dragging"
+              axis={instruction.qubits.length == 1 ? "both" : "y"}
+              bounds={{
+                top:
+                  -parseInt(theme.spacing(5)) *
+                  Math.min.apply(Math, instruction.qubits),
+                bottom:
+                  parseInt(theme.spacing(5)) *
+                  (circuit.meta.qubits -
+                    Math.max.apply(Math, instruction.qubits) -
+                    1),
+                right:
+                  parseInt(theme.spacing(6)) * (matrix[0].length - colIndex),
+                left: -parseInt(theme.spacing(6)) * colIndex,
+              }}
             >
               <Box
                 sx={{
@@ -298,6 +282,9 @@ const Circuit = ({ circuit, setCircuit }) => {
   );
 };
 
+{
+  /** The phase disks on the right side of the circuit */
+}
 const Right = ({ circuit }) => {
   return (
     <Box
@@ -384,7 +371,7 @@ const Graph1 = (props) => {
         }}
       >
         {[...Array(20)].map((_, __) => {
-          return <Box>Lorem ipsum</Box>;
+          return <Box key={__}>Lorem ipsum</Box>;
         })}
       </Box>
     </Grid>
