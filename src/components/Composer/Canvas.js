@@ -9,7 +9,7 @@ import {
   Chip,
   IconButton,
 } from "@mui/material";
-import { InlineMath } from "react-katex";
+import Latex from "react-latex-next";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
@@ -38,11 +38,69 @@ const convertDeltaToPos = (x, y) => {
   };
 };
 
+const PhaseDisk = (props) => {
+  const { probability, phase, purity } = props;
+
+  return (
+    <Box
+      sx={{
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+        borderRadius: "50%",
+        background: theme.palette.grey[100],
+        cursor: "pointer",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Display the probability */}
+      <Box
+        sx={{
+          width: theme.spacing(4),
+          height: `${parseInt(theme.spacing(4)) * probability}px`,
+          background: theme.palette.primary.light,
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+        }}
+      />
+      {/* Display the purity */}
+      <Box
+        sx={{
+          position: "absolute",
+          background: "transparent",
+          border: `2px solid ${theme.palette.darkGrey.dark}`,
+          width: `${purity * 100}%`,
+          height: `${purity * 100}%`,
+          top: "50%",
+          left: "50%",
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+      {/* Display the phase */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: "calc(50% - 1px)",
+          left: "50%",
+          width: "50%",
+          height: "2px",
+          background: theme.palette.darkGrey.dark,
+          transform: `rotate(-${phase}deg)`,
+          transformOrigin: "0px 1px",
+          borderRadius: "2px 0 0 2px",
+        }}
+      />
+    </Box>
+  );
+};
+
 const Left = ({ circuit, setCircuit }) => {
   return (
     <Box
       sx={{
-        width: theme.spacing(12),
+        width: theme.spacing(11),
         px: 1,
       }}
     >
@@ -65,20 +123,22 @@ const Left = ({ circuit, setCircuit }) => {
                   sx={{
                     width: "100%",
                     minWidth: "100%",
+                    borderRadius: 0,
                   }}
                 >
-                  <InlineMath math={`\\mathsf{Q_{${i}}}`} />
+                  <Latex>{`$\\sf{Q_{${i}}}$`}</Latex>
                 </Button>
               </Grid>
               <Grid
                 item
                 xs={6}
                 sx={{
-                  textAlign: "right",
+                  pl: 1,
+                  textAlign: "center",
                   color: theme.palette.darkGrey.main,
                 }}
               >
-                <InlineMath math={`\\mathsf{\\ket{0}}`} />
+                <Latex>{`$\\mathsf{\\ket{0}}$`}</Latex>
               </Grid>
             </Grid>
           </Box>
@@ -102,6 +162,7 @@ const Left = ({ circuit, setCircuit }) => {
             sx={{
               minWidth: "100%",
               marginTop: "5px",
+              borderRadius: 0,
             }}
           >
             +
@@ -157,8 +218,9 @@ const Circuit = ({ circuit, setCircuit }) => {
           <Box
             sx={{
               position: "absolute",
-              width: "100%",
+              minWidth: "100%",
               height: "2px",
+              display: "block",
               background: theme.palette.darkGrey.main,
               left: 0,
               top: `calc(${theme.spacing(
@@ -214,7 +276,7 @@ const Circuit = ({ circuit, setCircuit }) => {
         });
       })}
       {/* Display the vertical striples */}
-      {[...Array(matrix[0].length)].map((_, i) => {
+      {[...Array(matrix[0].length - 1)].map((_, i) => {
         return (
           <Box
             sx={{
@@ -240,14 +302,138 @@ const Right = ({ circuit }) => {
   return (
     <Box
       sx={{
-        width: theme.spacing(5),
+        width: theme.spacing(7),
+        px: 1,
       }}
-    ></Box>
+    >
+      {[...Array(circuit.meta.qubits)].map((_, i) => {
+        return (
+          <Box
+            key={`left--row-${i}`}
+            sx={{
+              height: theme.spacing(rowHeight),
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PhaseDisk
+              probability={(i * 0.25) % 1}
+              phase={(i * 60) % 360}
+              purity={0.5 + ((i * 0.25) % 0.75)}
+            />
+          </Box>
+        );
+      })}
+    </Box>
+  );
+};
+
+const Graph1 = (props) => {
+  return (
+    <Grid
+      item
+      xs={6}
+      sx={{
+        borderRight: `1px solid ${theme.palette.grey[200]}`,
+      }}
+    >
+      <Grid
+        container
+        sx={{
+          p: 1,
+          borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          height: theme.spacing(6),
+        }}
+        alignItems="center"
+      >
+        <Grid item xs={8}>
+          <Grid container>
+            <Typography variant="subtitle1">Statevector</Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            justifyContent: "right",
+          }}
+        >
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              alignItems: "stretch",
+              justifyContent: "right",
+            }}
+          >
+            buttons
+          </Grid>
+        </Grid>
+      </Grid>
+      <Box
+        sx={{
+          p: 1,
+          height: `calc(2/5 * (100vh - (${
+            theme.constants.menuHeight
+          }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
+            6
+          )} + ${theme.spacing(6)})))`,
+          overflowY: "auto",
+        }}
+      >
+        {[...Array(20)].map((_, __) => {
+          return <Box>Lorem ipsum</Box>;
+        })}
+      </Box>
+    </Grid>
+  );
+};
+
+const Graph2 = (props) => {
+  return (
+    <Grid item xs={6}>
+      <Grid
+        container
+        sx={{
+          p: 1,
+          borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          height: theme.spacing(6),
+        }}
+        alignItems="center"
+      >
+        <Grid item xs={8}>
+          <Grid container>
+            <Typography variant="subtitle1">Bloch sphere</Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            justifyContent: "right",
+          }}
+        >
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              alignItems: "stretch",
+              justifyContent: "right",
+            }}
+          >
+            buttons
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
 const Canvas = (props) => {
-  const { startCircuit } = props;
+  const { startCircuit, sidebarCollapsed, setSidebarCollapsed } = props;
 
   const [circuit, setCircuit] = React.useState(startCircuit);
 
@@ -314,22 +500,35 @@ const Canvas = (props) => {
               <RedoRoundedIcon />
             </IconButton>
             <IconButton
-              onClick={() => {}}
+              onClick={() => {
+                setSidebarCollapsed(!sidebarCollapsed);
+              }}
               size="small"
               sx={{
                 borderRadius: 0,
               }}
               disableTouchRipple
             >
-              <KeyboardDoubleArrowRightRoundedIcon />
+              {sidebarCollapsed ? (
+                <KeyboardDoubleArrowLeftRoundedIcon />
+              ) : (
+                <KeyboardDoubleArrowRightRoundedIcon />
+              )}
             </IconButton>
           </Grid>
         </Grid>
       </Grid>
+      {/* Container of the canvas, left and right */}
       <Grid
         container
         sx={{
-          my: 1,
+          height: `calc(3/5 * (100vh - (${
+            theme.constants.menuHeight
+          }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,
+          borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          overflowY: "auto",
+          position: "relative",
+          py: 1,
         }}
       >
         <Grid item width="auto">
@@ -339,7 +538,7 @@ const Canvas = (props) => {
           item
           xs
           sx={{
-            overflow: "auto",
+            overflowX: "auto",
           }}
         >
           <Circuit circuit={circuit} setCircuit={setCircuit} />
@@ -347,6 +546,11 @@ const Canvas = (props) => {
         <Grid item width="auto">
           <Right circuit={circuit} />
         </Grid>
+      </Grid>
+      {/* Container of the graphical representations */}
+      <Grid container>
+        <Graph1 />
+        <Graph2 />
       </Grid>
     </Box>
   );

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export",
+    "export": "next build && next export",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
@@ -24,7 +24,9 @@
     "react": "latest",
     "react-dom": "latest",
     "react-draggable": "^4.4.5",
+    "react-icons": "^4.6.0",
     "react-katex": "^3.0.1",
+    "react-latex": "^2.0.0",
     "react-latex-next": "^2.2.0",
     "sass": "^1.56.1"
   },

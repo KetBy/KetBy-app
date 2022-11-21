@@ -19,6 +19,8 @@ export default function Composer() {
     ),
   };
 
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+
   return (
     <Box
       sx={{
@@ -37,10 +39,14 @@ export default function Composer() {
           <GatesDirectory />
         </Grid>
         <Grid item xs>
-          <Canvas startCircuit={startCircuit} />
+          <Canvas
+            startCircuit={startCircuit}
+            sidebarCollapsed={sidebarCollapsed}
+            setSidebarCollapsed={setSidebarCollapsed}
+          />
         </Grid>
         <Grid item width="auto">
-          <Sidebar />
+          <Sidebar collapsed={sidebarCollapsed} />
         </Grid>
       </Grid>
     </Box>

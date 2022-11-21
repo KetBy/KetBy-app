@@ -165,8 +165,9 @@ const ExportHeader = (props) => {
 
 const Sidebar = (props) => {
   const [projectTab, setProjectTab] = React.useState("circuits");
+  const { collapsed } = props;
 
-  return (
+  return collapsed ? null : (
     <Box
       sx={{
         width: `calc(2px + ${theme.spacing(31)})`,

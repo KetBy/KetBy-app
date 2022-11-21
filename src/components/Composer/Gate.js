@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Box, Grid, Typography, Divider } from "@mui/material";
 import theme from "../../themes/default";
-import { InlineMath } from "react-katex";
+import Latex from "react-latex-next";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
+
 const gatesMap = getGatesMap();
 
 const NOTGate = (props) => {
@@ -59,7 +60,7 @@ const Representation = (props) => {
     text = (
       <>
         {gate.name.replace("+", "")}
-        <InlineMath math="^\dagger" />
+        <Latex>{`$^\\dagger$`}</Latex>
       </>
     );
   }
