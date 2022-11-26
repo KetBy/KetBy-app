@@ -24,6 +24,7 @@ import KeyboardDoubleArrowLeftRoundedIcon from "@mui/icons-material/KeyboardDoub
 import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDoubleArrowRightRounded";
 import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
 import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -82,9 +83,13 @@ const Left = ({ circuit, setCircuit }) => {
                   variant="outlined"
                   size="small"
                   sx={{
-                    width: "100%",
-                    minWidth: "100%",
+                    width: theme.spacing(4),
+                    height: theme.spacing(4),
+                    minWidth: 0,
+                    minHeight: 0,
                     borderRadius: 0,
+                    borderWidth: "2px !important",
+                    borderColor: `${theme.palette.darkGrey.main} !important`,
                   }}
                 >
                   <Latex>{`$\\sf{Q_{${i}}}$`}</Latex>
@@ -121,9 +126,14 @@ const Left = ({ circuit, setCircuit }) => {
               });
             }}
             sx={{
-              minWidth: "100%",
-              marginTop: "5px",
+              width: theme.spacing(4),
+              height: theme.spacing(4),
+              minWidth: 0,
+              minHeight: 0,
               borderRadius: 0,
+              borderWidth: "2px !important",
+              borderColor: `${theme.palette.darkGrey.main} !important`,
+              marginTop: "5px",
             }}
           >
             +
@@ -139,48 +149,61 @@ const Left = ({ circuit, setCircuit }) => {
 }
 const Circuit = ({ circuit, setCircuit }) => {
   let matrix = generateCanvasMatrix(circuit.instructions);
+  const [renderCount, setRenderCount] = React.useState(1);
 
-  console.log(circuit.instructions);
+  console.log(circuit);
   console.log(matrix);
+
+  // console.log(circuit.instructions);
+  // console.log(matrix);
 
   const handleDrag = (e, ui) => {
     let delta = convertPxToGridDelta(ui.x, ui.y);
-    console.log(
+    /*console.log(
       "Instruction " +
         ui.node.dataset.instructionIndex +
         ` moving by {${delta.x}, ${delta.y}}`
-    );
+    );*/
   };
 
   const handleStop = (e, ui) => {
     let delta = convertPxToGridDelta(ui.x, ui.y);
-    let instructionIndex = ui.node.dataset.instructionIndex;
-    console.log(
+    if (delta.x === 0 && delta.y === 0) {
+      return;
+    }
+    let instructionIndex = parseInt(ui.node.dataset.instructionIndex);
+    let colIndex = parseInt(ui.node.dataset.columnIndex);
+    let rowIndex = parseInt(ui.node.dataset.rowIndex);
+    /*console.log(
       "Instruction " + instructionIndex + ` moved by {${delta.x}, ${delta.y}}`
-    );
-    /*
-    let newCircuit = regenerateCircuit(
+    );*/
+    /*let newCircuit = regenerateCircuit(
       circuit,
+      matrix,
       instructionIndex,
       delta.x,
       delta.y
+    );*/
+    let newCircuit = regenerateCircuit(
+      circuit,
+      matrix,
+      instructionIndex,
+      rowIndex,
+      colIndex,
+      delta.x,
+      delta.y
     );
-    setCircuit({
-      ...circuit,
-      instructions: newCircuit.instructions,
-    });
-    */
+    setCircuit(newCircuit);
+    setRenderCount(renderCount + 1);
+    // setMatrix(generateCanvasMatrix(newCircuit.instructions));
   };
 
   return (
     <Box
       sx={{
         position: "relative",
-        height: `calc(${theme.spacing(0.5)} + ${
-          circuit.meta.qubits
-        } * ${theme.spacing(5)})`,
-        padding: theme.spacing(0.5, 1, 2),
       }}
+      key={`render--${renderCount}`}
     >
       {/* Display the horizontal stripes */}
       {[...Array(circuit.meta.qubits)].map((_, i) => {
@@ -188,6 +211,7 @@ const Circuit = ({ circuit, setCircuit }) => {
           <Box
             sx={{
               position: "absolute",
+              width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
               minWidth: "100%",
               height: "2px",
               display: "block",
@@ -205,7 +229,7 @@ const Circuit = ({ circuit, setCircuit }) => {
       {/* Display the gates */}
       {matrix.map((row, rowIndex) => {
         return row.map((instructionIndex, colIndex) => {
-          if (instructionIndex === null || instructionIndex === -1) {
+          if (instructionIndex === null || instructionIndex < 0) {
             return null;
           }
           let instruction = circuit.instructions[instructionIndex];
@@ -225,7 +249,7 @@ const Circuit = ({ circuit, setCircuit }) => {
               onDrag={handleDrag}
               onStop={handleStop}
               defaultClassNameDragging="dragging"
-              axis={instruction.qubits.length == 1 ? "both" : "y"}
+              axis="both"
               bounds={{
                 top:
                   -parseInt(theme.spacing(5)) *
@@ -247,7 +271,11 @@ const Circuit = ({ circuit, setCircuit }) => {
                   top: `${instructionPos.y}px`,
                   left: `${instructionPos.x}px`,
                 }}
-                {...{ "data-instruction-index": instructionIndex }}
+                {...{
+                  "data-instruction-index": instructionIndex,
+                  "data-column-index": colIndex,
+                  "data-row-index": rowIndex,
+                }}
               >
                 <Gate
                   gate={gatesMap[instruction.gate]}
@@ -289,7 +317,7 @@ const Right = ({ circuit }) => {
   return (
     <Box
       sx={{
-        width: theme.spacing(7),
+        width: theme.spacing(6),
         px: 1,
       }}
     >
@@ -486,6 +514,21 @@ const Canvas = (props) => {
             >
               <RedoRoundedIcon />
             </IconButton>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                mx: 0.5,
+              }}
+            >
+              <Button
+                size="small"
+                variant="contained"
+                startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+              >
+                Run
+              </Button>
+            </Box>
             <IconButton
               onClick={() => {
                 setSidebarCollapsed(!sidebarCollapsed);

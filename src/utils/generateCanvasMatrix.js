@@ -33,14 +33,14 @@ export default function generateCanvasMatrix(input) {
     // Find column that is empty from row start_row to row end_row
     let column = -1;
     // Find first column that can fit the instruction (i.e., contains only null values from start_row to end_row)
-    // such that all succeeding values are either null or -1
+    // such that all succeeding values are either null or negative
     for (let col = 0; col < matrix[0].length; col++) {
       // Check if the current column can fit the instruction
       let fit = true;
       for (let row = start_row; row <= end_row; row++) {
         let last_possible_col = matrix[0].length;
         for (let i = matrix[0].length - 1; i >= 0; i--) {
-          if (matrix[row][i] !== null && matrix[row][i] > -1) {
+          if (matrix[row][i] !== null && matrix[row][i] >= 0) {
             break;
           }
           last_possible_col = i;
@@ -69,7 +69,7 @@ export default function generateCanvasMatrix(input) {
     for (let i = start_row; i <= end_row; i++) {
       matrix[i][column] = _instruction["qubits"].includes(i)
         ? instructionIndex
-        : -1;
+        : -instructionIndex;
     }
   });
 
