@@ -148,7 +148,7 @@ const Left = ({ circuit, setCircuit }) => {
   /** The circuit canvas */
 }
 const Circuit = ({ circuit, setCircuit }) => {
-  let matrix = generateCanvasMatrix(circuit.instructions);
+  let matrix = generateCanvasMatrix(circuit.instructions, circuit.meta.qubits);
   const [renderCount, setRenderCount] = React.useState(1);
 
   console.log(circuit);

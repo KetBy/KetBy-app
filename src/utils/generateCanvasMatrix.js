@@ -11,15 +11,19 @@ S[0]; H[1]; T+[2];  I[2]; CX[1,2];  X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[
 2   | 2   3   4   7   -1
 3   |                 6
 */
-export default function generateCanvasMatrix(input) {
+export default function generateCanvasMatrix(input, def_no_rows = false) {
   // Find number of needed rows
   let no_rows = 0;
-  input.map((_instruction) => {
-    let max = Math.max.apply(Math, _instruction["qubits"]);
-    if (max + 1 > no_rows) {
-      no_rows = max + 1;
-    }
-  });
+  if (def_no_rows !== false) {
+    no_rows = def_no_rows;
+  } else {
+    input.map((_instruction) => {
+      let max = Math.max.apply(Math, _instruction["qubits"]);
+      if (max + 1 > no_rows) {
+        no_rows = max + 1;
+      }
+    });
+  }
   // Generate matrix of size no_rows x 0
   let matrix = [];
   for (let i = 0; i < no_rows; i++) {
@@ -33,14 +37,14 @@ export default function generateCanvasMatrix(input) {
     // Find column that is empty from row start_row to row end_row
     let column = -1;
     // Find first column that can fit the instruction (i.e., contains only null values from start_row to end_row)
-    // such that all succeeding values are either null or negative
+    // such that all succeeding values are either null (or negative NOT ANYMORE)
     for (let col = 0; col < matrix[0].length; col++) {
       // Check if the current column can fit the instruction
       let fit = true;
       for (let row = start_row; row <= end_row; row++) {
         let last_possible_col = matrix[0].length;
         for (let i = matrix[0].length - 1; i >= 0; i--) {
-          if (matrix[row][i] !== null && matrix[row][i] >= 0) {
+          if (matrix[row][i] !== null /*&& matrix[row][i] >= 0*/) {
             break;
           }
           last_possible_col = i;

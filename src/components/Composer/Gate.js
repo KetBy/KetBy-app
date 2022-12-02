@@ -99,7 +99,11 @@ const Gate = (props) => {
 
   return (
     <>
-      <Box sx={{ position: "relative" }} onContextMenu={handleRightClick}>
+      <Box
+        sx={{ position: "relative" }}
+        onClick={handleRightClick}
+        onContextMenu={handleRightClick}
+      >
         {/* Border on hover */}
         <Box
           sx={{

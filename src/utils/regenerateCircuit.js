@@ -14,24 +14,9 @@ S[0]; H[1]; T+[2];  I[2]; CX[1,2];  X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[
 */
 /*
  * Regenerate a canvas matrix given the circuit, the index of the instruction that has been moved,
- * the deltas of the move (diffirence in number of cells).
+ * the deltas of the move (difference in number of cells).
  *
  */
-export function regenerateCircuit_0(oldCircuit, oldMatrix, index, dx, dy) {
-  let newCircuit = oldCircuit;
-  if (dx == 0) {
-    // Shift the qubits
-    newCircuit.instructions[index].qubits.map((qubit, _index) => {
-      newCircuit.instructions[index].qubits[_index] += dy;
-    });
-    // If there had already been some instructions in the cells where the instruction has been moved,
-    // make sure that the moved instruction comes before the other ones in the instructions array
-    // First, get overlapped instructions
-    let overlapped = [];
-  }
-  return newCircuit;
-}
-
 export default function regenerateCircuit(
   oldCircuit, // old circuit
   oldMatrix, // old canvas matrix
@@ -51,10 +36,7 @@ export default function regenerateCircuit(
     });
   }
 
-  // console.log(x, y);
-
-  // If column changed
-  // Find the overlapped instructions
+  // If the column changed
   if (dx != 0) {
     let minQubit =
       Math.min.apply(Math, oldCircuit.instructions[instructionIndex].qubits) +
@@ -63,36 +45,91 @@ export default function regenerateCircuit(
       Math.max.apply(Math, oldCircuit.instructions[instructionIndex].qubits) +
       dy;
 
-    let overlapped = [];
-    for (let rowIndex = minQubit; rowIndex <= maxQubit; rowIndex++) {
-      let instruction = oldMatrix[rowIndex][y + dx];
-      if (instruction == null) {
-        continue;
+    // Moved to the left
+    if (dx < 0) {
+      // Find all instructions that should come AFTER the current instruction
+      // (i.e., to be shifted to the right by one position)
+      let toBeShifted = [];
+      for (let rowIndex = minQubit; rowIndex <= maxQubit; rowIndex++) {
+        // Check if there already exists an instruction in the cell where the instruction has been moved
+        let overlappedInstruction = oldMatrix[rowIndex][y + dx];
+        // If no instruction
+        if (overlappedInstruction == null) {
+          // Find the first instruction when going to the right from the new position to the old position
+          for (let col = y + dx; col < y; col++) {
+            if (oldMatrix[rowIndex][col] != null) {
+              overlappedInstruction = oldMatrix[rowIndex][col];
+              break;
+            }
+          }
+          if (overlappedInstruction == null) {
+            // If still no instruction found, skip this row
+            continue;
+          }
+        }
+        if (overlappedInstruction < 0) {
+          overlappedInstruction *= -1;
+        }
+        if (!toBeShifted.includes(overlappedInstruction)) {
+          toBeShifted.push(overlappedInstruction);
+        }
       }
-      if (instruction < 0) {
-        instruction *= -1;
+      console.log("To be shifted: ", toBeShifted);
+      // If the delta is negative (i.e., moved to the left):
+      // Shift the instruction in the circuit's instructions list so that it comes before all overlapped instructions
+      let newInstructionIndex = Math.min.apply(Math, toBeShifted);
+      if (newInstructionIndex < 0) {
+        newInstructionIndex = 0;
       }
-      if (!overlapped.includes(instruction)) {
-        overlapped.push(instruction);
-      }
+      console.log("Putting ", instructionIndex, " into ", newInstructionIndex);
+      newCircuit.instructions.splice(
+        newInstructionIndex /* to */,
+        0,
+        newCircuit.instructions.splice(instructionIndex /* from */, 1)[0]
+      );
     }
-    console.log("Overlapped: ", overlapped);
-    // If the delta is negative (i.e., moved to the left):
-    // Shift the instruction in the circuit's instructions list so that it comes before all overlapped instructions
-    let newInstructionIndex = Math.min.apply(Math, overlapped);
-    if (newInstructionIndex < 0) {
-      newInstructionIndex = 0;
-    }
-    console.log("Putting ", instructionIndex, " into ", newInstructionIndex);
-    newCircuit.instructions.splice(
-      newInstructionIndex /* to */,
-      0,
-      newCircuit.instructions.splice(instructionIndex /* from */, 1)[0]
-    );
-  }
 
-  // If the delta is positive (i.e., moved to the right):
-  // Shift the instruction in the circuit's instructions list so that it comes right after all the overlapped instructions
+    // Moved to the right
+    if (dx > 0) {
+      // Find all instructions that should come BEFORE the current instruction
+      // (i.e., to be shifted to the left by one position)
+      let toBeShifted = [];
+      for (let rowIndex = minQubit; rowIndex <= maxQubit; rowIndex++) {
+        // Check if there already exists an instruction in the cell before the cell where the instruction has been moved
+        let overlappedInstruction = oldMatrix[rowIndex][y + dx - 1];
+        // If no instruction
+        if (overlappedInstruction == null) {
+          // Find the first instruction when going to the left from the new position to the old position
+          for (let col = y + dx - 1; col > y; col--) {
+            if (oldMatrix[rowIndex][col] != null) {
+              overlappedInstruction = oldMatrix[rowIndex][col];
+              break;
+            }
+          }
+          if (overlappedInstruction == null) {
+            // If still no instruction found, skip this row
+            continue;
+          }
+        }
+        if (overlappedInstruction < 0) {
+          overlappedInstruction *= -1;
+        }
+        if (!toBeShifted.includes(overlappedInstruction)) {
+          toBeShifted.push(overlappedInstruction);
+        }
+      }
+      console.log("To be shifted: ", toBeShifted);
+      // If the delta is negative (i.e., moved to the left):
+      // Shift the instruction in the circuit's instructions list so that it comes before all overlapped instructions
+      let newInstructionIndex = Math.max.apply(Math, toBeShifted);
+      console.log("Putting ", instructionIndex, " into ", newInstructionIndex);
+      newCircuit.instructions.splice(
+        newInstructionIndex /* to */,
+        0,
+        newCircuit.instructions.splice(instructionIndex /* from */, 1)[0]
+      );
+    }
+  }
 
   console.log(oldCircuit.instructions, newCircuit.instructions);
 
