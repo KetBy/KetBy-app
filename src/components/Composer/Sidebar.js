@@ -184,7 +184,9 @@ const Sidebar = (props) => {
             theme.constants.menuHeight
           }px - ${theme.spacing(6 * 2)} ) / 2)`,
         }}
-      ></Box>
+      >
+        export here
+      </Box>
     </Box>
   );
 };

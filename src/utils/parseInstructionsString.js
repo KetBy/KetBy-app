@@ -21,6 +21,7 @@ export default function parseInstructionsString(input) {
       gate: gate,
       qubits: qubits,
       params: [],
+      uid: output.length,
     });
   }
   return output;

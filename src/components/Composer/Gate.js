@@ -77,7 +77,6 @@ const Representation = (props) => {
         position: "relative",
         border: "2px solid white",
       }}
-      className="gate"
     >
       {text}
     </Box>
@@ -103,9 +102,11 @@ const Gate = (props) => {
         sx={{ position: "relative" }}
         onClick={handleRightClick}
         onContextMenu={handleRightClick}
+        className="gate"
       >
         {/* Border on hover */}
         <Box
+          className="border"
           sx={{
             position: "absolute",
             width: theme.spacing(4),
@@ -137,6 +138,7 @@ const Gate = (props) => {
           }}
         />
         <Representation gate={gate} preview={props.preview} />
+        {/*props.uid ? props.uid : null*/}
         {qubits instanceof Array &&
           qubits.map((qubit, index) => {
             if (qubit === currentQubit) {

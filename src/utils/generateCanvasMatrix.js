@@ -12,6 +12,8 @@ S[0]; H[1]; T+[2];  I[2]; CX[1,2];  X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[
 3   |                 6
 */
 export default function generateCanvasMatrix(input, def_no_rows = false) {
+  // Initialize an empty map which will point each instruction index to its column
+  let colMap = [];
   // Find number of needed rows
   let no_rows = 0;
   if (def_no_rows !== false) {
@@ -75,7 +77,8 @@ export default function generateCanvasMatrix(input, def_no_rows = false) {
         ? instructionIndex
         : -instructionIndex;
     }
+    colMap[input[instructionIndex].uid] = column;
   });
 
-  return matrix;
+  return { matrix, colMap };
 }

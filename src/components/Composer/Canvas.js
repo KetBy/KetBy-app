@@ -148,25 +148,74 @@ const Left = ({ circuit, setCircuit }) => {
   /** The circuit canvas */
 }
 const Circuit = ({ circuit, setCircuit }) => {
-  let matrix = generateCanvasMatrix(circuit.instructions, circuit.meta.qubits);
+  let { matrix, colMap } = generateCanvasMatrix(
+    circuit.instructions,
+    circuit.meta.qubits
+  );
   const [renderCount, setRenderCount] = React.useState(1);
+  const [previewRenderCount, setPreviewRenderCount] = React.useState(0);
 
-  console.log(circuit);
-  console.log(matrix);
+  const defaultInsTransf = [];
+  const [insTransf, setInsTransf] = React.useState(defaultInsTransf);
 
-  // console.log(circuit.instructions);
+  const [dragging, setDragging] = React.useState(false);
+
+  // console.log(circuit);
   // console.log(matrix);
 
   const handleDrag = (e, ui) => {
     let delta = convertPxToGridDelta(ui.x, ui.y);
-    /*console.log(
-      "Instruction " +
-        ui.node.dataset.instructionIndex +
-        ` moving by {${delta.x}, ${delta.y}}`
-    );*/
+    let instructionIndex = parseInt(ui.node.dataset.instructionIndex);
+    let colIndex = parseInt(ui.node.dataset.columnIndex);
+    let rowIndex = parseInt(ui.node.dataset.rowIndex);
+    setDragging(circuit.instructions[instructionIndex].uid);
+    // Compute the new circuit to simulate the circuit in case the user 'drops' the instruction
+    let newCircuit = regenerateCircuit(
+      circuit,
+      matrix,
+      instructionIndex,
+      rowIndex,
+      colIndex,
+      delta.x,
+      delta.y
+    );
+    let oldInstructionIndex = newCircuit.meta.oldInstructionIndex;
+    let newInstructionIndex = newCircuit.meta.newInstructionIndex;
+    // console.log(oldInstructionIndex, newInstructionIndex);
+    // console.log(newCircuit);
+    let simulation = generateCanvasMatrix(
+      newCircuit.instructions,
+      newCircuit.meta.qubits
+    );
+    let newMatrix = simulation.matrix;
+    let newColMap = simulation.colMap;
+    let newInsTransf = [];
+    for (let i = 0; i < circuit.instructions.length; i++) {
+      let uid = circuit.instructions[i].uid;
+      if (colMap[uid] !== "undefined" && newColMap[uid] !== "undefined") {
+        if (newColMap[uid] != colMap[uid]) {
+          newInsTransf.push({
+            uid: uid,
+            x: (newColMap[uid] - colMap[uid]) * parseInt(theme.spacing(6)),
+            y:
+              i === instructionIndex ? delta.y * parseInt(theme.spacing(5)) : 0,
+          });
+        } else {
+          newInsTransf.push({
+            uid: uid,
+            x: 0,
+            y:
+              i === instructionIndex ? delta.y * parseInt(theme.spacing(5)) : 0,
+          });
+        }
+      }
+    }
+    setInsTransf(newInsTransf);
+    setPreviewRenderCount(previewRenderCount + 1);
   };
 
   const handleStop = (e, ui) => {
+    setDragging(false);
     let delta = convertPxToGridDelta(ui.x, ui.y);
     if (delta.x === 0 && delta.y === 0) {
       return;
@@ -174,16 +223,6 @@ const Circuit = ({ circuit, setCircuit }) => {
     let instructionIndex = parseInt(ui.node.dataset.instructionIndex);
     let colIndex = parseInt(ui.node.dataset.columnIndex);
     let rowIndex = parseInt(ui.node.dataset.rowIndex);
-    /*console.log(
-      "Instruction " + instructionIndex + ` moved by {${delta.x}, ${delta.y}}`
-    );*/
-    /*let newCircuit = regenerateCircuit(
-      circuit,
-      matrix,
-      instructionIndex,
-      delta.x,
-      delta.y
-    );*/
     let newCircuit = regenerateCircuit(
       circuit,
       matrix,
@@ -195,118 +234,132 @@ const Circuit = ({ circuit, setCircuit }) => {
     );
     setCircuit(newCircuit);
     setRenderCount(renderCount + 1);
-    // setMatrix(generateCanvasMatrix(newCircuit.instructions));
+    setInsTransf(defaultInsTransf);
   };
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-      }}
-      key={`render--${renderCount}`}
-    >
-      {/* Display the horizontal stripes */}
-      {[...Array(circuit.meta.qubits)].map((_, i) => {
-        return (
-          <Box
-            sx={{
-              position: "absolute",
-              width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
-              minWidth: "100%",
-              height: "2px",
-              display: "block",
-              background: theme.palette.darkGrey.main,
-              left: 0,
-              top: `calc(${theme.spacing(
-                rowHeight / 2
-              )} + ${i} * ${theme.spacing(rowHeight)})`,
-              zIndex: 0,
-            }}
-            key={`horizontal-stripe-${i}`}
-          />
-        );
-      })}
-      {/* Display the gates */}
-      {matrix.map((row, rowIndex) => {
-        return row.map((instructionIndex, colIndex) => {
-          if (instructionIndex === null || instructionIndex < 0) {
-            return null;
-          }
-          let instruction = circuit.instructions[instructionIndex];
-          let instructionPos = getInstructionPosition(rowIndex, colIndex);
-
-          if (instruction.qubits.length > 1) {
-            // If it is a control cell
-            if (instruction.qubits[0] !== rowIndex) {
+    <>
+      <style>
+        {insTransf.map((ins, key) => {
+          return `.canvas-instruction-wrapper[data-uid="${ins.uid}"]{transform:translate(${ins.x}px, ${ins.y}px)!important}`;
+        })}
+      </style>
+      {dragging !== false && (
+        <style>{`.canvas-instruction-wrapper:not([data-uid="${dragging}"]) .gate .border:hover{display:none !important;}`}</style>
+      )}
+      <Box
+        sx={{
+          position: "relative",
+        }}
+        key={`render--${renderCount}`}
+      >
+        {/* Display the horizontal stripes */}
+        {[...Array(circuit.meta.qubits)].map((_, i) => {
+          return (
+            <Box
+              sx={{
+                position: "absolute",
+                width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
+                minWidth: "100%",
+                height: "2px",
+                display: "block",
+                background: theme.palette.darkGrey.main,
+                left: 0,
+                top: `calc(${theme.spacing(
+                  rowHeight / 2
+                )} + ${i} * ${theme.spacing(rowHeight)})`,
+                zIndex: 0,
+              }}
+              key={`horizontal-stripe-${i}`}
+            />
+          );
+        })}
+        {/* Display the gates */}
+        {matrix.map((row, rowIndex) => {
+          return row.map((instructionIndex, colIndex) => {
+            if (instructionIndex === null || instructionIndex < 0) {
               return null;
             }
-          }
+            let instruction = circuit.instructions[instructionIndex];
+            let instructionPos = getInstructionPosition(rowIndex, colIndex);
 
-          return (
-            <Draggable
-              key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
-              grid={[parseInt(theme.spacing(6)), parseInt(theme.spacing(5))]}
-              onDrag={handleDrag}
-              onStop={handleStop}
-              defaultClassNameDragging="dragging"
-              axis="both"
-              bounds={{
-                top:
-                  -parseInt(theme.spacing(5)) *
-                  Math.min.apply(Math, instruction.qubits),
-                bottom:
-                  parseInt(theme.spacing(5)) *
-                  (circuit.meta.qubits -
-                    Math.max.apply(Math, instruction.qubits) -
-                    1),
-                right:
-                  parseInt(theme.spacing(6)) * (matrix[0].length - colIndex),
-                left: -parseInt(theme.spacing(6)) * colIndex,
-              }}
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  display: "block",
-                  top: `${instructionPos.y}px`,
-                  left: `${instructionPos.x}px`,
+            if (instruction.qubits.length > 1) {
+              // If it is a control cell
+              if (instruction.qubits[0] !== rowIndex) {
+                return null;
+              }
+            }
+
+            return (
+              <Draggable
+                key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
+                grid={[parseInt(theme.spacing(6)), parseInt(theme.spacing(5))]}
+                onDrag={handleDrag}
+                onStop={handleStop}
+                defaultClassNameDragging="dragging"
+                axis="both"
+                bounds={{
+                  top:
+                    -parseInt(theme.spacing(5)) *
+                    Math.min.apply(Math, instruction.qubits),
+                  bottom:
+                    parseInt(theme.spacing(5)) *
+                    (circuit.meta.qubits -
+                      Math.max.apply(Math, instruction.qubits) -
+                      1),
+                  right:
+                    parseInt(theme.spacing(6)) * (matrix[0].length - colIndex),
+                  left: -parseInt(theme.spacing(6)) * colIndex,
                 }}
-                {...{
-                  "data-instruction-index": instructionIndex,
-                  "data-column-index": colIndex,
-                  "data-row-index": rowIndex,
-                }}
+                defaultClassName={`canvas-instruction-wrapper`}
               >
-                <Gate
-                  gate={gatesMap[instruction.gate]}
-                  qubits={instruction.qubits}
-                  currentQubit={rowIndex}
-                />
-              </Box>
-            </Draggable>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    display: "block",
+                    top: `${instructionPos.y}px`,
+                    left: `${instructionPos.x}px`,
+                    transitionDuration: "0.1s",
+                  }}
+                  {...{
+                    "data-instruction-index": instructionIndex,
+                    "data-uid": instruction.uid,
+                    "data-column-index": colIndex,
+                    "data-row-index": rowIndex,
+                  }}
+                >
+                  <Gate
+                    gate={gatesMap[instruction.gate]}
+                    qubits={instruction.qubits}
+                    currentQubit={rowIndex}
+                    uid={instruction.uid}
+                  />
+                </Box>
+              </Draggable>
+            );
+          });
+        })}
+        {/* Display the vertical striples */}
+        {[...Array(matrix[0].length - 1)].map((_, i) => {
+          return (
+            <Box
+              sx={{
+                position: "absolute",
+                width: "1px",
+                height: `calc(${theme.spacing(0.5)} + ${
+                  circuit.meta.qubits
+                } * ${theme.spacing(5)})`,
+                background: theme.palette.grey[200],
+                top: 0,
+                left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
+                zIndex: -1,
+              }}
+              key={`vertical-stripe-${i}`}
+            />
           );
-        });
-      })}
-      {/* Display the vertical striples */}
-      {[...Array(matrix[0].length - 1)].map((_, i) => {
-        return (
-          <Box
-            sx={{
-              position: "absolute",
-              width: "1px",
-              height: `calc(${theme.spacing(0.5)} + ${
-                circuit.meta.qubits
-              } * ${theme.spacing(5)})`,
-              background: theme.palette.grey[200],
-              top: 0,
-              left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
-              zIndex: -1,
-            }}
-            key={`vertical-stripe-${i}`}
-          />
-        );
-      })}
-    </Box>
+        })}
+      </Box>
+    </>
   );
 };
 
