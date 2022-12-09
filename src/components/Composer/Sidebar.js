@@ -15,6 +15,7 @@ import theme from "../../themes/default";
 import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
+import { gatesMap as getGatesMap } from "../../utils/gates";
 
 const CustomTabs = styled(Tabs)({
   "& .MuiTab-root": {
@@ -163,9 +164,59 @@ const ExportHeader = (props) => {
   );
 };
 
+const ExportContent = (props) => {
+  const { circuit } = props;
+  let gatesMap = getGatesMap();
+
+  return (
+    <Box
+      sx={{
+        height: `calc((100vh - ${
+          theme.constants.menuHeight
+        }px - ${theme.spacing(6 * 2)} ) / 2)`,
+        overflowY: "auto",
+      }}
+      p={1}
+    >
+      <Typography variant="body2" mb={1}>
+        Internal representation
+      </Typography>
+      <Box
+        sx={{
+          background: theme.palette.grey[50],
+          color: theme.palette.grey[700],
+          p: 1,
+        }}
+      >
+        {circuit.instructions.map((ins, index) => {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              sx={{ fontFamily: "monospace" }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  color: gatesMap[ins.gate].color.main,
+                  fontWeight: 600,
+                }}
+              >
+                {ins.gate}
+              </Box>
+              [{ins.qubits.join(",")}]
+              {ins.params.length > 0 && `[${ins.params.join(",")}]`}
+            </Typography>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+};
+
 const Sidebar = (props) => {
   const [projectTab, setProjectTab] = React.useState("circuits");
-  const { collapsed } = props;
+  const { collapsed, circuit } = props;
 
   return collapsed ? null : (
     <Box
@@ -178,15 +229,7 @@ const Sidebar = (props) => {
       <ProjectHeader projectTab={projectTab} setProjectTab={setProjectTab} />
       <ProjectContent projectTab={projectTab} />
       <ExportHeader />
-      <Box
-        sx={{
-          height: `calc((100vh - ${
-            theme.constants.menuHeight
-          }px - ${theme.spacing(6 * 2)} ) / 2)`,
-        }}
-      >
-        export here
-      </Box>
+      <ExportContent circuit={circuit} />
     </Box>
   );
 };

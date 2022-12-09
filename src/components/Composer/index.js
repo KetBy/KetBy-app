@@ -20,6 +20,7 @@ export default function Composer() {
   };
 
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [circuit, setCircuit] = React.useState(startCircuit);
 
   return (
     <Box
@@ -40,13 +41,14 @@ export default function Composer() {
         </Grid>
         <Grid item xs>
           <Canvas
-            startCircuit={startCircuit}
+            circuit={circuit}
+            setCircuit={setCircuit}
             sidebarCollapsed={sidebarCollapsed}
             setSidebarCollapsed={setSidebarCollapsed}
           />
         </Grid>
         <Grid item width="auto">
-          <Sidebar collapsed={sidebarCollapsed} />
+          <Sidebar collapsed={sidebarCollapsed} circuit={circuit} />
         </Grid>
       </Grid>
     </Box>
