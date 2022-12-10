@@ -15,7 +15,7 @@ export default function Composer() {
       bits: 0,
     },
     instructions: parseInstructionsString(
-      "S[0]; H[1]; T+[2]; I[2]; CX[0,2]; X[1]; Tfl[1,0,3]; X[2]; I[0]; I[1]; I[1]; X[0]; X[0]; S+[0]; CX[2,0]"
+      "S[0]; H[1]; T+[2]; I[2]; CX[0,2]; X[1]; SX[2]; Tfl[1,0,3]; X[2]; I[0]; I[1]; I[1]; SX+[1]; X[0]; X[0]; S+[0]; RX[3]; H[0]; CX[2,0]"
     ),
   };
 
@@ -37,7 +37,7 @@ export default function Composer() {
         }}
       >
         <Grid item width="auto">
-          <GatesDirectory />
+          <GatesDirectory circuit={circuit} setCircuit={setCircuit} />
         </Grid>
         <Grid item xs>
           <Canvas

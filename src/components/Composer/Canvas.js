@@ -9,7 +9,6 @@ import {
   Chip,
   IconButton,
 } from "@mui/material";
-import Latex from "react-latex-next";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
@@ -92,7 +91,9 @@ const Left = ({ circuit, setCircuit }) => {
                     borderColor: `${theme.palette.darkGrey.main} !important`,
                   }}
                 >
-                  <Latex>{`$\\sf{Q_{${i}}}$`}</Latex>
+                  <span>
+                    Q<sub>{i}</sub>
+                  </span>
                 </Button>
               </Grid>
               <Grid
@@ -102,9 +103,14 @@ const Left = ({ circuit, setCircuit }) => {
                   pl: 1,
                   textAlign: "center",
                   color: theme.palette.darkGrey.main,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
                 }}
               >
-                <Latex>{`$\\mathsf{\\ket{0}}$`}</Latex>
+                <Box component="span" sx={{ mx: -0.75, display: "inline" }}>
+                  ｜
+                </Box>
+                0〉
               </Grid>
             </Grid>
           </Box>
@@ -160,7 +166,7 @@ const Circuit = ({ circuit, setCircuit }) => {
 
   const [dragging, setDragging] = React.useState(false);
 
-  // console.log(circuit);
+  console.log(circuit);
   // console.log(matrix);
 
   const handleDrag = (e, ui) => {
@@ -333,6 +339,9 @@ const Circuit = ({ circuit, setCircuit }) => {
                     qubits={instruction.qubits}
                     currentQubit={rowIndex}
                     uid={instruction.uid}
+                    circuit={circuit}
+                    setCircuit={setCircuit}
+                    instructionIndex={instructionIndex}
                   />
                 </Box>
               </Draggable>
@@ -501,9 +510,7 @@ const Graph2 = (props) => {
 };
 
 const Canvas = (props) => {
-  const { startCircuit, sidebarCollapsed, setSidebarCollapsed } = props;
-
-  const [circuit, setCircuit] = React.useState(startCircuit);
+  const { circuit, setCircuit, sidebarCollapsed, setSidebarCollapsed } = props;
 
   return (
     <Box>

@@ -175,7 +175,7 @@ const theme = createTheme({
       dark: "#D7D709",
     },
     green: {
-      light: "#00F5AF",
+      light: "#02C28B",
       main: "#008A63",
       dark: "#007A58",
     },

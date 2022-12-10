@@ -12,6 +12,7 @@ const gatesMap = getGatesMap();
 
 const GatesDirectory = (props) => {
   const [display, setDisplay] = React.useState("default");
+  const { circuit, setCircuit } = props;
 
   return (
     <Box
@@ -182,6 +183,8 @@ const GatesDirectory = (props) => {
                           gate={gatesMap[gate.name]}
                           key={`gates-${category.name}-${gate.name}`}
                           preview
+                          circuit={circuit}
+                          setCircuit={setCircuit}
                         />
                       </Grid>
                     ) : (
@@ -196,6 +199,8 @@ const GatesDirectory = (props) => {
                               gate={gatesMap[gate.name]}
                               key={`gates-${category.name}-${gate.name}`}
                               preview
+                              circuit={circuit}
+                              setCircuit={setCircuit}
                             />
                           </Grid>
                           <Grid
@@ -229,6 +234,8 @@ const GatesDirectory = (props) => {
                       gate={gatesMap[gate.name]}
                       key={`gates-${category.name}-${gate.name}`}
                       preview
+                      circuit={circuit}
+                      setCircuit={setCircuit}
                     />
                   </Grid>
                 );

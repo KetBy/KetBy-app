@@ -100,6 +100,49 @@ const gates = [
       },
     ],
   },
+  {
+    name: "Quantum gates",
+    color: theme.palette.green,
+    contrastColor: theme.palette.common.white,
+    gates: [
+      {
+        name: "SX",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+      {
+        name: "SX+",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+      {
+        name: "Y",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+      {
+        name: "RX",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+      {
+        name: "RY",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+      {
+        name: "U",
+        qubits: 1,
+        title: "Lorem ipsum",
+        desc: "Lorem ipsum",
+      },
+    ],
+  },
 ];
 
 export const gatesMap = () => {

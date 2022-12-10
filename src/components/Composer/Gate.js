@@ -1,8 +1,23 @@
 import * as React from "react";
-import { Box, Grid, Typography, Divider, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  Divider,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  TextField,
+  Select,
+  NativeSelect,
+} from "@mui/material";
 import theme from "../../themes/default";
-import Latex from "react-latex-next";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+
 const gatesMap = getGatesMap();
 
 const NOTGate = (props) => {
@@ -47,22 +62,41 @@ const NOTGate = (props) => {
   );
 };
 
-const Representation = (props) => {
-  const { gate } = props;
-
-  if (["X", "CX", "Tfl"].includes(gate.name)) {
-    return <NOTGate gate={gate} hideHorizontalLine={!props.preview} />;
-  }
-
-  let text = <>{gate.name}</>;
-  if (gate.name == "T+" || gate.name == "S+") {
+const formattedName = (name) => {
+  let dagger = "†";
+  let sqrt = "√";
+  let text = <>{name}</>;
+  if (name == "T+" || name == "S+") {
     text = (
       <>
-        {gate.name.replace("+", "")}
-        <Latex>{`$^\\dagger$`}</Latex>
+        {name.replace("+", "")}
+        <sup>{dagger}</sup>
       </>
     );
   }
+  if (name == "SX") {
+    text = <>{sqrt}X</>;
+  }
+  if (name == "SX+") {
+    text = (
+      <>
+        {sqrt}X<sup>{dagger}</sup>
+      </>
+    );
+  }
+  return text;
+};
+const Representation = (props) => {
+  const { gate, preview } = props;
+
+  if (["X", "CX", "Tfl"].includes(gate.name)) {
+    return <NOTGate gate={gate} hideHorizontalLine={!preview} />;
+  }
+
+  let dagger = "†";
+  let sqrt = "√";
+
+  let text = formattedName(gate.name);
 
   return (
     <Box
@@ -75,7 +109,8 @@ const Representation = (props) => {
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        border: "2px solid white",
+        border: `2px solid white`,
+        fontSize: "0.9rem",
       }}
     >
       {text}
@@ -84,7 +119,9 @@ const Representation = (props) => {
 };
 
 const Gate = (props) => {
-  const { gate, qubits, currentQubit } = props;
+  const { gate, qubits, currentQubit, circuit, setCircuit, instructionIndex } =
+    props;
+  const preview = props.preview ? true : false;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -99,7 +136,7 @@ const Gate = (props) => {
   return (
     <>
       <Box
-        sx={{ position: "relative" }}
+        sx={{ position: "relative", cursor: preview ? "pointer" : "move" }}
         onClick={handleRightClick}
         onContextMenu={handleRightClick}
         className="gate"
@@ -116,7 +153,9 @@ const Gate = (props) => {
                 1) *
               parseInt(theme.spacing(5))
             }px - ${parseInt(theme.spacing(1))}px)`,
-            outline: `2px solid ${open ? gate.color.light : "transparent"}`,
+            outline: `2px solid ${
+              open && !preview ? gate.color.light : "transparent"
+            }`,
             outlineStyle: `${open ? "solid !important" : "inherit"}`,
             "&:hover": {
               outline: `2px solid ${gate.color.light}`,
@@ -126,7 +165,6 @@ const Gate = (props) => {
               outline: `2px solid ${gate.color.light}`,
             },
             zIndex: 999,
-            cursor: "move",
             ...{
               top: `-${
                 Math.min.apply(Math, qubits) < currentQubit
@@ -137,7 +175,7 @@ const Gate = (props) => {
             },
           }}
         />
-        <Representation gate={gate} preview={props.preview} />
+        <Representation gate={gate} preview={preview} />
         {/*props.uid ? props.uid : null*/}
         {qubits instanceof Array &&
           qubits.map((qubit, index) => {
@@ -207,16 +245,138 @@ const Gate = (props) => {
         }}
         sx={{
           ml: 1,
+          borderRadius: 0,
         }}
       >
-        <MenuItem onClick={handleClose}>
-          <Typography variant="body2">Edit</Typography>
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Typography variant="body2" color="error">
-            Delete
-          </Typography>
-        </MenuItem>
+        {preview
+          ? [
+              <>
+                <MenuItem disableRipple>
+                  <ListItemIcon>
+                    <AddRoundedIcon
+                      sx={{
+                        fontSize: "1.25rem",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <Box
+                    sx={{
+                      display: "block",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ display: "inline-block" }}
+                    >
+                      Add{" "}
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{ color: gate.color.main, fontWeight: 600 }}
+                      >
+                        {formattedName(gate.name)}
+                      </Typography>{" "}
+                      to{" "}
+                    </Typography>
+                    <NativeSelect
+                      label="Age"
+                      size="small"
+                      sx={{
+                        ml: 0.5,
+                        fontSize: "0.9rem",
+                        mb: -0.6,
+                        display: "inline-block",
+                      }}
+                      onChange={(e) => {
+                        setCircuit({
+                          ...circuit,
+                          instructions: circuit.instructions.concat({
+                            gate: gate.name,
+                            qubits: [parseInt(e.target.value)],
+                            params: [],
+                            uid:
+                              Math.max(
+                                ...circuit.instructions.map((o) => o.uid)
+                              ) + 1,
+                          }),
+                        });
+                        handleClose();
+                      }}
+                    >
+                      <option selected disabled>
+                        qubit
+                      </option>
+                      {[...Array(circuit.meta.qubits)].map((_, index) => {
+                        return (
+                          <option value={index} key={index}>
+                            Q{index}
+                          </option>
+                        );
+                      })}
+                    </NativeSelect>
+                  </Box>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <InfoOutlinedIcon
+                      sx={{
+                        fontSize: "1.25rem",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Gate info</Typography>
+                </MenuItem>
+              </>,
+            ]
+          : [
+              <>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <TuneRoundedIcon
+                      sx={{
+                        fontSize: "1.25rem",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Edit</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <InfoOutlinedIcon
+                      sx={{
+                        fontSize: "1.25rem",
+                      }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Gate info</Typography>
+                </MenuItem>
+                <Divider sx={{ my: -0 }} />
+                <MenuItem
+                  onClick={() => {
+                    setCircuit({
+                      ...circuit,
+                      instrunctions: circuit.instructions.splice(
+                        instructionIndex,
+                        1
+                      ),
+                    });
+                    handleClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <DeleteOutlineRoundedIcon
+                      sx={{
+                        fontSize: "1.25rem",
+                        color: theme.palette.error.main,
+                      }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2" color="error">
+                    Delete
+                  </Typography>
+                </MenuItem>
+              </>,
+            ]}
       </Menu>
     </>
   );
