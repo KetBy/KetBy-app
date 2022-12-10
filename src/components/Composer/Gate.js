@@ -250,132 +250,127 @@ const Gate = (props) => {
       >
         {preview
           ? [
-              <>
-                <MenuItem disableRipple>
-                  <ListItemIcon>
-                    <AddRoundedIcon
-                      sx={{
-                        fontSize: "1.25rem",
-                      }}
-                    />
-                  </ListItemIcon>
-                  <Box
+              <MenuItem disableRipple key={0}>
+                <ListItemIcon>
+                  <AddRoundedIcon
                     sx={{
-                      display: "block",
+                      fontSize: "1.25rem",
                     }}
-                  >
-                    <Typography
-                      variant="body2"
-                      sx={{ display: "inline-block" }}
-                    >
-                      Add{" "}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        sx={{ color: gate.color.main, fontWeight: 600 }}
-                      >
-                        {formattedName(gate.name)}
-                      </Typography>{" "}
-                      to{" "}
-                    </Typography>
-                    <NativeSelect
-                      label="Age"
-                      size="small"
-                      sx={{
-                        ml: 0.5,
-                        fontSize: "0.9rem",
-                        mb: -0.6,
-                        display: "inline-block",
-                      }}
-                      onChange={(e) => {
-                        setCircuit({
-                          ...circuit,
-                          instructions: circuit.instructions.concat({
-                            gate: gate.name,
-                            qubits: [parseInt(e.target.value)],
-                            params: [],
-                            uid:
-                              Math.max(
-                                ...circuit.instructions.map((o) => o.uid)
-                              ) + 1,
-                          }),
-                        });
-                        handleClose();
-                      }}
-                    >
-                      <option selected disabled>
-                        qubit
-                      </option>
-                      {[...Array(circuit.meta.qubits)].map((_, index) => {
-                        return (
-                          <option value={index} key={index}>
-                            Q{index}
-                          </option>
-                        );
-                      })}
-                    </NativeSelect>
-                  </Box>
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <InfoOutlinedIcon
-                      sx={{
-                        fontSize: "1.25rem",
-                      }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2">Gate info</Typography>
-                </MenuItem>
-              </>,
-            ]
-          : [
-              <>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <TuneRoundedIcon
-                      sx={{
-                        fontSize: "1.25rem",
-                      }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2">Edit</Typography>
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <InfoOutlinedIcon
-                      sx={{
-                        fontSize: "1.25rem",
-                      }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2">Gate info</Typography>
-                </MenuItem>
-                <Divider sx={{ my: -0 }} />
-                <MenuItem
-                  onClick={() => {
-                    setCircuit({
-                      ...circuit,
-                      instrunctions: circuit.instructions.splice(
-                        instructionIndex,
-                        1
-                      ),
-                    });
-                    handleClose();
+                  />
+                </ListItemIcon>
+                <Box
+                  sx={{
+                    display: "block",
                   }}
                 >
-                  <ListItemIcon>
-                    <DeleteOutlineRoundedIcon
-                      sx={{
-                        fontSize: "1.25rem",
-                        color: theme.palette.error.main,
-                      }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2" color="error">
-                    Delete
+                  <Typography variant="body2" sx={{ display: "inline-block" }}>
+                    Add{" "}
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      sx={{ color: gate.color.main, fontWeight: 600 }}
+                    >
+                      {formattedName(gate.name)}
+                    </Typography>{" "}
+                    to{" "}
                   </Typography>
-                </MenuItem>
-              </>,
+                  <NativeSelect
+                    label="Age"
+                    size="small"
+                    defaultValue={-1}
+                    sx={{
+                      ml: 0.5,
+                      fontSize: "0.9rem",
+                      mb: -0.6,
+                      display: "inline-block",
+                    }}
+                    onChange={(e) => {
+                      setCircuit({
+                        ...circuit,
+                        instructions: circuit.instructions.concat({
+                          gate: gate.name,
+                          qubits: [parseInt(e.target.value)],
+                          params: [],
+                          uid:
+                            Math.max(
+                              ...circuit.instructions.map((o) => o.uid)
+                            ) + 1,
+                        }),
+                      });
+                      handleClose();
+                    }}
+                  >
+                    <option disabled value={-1}>
+                      qubit
+                    </option>
+                    {[...Array(circuit.meta.qubits)].map((_, index) => {
+                      return (
+                        <option value={index} key={index}>
+                          Q{index}
+                        </option>
+                      );
+                    })}
+                  </NativeSelect>
+                </Box>
+              </MenuItem>,
+              <MenuItem onClick={handleClose} key={1}>
+                <ListItemIcon>
+                  <InfoOutlinedIcon
+                    sx={{
+                      fontSize: "1.25rem",
+                    }}
+                  />
+                </ListItemIcon>
+                <Typography variant="body2">Gate info</Typography>
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem onClick={handleClose} key={0}>
+                <ListItemIcon>
+                  <TuneRoundedIcon
+                    sx={{
+                      fontSize: "1.25rem",
+                    }}
+                  />
+                </ListItemIcon>
+                <Typography variant="body2">Edit</Typography>
+              </MenuItem>,
+              <MenuItem onClick={handleClose} key={1}>
+                <ListItemIcon>
+                  <InfoOutlinedIcon
+                    sx={{
+                      fontSize: "1.25rem",
+                    }}
+                  />
+                </ListItemIcon>
+                <Typography variant="body2">Gate info</Typography>
+              </MenuItem>,
+              <Divider sx={{ my: -0 }} key={2} />,
+              <MenuItem
+                key={3}
+                onClick={() => {
+                  setCircuit({
+                    ...circuit,
+                    instrunctions: circuit.instructions.splice(
+                      instructionIndex,
+                      1
+                    ),
+                  });
+                  handleClose();
+                }}
+              >
+                <ListItemIcon>
+                  <DeleteOutlineRoundedIcon
+                    sx={{
+                      fontSize: "1.25rem",
+                      color: theme.palette.error.main,
+                    }}
+                  />
+                </ListItemIcon>
+                <Typography variant="body2" color="error">
+                  Delete
+                </Typography>
+              </MenuItem>,
             ]}
       </Menu>
     </>

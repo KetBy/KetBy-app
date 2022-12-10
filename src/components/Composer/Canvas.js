@@ -166,7 +166,7 @@ const Circuit = ({ circuit, setCircuit }) => {
 
   const [dragging, setDragging] = React.useState(false);
 
-  console.log(circuit);
+  // console.log(circuit);
   // console.log(matrix);
 
   const handleDrag = (e, ui) => {
