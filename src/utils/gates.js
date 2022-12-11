@@ -23,18 +23,21 @@ const gates = [
         qubits: 2,
         title: "Controlled NOT gate",
         desc: "Lorem ipsum",
+        qubitsNames: ["target", "control"],
       },
       {
         name: "Tfl",
         qubits: 3,
         title: "Toffoli gate",
         desc: "Lorem ipsum",
+        qubitsNames: ["target", "control 1", "control 2"],
       },
       {
         name: "SWAP",
         qubits: 2,
         title: "SWAP gate",
         desc: "Lorem ipsum",
+        qubitsNames: ["qubit 1", "qubit 2"],
       },
     ],
   },
@@ -156,6 +159,7 @@ export const gatesMap = () => {
         qubits: gate.qubits,
         title: gate.title,
         desc: gate.desc,
+        qubitsNames: gate.qubitsNames,
       };
     });
   });

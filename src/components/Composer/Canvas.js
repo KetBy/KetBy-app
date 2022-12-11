@@ -61,7 +61,7 @@ const Left = ({ circuit, setCircuit }) => {
   return (
     <Box
       sx={{
-        width: theme.spacing(11),
+        width: theme.spacing(6),
         px: 1,
       }}
     >
@@ -77,7 +77,7 @@ const Left = ({ circuit, setCircuit }) => {
             }}
           >
             <Grid container alignItems="center">
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Button
                   variant="outlined"
                   size="small"
@@ -95,22 +95,6 @@ const Left = ({ circuit, setCircuit }) => {
                     Q<sub>{i}</sub>
                   </span>
                 </Button>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                sx={{
-                  pl: 1,
-                  textAlign: "center",
-                  color: theme.palette.darkGrey.main,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <Box component="span" sx={{ mx: -0.75, display: "inline" }}>
-                  ｜
-                </Box>
-                0〉
               </Grid>
             </Grid>
           </Box>
@@ -259,114 +243,161 @@ const Circuit = ({ circuit, setCircuit }) => {
         }}
         key={`render--${renderCount}`}
       >
-        {/* Display the horizontal stripes */}
-        {[...Array(circuit.meta.qubits)].map((_, i) => {
-          return (
-            <Box
-              sx={{
-                position: "absolute",
-                width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
-                minWidth: "100%",
-                height: "2px",
-                display: "block",
-                background: theme.palette.darkGrey.main,
-                left: 0,
-                top: `calc(${theme.spacing(
-                  rowHeight / 2
-                )} + ${i} * ${theme.spacing(rowHeight)})`,
-                zIndex: 0,
-              }}
-              key={`horizontal-stripe-${i}`}
-            />
-          );
-        })}
-        {/* Display the gates */}
-        {matrix.map((row, rowIndex) => {
-          return row.map((instructionIndex, colIndex) => {
-            if (instructionIndex === null || instructionIndex < 0) {
-              return null;
-            }
-            let instruction = circuit.instructions[instructionIndex];
-            let instructionPos = getInstructionPosition(rowIndex, colIndex);
+        <Grid container>
+          <Grid
+            item
+            sx={{
+              width: theme.spacing(4),
+            }}
+          >
+            {/* Display the initial kets */}
+            {[...Array(circuit.meta.qubits)].map((_, i) => {
+              return (
+                <Box
+                  key={i}
+                  sx={{
+                    pl: 1,
+                    textAlign: "center",
+                    color: theme.palette.darkGrey.main,
 
-            if (instruction.qubits.length > 1) {
-              // If it is a control cell
-              if (instruction.qubits[0] !== rowIndex) {
-                return null;
-              }
-            }
-
-            return (
-              <Draggable
-                key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
-                grid={[parseInt(theme.spacing(6)), parseInt(theme.spacing(5))]}
-                onDrag={handleDrag}
-                onStop={handleStop}
-                defaultClassNameDragging="dragging"
-                axis="both"
-                bounds={{
-                  top:
-                    -parseInt(theme.spacing(5)) *
-                    Math.min.apply(Math, instruction.qubits),
-                  bottom:
-                    parseInt(theme.spacing(5)) *
-                    (circuit.meta.qubits -
-                      Math.max.apply(Math, instruction.qubits) -
-                      1),
-                  right:
-                    parseInt(theme.spacing(6)) * (matrix[0].length - colIndex),
-                  left: -parseInt(theme.spacing(6)) * colIndex,
-                }}
-                defaultClassName={`canvas-instruction-wrapper`}
-              >
+                    height: theme.spacing(5),
+                    display: "grid",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Box sx={{ overflow: "hidden", whiteSpace: "nowrap" }}>
+                    <Box component="span" sx={{ display: "inline", mx: -0.65 }}>
+                      ｜
+                    </Box>
+                    0〉
+                  </Box>
+                </Box>
+              );
+            })}
+          </Grid>
+          <Grid
+            item
+            sx={{
+              ml: 2,
+              position: "relative",
+              width: `calc(100% - ${theme.spacing(4)} - ${theme.spacing(2)})`,
+            }}
+          >
+            {/* Display the horizontal stripes */}
+            {[...Array(circuit.meta.qubits)].map((_, i) => {
+              return (
                 <Box
                   sx={{
                     position: "absolute",
+                    width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
+                    minWidth: "100%",
+                    height: "2px",
                     display: "block",
-                    top: `${instructionPos.y}px`,
-                    left: `${instructionPos.x}px`,
-                    transitionDuration: "0.1s",
+                    background: theme.palette.darkGrey.main,
+                    left: 0,
+                    top: `calc(${theme.spacing(
+                      rowHeight / 2
+                    )} + ${i} * ${theme.spacing(rowHeight)})`,
+                    zIndex: 0,
                   }}
-                  {...{
-                    "data-instruction-index": instructionIndex,
-                    "data-uid": instruction.uid,
-                    "data-column-index": colIndex,
-                    "data-row-index": rowIndex,
+                  key={`horizontal-stripe-${i}`}
+                />
+              );
+            })}
+            {/* Display the gates */}
+            {matrix.map((row, rowIndex) => {
+              return row.map((instructionIndex, colIndex) => {
+                if (instructionIndex === null || instructionIndex < 0) {
+                  return null;
+                }
+                let instruction = circuit.instructions[instructionIndex];
+                let instructionPos = getInstructionPosition(rowIndex, colIndex);
+
+                if (instruction.qubits.length > 1) {
+                  // If it is a control cell
+                  if (instruction.qubits[0] !== rowIndex) {
+                    return null;
+                  }
+                }
+
+                return (
+                  <Draggable
+                    key={`instruction--${rowIndex}-${instructionIndex}--wrapper`}
+                    grid={[
+                      parseInt(theme.spacing(6)),
+                      parseInt(theme.spacing(5)),
+                    ]}
+                    onDrag={handleDrag}
+                    onStop={handleStop}
+                    defaultClassNameDragging="dragging"
+                    axis="both"
+                    bounds={{
+                      top:
+                        -parseInt(theme.spacing(5)) *
+                        Math.min.apply(Math, instruction.qubits),
+                      bottom:
+                        parseInt(theme.spacing(5)) *
+                        (circuit.meta.qubits -
+                          Math.max.apply(Math, instruction.qubits) -
+                          1),
+                      right:
+                        parseInt(theme.spacing(6)) *
+                        (matrix[0].length - colIndex),
+                      left: -parseInt(theme.spacing(6)) * colIndex,
+                    }}
+                    defaultClassName={`canvas-instruction-wrapper`}
+                  >
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        display: "block",
+                        top: `${instructionPos.y}px`,
+                        left: `${instructionPos.x}px`,
+                        transitionDuration: "0.1s",
+                      }}
+                      {...{
+                        "data-instruction-index": instructionIndex,
+                        "data-uid": instruction.uid,
+                        "data-column-index": colIndex,
+                        "data-row-index": rowIndex,
+                      }}
+                    >
+                      <Gate
+                        gate={gatesMap[instruction.gate]}
+                        qubits={instruction.qubits}
+                        currentQubit={rowIndex}
+                        uid={instruction.uid}
+                        circuit={circuit}
+                        setCircuit={setCircuit}
+                        instructionIndex={instructionIndex}
+                      />
+                    </Box>
+                  </Draggable>
+                );
+              });
+            })}
+            {/* Display the vertical striples */}
+            {[...Array(matrix[0].length - 1)].map((_, i) => {
+              return (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    width: "1px",
+                    height: `calc(${theme.spacing(0.5)} + ${
+                      circuit.meta.qubits
+                    } * ${theme.spacing(5)})`,
+                    background: theme.palette.grey[200],
+                    top: 0,
+                    left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
+                    zIndex: -1,
                   }}
-                >
-                  <Gate
-                    gate={gatesMap[instruction.gate]}
-                    qubits={instruction.qubits}
-                    currentQubit={rowIndex}
-                    uid={instruction.uid}
-                    circuit={circuit}
-                    setCircuit={setCircuit}
-                    instructionIndex={instructionIndex}
-                  />
-                </Box>
-              </Draggable>
-            );
-          });
-        })}
-        {/* Display the vertical striples */}
-        {[...Array(matrix[0].length - 1)].map((_, i) => {
-          return (
-            <Box
-              sx={{
-                position: "absolute",
-                width: "1px",
-                height: `calc(${theme.spacing(0.5)} + ${
-                  circuit.meta.qubits
-                } * ${theme.spacing(5)})`,
-                background: theme.palette.grey[200],
-                top: 0,
-                left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
-                zIndex: -1,
-              }}
-              key={`vertical-stripe-${i}`}
-            />
-          );
-        })}
+                  key={`vertical-stripe-${i}`}
+                />
+              );
+            })}
+          </Grid>
+        </Grid>
       </Box>
     </>
   );

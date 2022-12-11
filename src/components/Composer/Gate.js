@@ -118,6 +118,93 @@ const Representation = (props) => {
   );
 };
 
+{
+  /* Gate menu item responsible for adding a new instruction to the circuit */
+}
+const AddNewInstruction = (props) => {
+  const { circuit, setCircuit, gate, handleClose } = props;
+  const [selectedQubits, setSelectedQubits] = React.useState([
+    ...Array(gate.qubits),
+  ]);
+
+  const handleSelect = (e) => {
+    let value = parseInt(e.target.value);
+    let qubitIndex = parseInt(e.target.dataset.qubitIndex);
+    let newSelectedQubits = selectedQubits.slice(); // copy by value
+    newSelectedQubits[qubitIndex] = value;
+    // If all qubits set, add new instruction
+    if (!newSelectedQubits.includes(undefined)) {
+      setCircuit({
+        ...circuit,
+        instructions: circuit.instructions.concat({
+          gate: gate.name,
+          qubits: newSelectedQubits,
+          params: [],
+          uid: Math.max(...circuit.instructions.map((o) => o.uid)) + 1,
+        }),
+      });
+      setSelectedQubits([...Array(gate.qubits)]);
+      handleClose();
+    } else {
+      setSelectedQubits(newSelectedQubits);
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="body2" sx={{ display: "inline-block" }}>
+        Add{" "}
+        <Typography
+          component="span"
+          variant="body2"
+          sx={{ color: gate.color.main, fontWeight: 600 }}
+        >
+          {formattedName(gate.name)}
+        </Typography>{" "}
+        to{" "}
+      </Typography>
+      {[...Array(gate.qubits)].map((_, i) => {
+        return (
+          <NativeSelect
+            key={i}
+            size="small"
+            defaultValue={-1}
+            value={selectedQubits[i] !== "undefined" ? selectedQubits[i] : -1}
+            sx={{
+              ml: 0.5,
+              fontSize: "0.95rem",
+              mb: -0.6,
+              display: "inline-block",
+              "& select": {
+                width: "auto",
+              },
+            }}
+            onChange={handleSelect}
+            inputProps={{
+              "data-qubit-index": i,
+            }}
+          >
+            <option disabled value={-1}>
+              {gate.qubits > 1 ? gate.qubitsNames[i] : "qubit"}
+            </option>
+            {[...Array(circuit.meta.qubits)].map((_, index) => {
+              return (
+                <option
+                  value={index}
+                  key={index}
+                  disabled={selectedQubits.includes(index)}
+                >
+                  Q{index}
+                </option>
+              );
+            })}
+          </NativeSelect>
+        );
+      })}
+    </Box>
+  );
+};
+
 const Gate = (props) => {
   const { gate, qubits, currentQubit, circuit, setCircuit, instructionIndex } =
     props;
@@ -125,6 +212,9 @@ const Gate = (props) => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const handleClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
   const handleRightClick = (e) => {
     e.preventDefault();
     setAnchorEl(e.currentTarget);
@@ -137,7 +227,7 @@ const Gate = (props) => {
     <>
       <Box
         sx={{ position: "relative", cursor: preview ? "pointer" : "move" }}
-        onClick={handleRightClick}
+        onClick={handleClick}
         onContextMenu={handleRightClick}
         className="gate"
       >
@@ -247,6 +337,7 @@ const Gate = (props) => {
           ml: 1,
           borderRadius: 0,
         }}
+        disableAutoFocusItem
       >
         {preview
           ? [
@@ -258,60 +349,7 @@ const Gate = (props) => {
                     }}
                   />
                 </ListItemIcon>
-                <Box
-                  sx={{
-                    display: "block",
-                  }}
-                >
-                  <Typography variant="body2" sx={{ display: "inline-block" }}>
-                    Add{" "}
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ color: gate.color.main, fontWeight: 600 }}
-                    >
-                      {formattedName(gate.name)}
-                    </Typography>{" "}
-                    to{" "}
-                  </Typography>
-                  <NativeSelect
-                    label="Age"
-                    size="small"
-                    defaultValue={-1}
-                    sx={{
-                      ml: 0.5,
-                      fontSize: "0.9rem",
-                      mb: -0.6,
-                      display: "inline-block",
-                    }}
-                    onChange={(e) => {
-                      setCircuit({
-                        ...circuit,
-                        instructions: circuit.instructions.concat({
-                          gate: gate.name,
-                          qubits: [parseInt(e.target.value)],
-                          params: [],
-                          uid:
-                            Math.max(
-                              ...circuit.instructions.map((o) => o.uid)
-                            ) + 1,
-                        }),
-                      });
-                      handleClose();
-                    }}
-                  >
-                    <option disabled value={-1}>
-                      qubit
-                    </option>
-                    {[...Array(circuit.meta.qubits)].map((_, index) => {
-                      return (
-                        <option value={index} key={index}>
-                          Q{index}
-                        </option>
-                      );
-                    })}
-                  </NativeSelect>
-                </Box>
+                <AddNewInstruction handleClose={handleClose} {...props} />
               </MenuItem>,
               <MenuItem onClick={handleClose} key={1}>
                 <ListItemIcon>
