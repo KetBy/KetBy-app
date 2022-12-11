@@ -62,6 +62,45 @@ const NOTGate = (props) => {
   );
 };
 
+const SWAPGate = (props) => {
+  const { gate } = props;
+
+  return (
+    <Box
+      sx={{
+        width: theme.spacing(4),
+        height: theme.spacing(4),
+        background: "transparent",
+        border: "2px solid transparent",
+        position: "relative",
+      }}
+    >
+      {/* Primary diagonal */}
+      <Box
+        sx={{
+          position: "absolute",
+          width: "2px",
+          height: theme.spacing(Math.sqrt((5 ^ 2) + (5 ^ 2))),
+          background: gate.color.main,
+          transform: "rotate(-45deg)",
+          left: "calc(50% - 1px)",
+        }}
+      />
+      {/* Secondary diagonal */}
+      <Box
+        sx={{
+          position: "absolute",
+          width: "2px",
+          height: theme.spacing(Math.sqrt((5 ^ 2) + (5 ^ 2))),
+          background: gate.color.main,
+          transform: "rotate(45deg)",
+          left: "calc(50% - 1px)",
+        }}
+      />
+    </Box>
+  );
+};
+
 const formattedName = (name) => {
   let dagger = "†";
   let sqrt = "√";
@@ -91,6 +130,8 @@ const Representation = (props) => {
 
   if (["X", "CX", "Tfl"].includes(gate.name)) {
     return <NOTGate gate={gate} hideHorizontalLine={!preview} />;
+  } else if (gate.name === "SWAP") {
+    return <SWAPGate gate={gate} />;
   }
 
   let dagger = "†";
@@ -274,25 +315,46 @@ const Gate = (props) => {
             }
             return (
               <Box key={`control-${qubit}`}>
-                <Box
-                  sx={{
-                    width: theme.spacing(1.25),
-                    height: theme.spacing(1.25),
-                    background: `${gate.color.main}`,
-                    borderRadius: "50%",
-                    position: "absolute",
-                    left: "50%",
-                    top: `calc(50% - ${
-                      parseInt(theme.spacing(1.25)) / 2
-                    }px + 1px)`,
-                    transform: `translateX(-50%) translateY(${
-                      qubit > currentQubit ? "+" : "-"
-                    }${
-                      Math.abs(currentQubit - qubit) *
-                      parseInt(theme.spacing(5))
-                    }px)`,
-                  }}
-                />
+                {/* Control dot */}
+                {/* If swap, the second qubit in not a control */}
+                {gate.name === "SWAP" && index === 1 ? (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: `calc(50% - ${parseInt(theme.spacing(4)) / 2}px)`,
+                      transform: `translateY(${
+                        qubit > currentQubit ? "+" : "-"
+                      }${
+                        Math.abs(currentQubit - qubit) *
+                        parseInt(theme.spacing(5))
+                      }px)`,
+                    }}
+                  >
+                    <SWAPGate gate={gate} />
+                  </Box>
+                ) : (
+                  <Box
+                    sx={{
+                      width: theme.spacing(1.25),
+                      height: theme.spacing(1.25),
+                      background: `${gate.color.main}`,
+                      borderRadius: "50%",
+                      position: "absolute",
+                      left: "50%",
+                      top: `calc(50% - ${
+                        parseInt(theme.spacing(1.25)) / 2
+                      }px + 1px)`,
+                      transform: `translateX(-50%) translateY(${
+                        qubit > currentQubit ? "+" : "-"
+                      }${
+                        Math.abs(currentQubit - qubit) *
+                        parseInt(theme.spacing(5))
+                      }px)`,
+                    }}
+                  />
+                )}
+
+                {/* Control vertical bar */}
                 <Box
                   sx={{
                     width: "2px",
