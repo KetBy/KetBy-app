@@ -1,15 +1,13 @@
 import * as React from "react";
 import {
   Box,
-  Grid,
   Typography,
   Divider,
   Menu,
   MenuItem,
   ListItemIcon,
-  TextField,
-  Select,
   NativeSelect,
+  IconButton,
 } from "@mui/material";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -17,8 +15,34 @@ import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 
 const gatesMap = getGatesMap();
+
+const formattedName = (name) => {
+  let dagger = "†";
+  let sqrt = "√";
+  let text = <>{name}</>;
+  if (name == "T+" || name == "S+") {
+    text = (
+      <>
+        {name.replace("+", "")}
+        <sup>{dagger}</sup>
+      </>
+    );
+  }
+  if (name == "SX") {
+    text = <>{sqrt}X</>;
+  }
+  if (name == "SX+") {
+    text = (
+      <>
+        {sqrt}X<sup>{dagger}</sup>
+      </>
+    );
+  }
+  return text;
+};
 
 const NOTGate = (props) => {
   const { gate } = props;
@@ -84,6 +108,7 @@ const SWAPGate = (props) => {
           background: gate.color.main,
           transform: "rotate(-45deg)",
           left: "calc(50% - 1px)",
+          borderRadius: "2px",
         }}
       />
       {/* Secondary diagonal */}
@@ -95,36 +120,13 @@ const SWAPGate = (props) => {
           background: gate.color.main,
           transform: "rotate(45deg)",
           left: "calc(50% - 1px)",
+          borderRadius: "2px",
         }}
       />
     </Box>
   );
 };
 
-const formattedName = (name) => {
-  let dagger = "†";
-  let sqrt = "√";
-  let text = <>{name}</>;
-  if (name == "T+" || name == "S+") {
-    text = (
-      <>
-        {name.replace("+", "")}
-        <sup>{dagger}</sup>
-      </>
-    );
-  }
-  if (name == "SX") {
-    text = <>{sqrt}X</>;
-  }
-  if (name == "SX+") {
-    text = (
-      <>
-        {sqrt}X<sup>{dagger}</sup>
-      </>
-    );
-  }
-  return text;
-};
 const Representation = (props) => {
   const { gate, preview } = props;
 
@@ -243,6 +245,180 @@ const AddNewInstruction = (props) => {
         );
       })}
     </Box>
+  );
+};
+
+const OptionsMenu = (props) => {
+  const {
+    anchorEl,
+    open,
+    handleClose,
+    circuit,
+    setCircuit,
+    preview,
+    instructionIndex,
+    gate,
+  } = props;
+
+  const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
+
+  const ViewHeader = ({ title }) => {
+    return (
+      <MenuItem
+        disableRipple
+        key="view-header"
+        sx={{ "&:hover": { background: "transparent" } }}
+        divider
+      >
+        <ListItemIcon onClick={() => setView("default")}>
+          <IconButton size="small" sx={{ m: -1 }}>
+            <KeyboardArrowLeftRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+              }}
+            />
+          </IconButton>
+        </ListItemIcon>
+        <Typography variant="body2">{title}</Typography>
+      </MenuItem>
+    );
+  };
+
+  let previewItems = [];
+  let instructionItems = [];
+
+  if (view === "default") {
+    previewItems = [
+      <MenuItem disableRipple key="add-instruction">
+        <ListItemIcon>
+          <AddRoundedIcon
+            sx={{
+              fontSize: "1.25rem",
+            }}
+          />
+        </ListItemIcon>
+        <AddNewInstruction handleClose={handleClose} {...props} />
+      </MenuItem>,
+      <MenuItem onClick={() => setView("info")} key="view-info">
+        <ListItemIcon>
+          <InfoOutlinedIcon
+            sx={{
+              fontSize: "1.25rem",
+            }}
+          />
+        </ListItemIcon>
+        <Typography variant="body2">Gate info</Typography>
+      </MenuItem>,
+    ];
+
+    instructionItems = [
+      <MenuItem onClick={handleClose} key={0}>
+        <ListItemIcon>
+          <TuneRoundedIcon
+            sx={{
+              fontSize: "1.25rem",
+            }}
+          />
+        </ListItemIcon>
+        <Typography variant="body2">Edit</Typography>
+      </MenuItem>,
+      <MenuItem onClick={() => setView("info")} key={1}>
+        <ListItemIcon>
+          <InfoOutlinedIcon
+            sx={{
+              fontSize: "1.25rem",
+            }}
+          />
+        </ListItemIcon>
+        <Typography variant="body2">Gate info</Typography>
+      </MenuItem>,
+      <Divider sx={{ my: -0 }} key={2} />,
+      <MenuItem
+        key={3}
+        onClick={() => {
+          setCircuit({
+            ...circuit,
+            instrunctions: circuit.instructions.splice(instructionIndex, 1),
+          });
+          handleClose();
+        }}
+      >
+        <ListItemIcon>
+          <DeleteOutlineRoundedIcon
+            sx={{
+              fontSize: "1.25rem",
+              color: theme.palette.error.main,
+            }}
+          />
+        </ListItemIcon>
+        <Typography variant="body2" color="error">
+          Delete
+        </Typography>
+      </MenuItem>,
+    ];
+  } else if (view === "info") {
+    previewItems = [
+      <ViewHeader title="Gate info" key="view-header-wrapper" />,
+      <MenuItem
+        disableRipple
+        sx={{
+          "&:hover": { background: "transparent" },
+          width: "250px",
+          whiteSpace: "normal",
+          maxHeight: "250px",
+          overflowY: "auto",
+          display: "block",
+        }}
+        key="gate-info"
+      >
+        {gate.desc}
+      </MenuItem>,
+    ];
+
+    instructionItems = [
+      <ViewHeader title="Gate info" key="view-header-wrapper" />,
+      <MenuItem
+        disableRipple
+        sx={{
+          "&:hover": { background: "transparent" },
+          width: "250px",
+          whiteSpace: "normal",
+          maxHeight: "250px",
+          overflowY: "auto",
+          display: "block",
+        }}
+        key="gate-info"
+      >
+        {gate.desc}
+      </MenuItem>,
+    ];
+  }
+
+  return (
+    <Menu
+      id={`options-menu--${instructionIndex ? instructionIndex : gate.name}`}
+      aria-labelledby={`options-menu--${
+        instructionIndex ? instructionIndex : gate.name
+      }`}
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      sx={{
+        ml: 1,
+        borderRadius: 0,
+      }}
+      disableAutoFocusItem
+    >
+      {preview ? previewItems : instructionItems}
+    </Menu>
   );
 };
 
@@ -381,98 +557,16 @@ const Gate = (props) => {
             );
           })}
       </Box>
-      <Menu
-        id="demo-positioned-menu"
-        aria-labelledby="demo-positioned-button"
+      <OptionsMenu
         anchorEl={anchorEl}
         open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        sx={{
-          ml: 1,
-          borderRadius: 0,
-        }}
-        disableAutoFocusItem
-      >
-        {preview
-          ? [
-              <MenuItem disableRipple key={0}>
-                <ListItemIcon>
-                  <AddRoundedIcon
-                    sx={{
-                      fontSize: "1.25rem",
-                    }}
-                  />
-                </ListItemIcon>
-                <AddNewInstruction handleClose={handleClose} {...props} />
-              </MenuItem>,
-              <MenuItem onClick={handleClose} key={1}>
-                <ListItemIcon>
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: "1.25rem",
-                    }}
-                  />
-                </ListItemIcon>
-                <Typography variant="body2">Gate info</Typography>
-              </MenuItem>,
-            ]
-          : [
-              <MenuItem onClick={handleClose} key={0}>
-                <ListItemIcon>
-                  <TuneRoundedIcon
-                    sx={{
-                      fontSize: "1.25rem",
-                    }}
-                  />
-                </ListItemIcon>
-                <Typography variant="body2">Edit</Typography>
-              </MenuItem>,
-              <MenuItem onClick={handleClose} key={1}>
-                <ListItemIcon>
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: "1.25rem",
-                    }}
-                  />
-                </ListItemIcon>
-                <Typography variant="body2">Gate info</Typography>
-              </MenuItem>,
-              <Divider sx={{ my: -0 }} key={2} />,
-              <MenuItem
-                key={3}
-                onClick={() => {
-                  setCircuit({
-                    ...circuit,
-                    instrunctions: circuit.instructions.splice(
-                      instructionIndex,
-                      1
-                    ),
-                  });
-                  handleClose();
-                }}
-              >
-                <ListItemIcon>
-                  <DeleteOutlineRoundedIcon
-                    sx={{
-                      fontSize: "1.25rem",
-                      color: theme.palette.error.main,
-                    }}
-                  />
-                </ListItemIcon>
-                <Typography variant="body2" color="error">
-                  Delete
-                </Typography>
-              </MenuItem>,
-            ]}
-      </Menu>
+        handleClose={handleClose}
+        circuit={circuit}
+        setCircuit={setCircuit}
+        preview={preview}
+        instructionIndex={instructionIndex}
+        gate={gate}
+      />
     </>
   );
 };

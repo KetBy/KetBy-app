@@ -1,4 +1,16 @@
+import React, { Suspense } from "react";
+import { Typography } from "@mui/material";
 import theme from "../themes/default";
+
+const InfoI = React.lazy(() => import("./gates/I"));
+
+const GateInfoWrapper = ({ info }) => {
+  return (
+    <Suspense fallback={<Typography variant="body2">Loading...</Typography>}>
+      {info}
+    </Suspense>
+  );
+};
 
 const gates = [
   {
@@ -10,7 +22,7 @@ const gates = [
         name: "I",
         qubits: 1,
         title: "Identity gate",
-        desc: "Identity matrix",
+        desc: <GateInfoWrapper info={<InfoI />} />,
       },
       {
         name: "X",
