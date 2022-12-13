@@ -8,6 +8,8 @@ import {
   ListItemIcon,
   NativeSelect,
   IconButton,
+  Grid,
+  Button,
 } from "@mui/material";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -262,6 +264,12 @@ const OptionsMenu = (props) => {
 
   const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
 
+  const [selectedQubits, setSelectedQubits] = React.useState(
+    instructionIndex
+      ? circuit.instructions[instructionIndex].qubits.slice()
+      : [...Array(gate.qubits)]
+  );
+
   const ViewHeader = ({ title }) => {
     return (
       <MenuItem
@@ -312,7 +320,7 @@ const OptionsMenu = (props) => {
     ];
 
     instructionItems = [
-      <MenuItem onClick={handleClose} key={0}>
+      <MenuItem onClick={() => setView("edit")} key={0}>
         <ListItemIcon>
           <TuneRoundedIcon
             sx={{
@@ -392,6 +400,112 @@ const OptionsMenu = (props) => {
         {gate.desc}
       </MenuItem>,
     ];
+  } else if (view === "edit") {
+    const handleSelect = (e) => {
+      let value = parseInt(e.target.value);
+      let qubitIndex = parseInt(e.target.dataset.qubitIndex);
+      let newSelectedQubits = selectedQubits.slice(); // copy by value
+      newSelectedQubits[qubitIndex] = value;
+      setSelectedQubits(newSelectedQubits);
+    };
+
+    const handleSave = () => {
+      let newInstructions = circuit.instructions.slice();
+      newInstructions[instructionIndex].qubits = selectedQubits;
+      setCircuit({ ...circuit, instructions: newInstructions });
+      handleClose();
+    };
+
+    instructionItems = [
+      <ViewHeader title="Edit instruction" key={0} />,
+      <MenuItem
+        disableRipple
+        divider
+        sx={{
+          "&:hover": { background: "transparent" },
+          display: "block",
+          width: "200px",
+          pb: 1,
+        }}
+        key={1}
+      >
+        <Grid
+          rowSpacing={2}
+          container
+          sx={{ display: "flex", alignItems: "end", mb: 0.5 }}
+        >
+          {[...Array(gate.qubits)].map((_, i) => {
+            return [
+              <Grid item xs={6} key={`option-title--${i}`}>
+                {gate.qubits == 1 ? (
+                  <Typography variant="body2">Qubit</Typography>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      "&::first-letter": { textTransform: "capitalize" },
+                    }}
+                  >
+                    {gate.qubitsNames[i]}
+                  </Typography>
+                )}
+              </Grid>,
+              <Grid item xs={6} key={`option-value--${i}`} sx={{ pr: 0.5 }}>
+                <NativeSelect
+                  fullWidth
+                  key={i}
+                  size="small"
+                  value={selectedQubits[i]}
+                  sx={{
+                    ml: 0.5,
+                    fontSize: "0.95rem",
+                    mb: -0.6,
+                    display: "inline-block",
+                    "& select": {
+                      width: "100%",
+                    },
+                  }}
+                  onChange={handleSelect}
+                  inputProps={{
+                    "data-qubit-index": i,
+                  }}
+                >
+                  {[...Array(circuit.meta.qubits)].map((_, index) => {
+                    return (
+                      <option
+                        value={index}
+                        key={index}
+                        disabled={selectedQubits.includes(index)}
+                      >
+                        Q{index}
+                      </option>
+                    );
+                  })}
+                </NativeSelect>
+              </Grid>,
+            ];
+          })}
+        </Grid>
+      </MenuItem>,
+      <MenuItem
+        disableRipple
+        sx={{
+          "&:hover": { background: "transparent" },
+          textAlign: "right",
+          display: "block",
+        }}
+        key={2}
+      >
+        <Button
+          disableElevation
+          variant="contained"
+          size="small"
+          onClick={() => handleSave()}
+        >
+          Save
+        </Button>
+      </MenuItem>,
+    ];
   }
 
   return (
@@ -402,7 +516,10 @@ const OptionsMenu = (props) => {
       }`}
       anchorEl={anchorEl}
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        setView("default");
+      }}
       anchorOrigin={{
         vertical: "top",
         horizontal: "right",
@@ -423,21 +540,37 @@ const OptionsMenu = (props) => {
 };
 
 const Gate = (props) => {
-  const { gate, qubits, currentQubit, circuit, setCircuit, instructionIndex } =
-    props;
+  const {
+    gate,
+    qubits,
+    currentQubit,
+    circuit,
+    setCircuit,
+    instructionIndex,
+    setDisableDragging,
+  } = props;
   const preview = props.preview ? true : false;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
+    if (Boolean(setDisableDragging)) {
+      setDisableDragging(true);
+    }
   };
   const handleRightClick = (e) => {
     e.preventDefault();
     setAnchorEl(e.currentTarget);
+    if (Boolean(setDisableDragging)) {
+      setDisableDragging(true);
+    }
   };
   const handleClose = () => {
     setAnchorEl(null);
+    if (Boolean(setDisableDragging)) {
+      setDisableDragging(false);
+    }
   };
 
   return (

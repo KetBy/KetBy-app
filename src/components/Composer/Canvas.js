@@ -153,6 +153,8 @@ const Circuit = ({ circuit, setCircuit }) => {
   // console.log(circuit);
   // console.log(matrix);
 
+  const [disableDragging, setDisableDragging] = React.useState(false);
+
   const handleDrag = (e, ui) => {
     let delta = convertPxToGridDelta(ui.x, ui.y);
     let instructionIndex = parseInt(ui.node.dataset.instructionIndex);
@@ -332,6 +334,7 @@ const Circuit = ({ circuit, setCircuit }) => {
                     onStop={handleStop}
                     defaultClassNameDragging="dragging"
                     axis="both"
+                    disabled={disableDragging}
                     bounds={{
                       top:
                         -parseInt(theme.spacing(5)) *
@@ -371,6 +374,7 @@ const Circuit = ({ circuit, setCircuit }) => {
                         circuit={circuit}
                         setCircuit={setCircuit}
                         instructionIndex={instructionIndex}
+                        setDisableDragging={setDisableDragging}
                       />
                     </Box>
                   </Draggable>

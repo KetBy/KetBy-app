@@ -11,7 +11,7 @@ import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 const gatesMap = getGatesMap();
 
 const GatesDirectory = (props) => {
-  const [display, setDisplay] = React.useState("default");
+  const [display, setDisplay] = React.useState("compact"); // default / compact / detailed
   const { circuit, setCircuit } = props;
 
   return (

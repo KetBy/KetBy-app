@@ -5,8 +5,8 @@ export default function I(props) {
   return (
     <>
       <Typography variant="body2">
-        The <i>identity</i> gate (also known as <i>I</i> gate) indicates the
-        absence of a gate. It has no effect on a qubit whatsoever.
+        The <i>identity</i> gate (also known as <i>I</i> gate) is used to
+        indicate the absence of a gate. It has no effect on a qubit whatsoever.
       </Typography>
       <Typography variant="body2" mt={1}>
         Matrix representation:
