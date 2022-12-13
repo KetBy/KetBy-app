@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import Latex from "react-latex-next";
+import LatexFigure from "../../components/LatexFigure";
 
 export default function I(props) {
   return (
@@ -11,9 +11,10 @@ export default function I(props) {
       <Typography variant="body2" mt={1}>
         Matrix representation:
       </Typography>
-      <Latex displayMode>
-        {"$$I = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\end{bmatrix}$$"}
-      </Latex>
+      <LatexFigure
+        input="I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}"
+        sx={{ margin: "0.5rem auto", display: "block" }}
+      />
     </>
   );
 }
