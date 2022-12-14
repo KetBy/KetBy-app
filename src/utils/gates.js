@@ -8,6 +8,8 @@ const InfoCX = React.lazy(() => import("./gates/CX"));
 const InfoTfl = React.lazy(() => import("./gates/Tfl"));
 const InfoSWAP = React.lazy(() => import("./gates/SWAP"));
 
+const InfoH = React.lazy(() => import("./gates/H"));
+
 const GateInfoWrapper = ({ info }) => {
   return (
     <Suspense fallback={<Typography variant="body2">Loading...</Typography>}>
@@ -66,7 +68,7 @@ const gates = [
         name: "H",
         qubits: 1,
         title: "Hadamard gate",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoH />} />,
       },
     ],
   },

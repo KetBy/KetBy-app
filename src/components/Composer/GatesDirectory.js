@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Grid, Typography, IconButton } from "@mui/material";
+import { Box, Grid, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import theme from "../../themes/default";
 import Gate from "./Gate";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -28,6 +28,7 @@ const GatesDirectory = (props) => {
           pr: 0.5,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
+          background: theme.palette.primary[50],
         }}
         alignItems="center"
       >

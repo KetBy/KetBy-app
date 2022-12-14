@@ -8,6 +8,10 @@ import {
   Breadcrumbs,
   Chip,
   IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Divider,
 } from "@mui/material";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -25,6 +29,9 @@ import KeyboardDoubleArrowRightRoundedIcon from "@mui/icons-material/KeyboardDou
 import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
 import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
+import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -55,6 +62,86 @@ const convertPxToGridDelta = (x, y) => {
   };
 };
 
+const RowButton = ({ index }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <Button
+        variant="outlined"
+        size="small"
+        sx={{
+          width: theme.spacing(4),
+          height: theme.spacing(4),
+          minWidth: 0,
+          minHeight: 0,
+          borderRadius: 0,
+          borderWidth: "2px !important",
+          borderColor: `${theme.palette.darkGrey.main} !important`,
+        }}
+        onClick={handleClick}
+      >
+        <span>
+          Q<sub>{index}</sub>
+        </span>
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        disableAutoFocusItem
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        sx={{ ml: 1 }}
+      >
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <ArrowUpwardRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2">Add qubit above</Typography>
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <ArrowDownwardRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2">Add qubit below</Typography>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <DeleteOutlineRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+                color: theme.palette.error.main,
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2" color="error">
+            Delete qubit
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
 {
   /** The qubits buttons on the left side of the circuit */
 }
@@ -79,23 +166,7 @@ const Left = ({ circuit, setCircuit }) => {
           >
             <Grid container alignItems="center">
               <Grid item xs={12}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    width: theme.spacing(4),
-                    height: theme.spacing(4),
-                    minWidth: 0,
-                    minHeight: 0,
-                    borderRadius: 0,
-                    borderWidth: "2px !important",
-                    borderColor: `${theme.palette.darkGrey.main} !important`,
-                  }}
-                >
-                  <span>
-                    Q<sub>{i}</sub>
-                  </span>
-                </Button>
+                <RowButton index={i} />
               </Grid>
             </Grid>
           </Box>
@@ -454,6 +525,7 @@ const Graph1 = (props) => {
           p: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
+          background: theme.palette.primary[50],
         }}
         alignItems="center"
       >
@@ -510,6 +582,7 @@ const Graph2 = (props) => {
           p: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
+          background: theme.palette.primary[50],
         }}
         alignItems="center"
       >
@@ -553,6 +626,7 @@ const Canvas = (props) => {
           p: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
+          background: theme.palette.primary[50],
         }}
         alignItems="center"
       >

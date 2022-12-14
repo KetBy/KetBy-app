@@ -10,7 +10,13 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Link as MuiLink,
+  Menu,
+  MenuItem,
 } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import { css, keyframes } from "@emotion/react";
 import theme from "../../themes/default";
 import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
@@ -24,9 +30,54 @@ const CustomTabs = styled(Tabs)({
   },
 });
 
+const activeFileTabEffect = keyframes`
+  0% {
+    height: 0;
+    top: 50%;
+  }
+  100% {
+    height: 100%;
+    top: 0;
+  }
+`;
+
 const CustomList = styled(List)({
   "& .MuiListItemButton-root": {
-    padding: theme.spacing(0.5, 1),
+    padding: theme.spacing(0.25, 0.25, 0.25, 1),
+    position: "relative",
+    transitionDuration: "0.2s",
+    "&:after": {
+      position: "absolute",
+      content: "''",
+      left: 0,
+      top: "50%",
+      width: "2px",
+      height: 0,
+      background: theme.palette.darkGrey.main,
+      transitionDuration: "0.2s",
+    },
+    "&.Mui-selected": {
+      background: "transparent",
+      "&:after": {
+        animation: `${activeFileTabEffect} 0.2s normal forwards ease-in`,
+      },
+    },
+    "& .MuiTypography-root": {
+      lineHeight: 1.1,
+      "&.meta": {
+        "& .user, & .time": {
+          fontSize: theme.spacing(1.5),
+          fontWeight: 400,
+          display: "inline-block",
+        },
+        "& .user": {
+          marginRight: theme.spacing(0.5),
+        },
+        "& .time": {
+          fontStyle: "italic",
+        },
+      },
+    },
   },
   "& .MuiListItemIcon-root": {
     minWidth: 0,
@@ -51,6 +102,7 @@ const ProjectHeader = (props) => {
         borderBottom: `1px solid ${theme.palette.grey[200]}`,
         height: theme.spacing(6),
         pr: 1,
+        background: theme.palette.primary[50],
       }}
       alignItems="center"
     >
@@ -97,8 +149,52 @@ const ProjectHeader = (props) => {
   );
 };
 
+const FileOptionsMenu = (props) => {
+  const { file } = props;
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    event.preventDefault();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <ListItemIcon>
+      <IconButton aria-label="more" aria-haspopup="true" onClick={handleClick}>
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id={`file-options--${file.id}`}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <DeleteOutlineRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+                color: theme.palette.error.main,
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2" color="error">
+            Delete
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </ListItemIcon>
+  );
+};
+
 const ProjectContent = (props) => {
   const { projectTab } = props;
+
+  const [active, setActive] = React.useState(0);
 
   const Circuits = () => {
     return (
@@ -106,17 +202,41 @@ const ProjectContent = (props) => {
         <CustomList component="nav" aria-label="circuits">
           {[...Array(10)].map((_, index) => {
             return (
-              <ListItemButton selected={index == 0} key={index}>
-                <ListItemIcon>
+              <ListItemButton
+                selected={index == active}
+                key={index}
+                disableRipple
+              >
+                <ListItemIcon onClick={() => setActive(index)}>
                   <ArticleOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText
+                  onClick={() => setActive(index)}
                   primary={
                     <Typography variant="subtitle2">
                       My circuit #{index + 1}
                     </Typography>
                   }
+                  secondary={
+                    <Typography variant="body2" className="meta">
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        className="user"
+                      >
+                        <MuiLink href="#!">alexhodo</MuiLink>
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        className="time"
+                      >
+                        – 2h ago
+                      </Typography>
+                    </Typography>
+                  }
                 />
+                <FileOptionsMenu file={{ id: index }} />
               </ListItemButton>
             );
           })}
@@ -154,6 +274,7 @@ const ExportHeader = (props) => {
         borderBottom: `1px solid ${theme.palette.grey[200]}`,
         borderTop: `1px solid ${theme.palette.grey[200]}`,
         height: theme.spacing(6),
+        background: theme.palette.primary[50],
       }}
       alignItems="center"
     >

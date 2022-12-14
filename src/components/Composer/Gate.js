@@ -146,14 +146,15 @@ const Representation = (props) => {
           sx={{
             width: theme.spacing(4),
             height: theme.spacing(4),
-            background: "transparent",
+            background: theme.palette.grey[100],
             position: "relative",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            border: "2px solid white",
           }}
         >
-          <img src={CX_gate_svg.src} />
+          <img src={CX_gate_svg.src} height="26" />
         </Box>
       );
     } else if (gate.name === "Tfl") {
@@ -162,14 +163,15 @@ const Representation = (props) => {
           sx={{
             width: theme.spacing(4),
             height: theme.spacing(4),
-            background: "transparent",
+            background: theme.palette.grey[100],
             position: "relative",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            border: "2px solid white",
           }}
         >
-          <img src={Tfl_gate_svg.src} />
+          <img src={Tfl_gate_svg.src} height="26" />
         </Box>
       );
     } else if (gate.name === "SWAP") {
@@ -178,14 +180,15 @@ const Representation = (props) => {
           sx={{
             width: theme.spacing(4),
             height: theme.spacing(4),
-            background: "transparent",
+            background: theme.palette.grey[100],
             position: "relative",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            border: "2px solid white",
           }}
         >
-          <img src={SWAP_gate_svg.src} />
+          <img src={SWAP_gate_svg.src} height="26" />
         </Box>
       );
     }
