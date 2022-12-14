@@ -19,12 +19,19 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
 
+import CX_gate_svg from "../../../public/assets/composer/CX_gate.svg";
+import Tfl_gate_svg from "../../../public/assets/composer/Tfl_gate.svg";
+import SWAP_gate_svg from "../../../public/assets/composer/SWAP_gate.svg";
+
 const gatesMap = getGatesMap();
 
 const formattedName = (name) => {
   let dagger = "†";
   let sqrt = "√";
   let text = <>{name}</>;
+  if (name == "Tfl") {
+    text = "Toffoli";
+  }
   if (name == "T+" || name == "S+") {
     text = (
       <>
@@ -131,6 +138,58 @@ const SWAPGate = (props) => {
 
 const Representation = (props) => {
   const { gate, preview } = props;
+
+  if (preview) {
+    if (gate.name === "CX") {
+      return (
+        <Box
+          sx={{
+            width: theme.spacing(4),
+            height: theme.spacing(4),
+            background: "transparent",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img src={CX_gate_svg.src} />
+        </Box>
+      );
+    } else if (gate.name === "Tfl") {
+      return (
+        <Box
+          sx={{
+            width: theme.spacing(4),
+            height: theme.spacing(4),
+            background: "transparent",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img src={Tfl_gate_svg.src} />
+        </Box>
+      );
+    } else if (gate.name === "SWAP") {
+      return (
+        <Box
+          sx={{
+            width: theme.spacing(4),
+            height: theme.spacing(4),
+            background: "transparent",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img src={SWAP_gate_svg.src} />
+        </Box>
+      );
+    }
+  }
 
   if (["X", "CX", "Tfl"].includes(gate.name)) {
     return <NOTGate gate={gate} hideHorizontalLine={!preview} />;
@@ -297,7 +356,11 @@ const OptionsMenu = (props) => {
 
   if (view === "default") {
     previewItems = [
-      <MenuItem disableRipple key="add-instruction">
+      <MenuItem
+        disableRipple
+        key="add-instruction"
+        sx={{ "&:hover": { background: "transparent" } }}
+      >
         <ListItemIcon>
           <AddRoundedIcon
             sx={{
@@ -518,7 +581,9 @@ const OptionsMenu = (props) => {
       open={open}
       onClose={() => {
         handleClose();
-        setView("default");
+        setTimeout(() => {
+          setView("default");
+        }, 250);
       }}
       anchorOrigin={{
         vertical: "top",

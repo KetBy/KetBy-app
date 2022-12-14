@@ -13,6 +13,7 @@ import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
 import PhaseDisk from "./PhaseDisk";
+import LatexFigure from "../LatexFigure";
 
 import Draggable from "react-draggable";
 
@@ -268,11 +269,8 @@ const Circuit = ({ circuit, setCircuit }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Box sx={{ overflow: "hidden", whiteSpace: "nowrap" }}>
-                    <Box component="span" sx={{ display: "inline", mx: -0.65 }}>
-                      ｜
-                    </Box>
-                    0〉
+                  <Box>
+                    <LatexFigure input="\sf\ket{0}" inline />
                   </Box>
                 </Box>
               );

@@ -1,6 +1,9 @@
 .dragging {
     .gate {
-        // opacity: 0.25;
         z-index: 99999;
     }
+}
+.inline-latex-container, .inline-latex {
+    vertical-align: middle;
+    display: inline-block;
 }

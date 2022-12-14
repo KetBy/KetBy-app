@@ -3,6 +3,10 @@ import { Typography } from "@mui/material";
 import theme from "../themes/default";
 
 const InfoI = React.lazy(() => import("./gates/I"));
+const InfoX = React.lazy(() => import("./gates/X"));
+const InfoCX = React.lazy(() => import("./gates/CX"));
+const InfoTfl = React.lazy(() => import("./gates/Tfl"));
+const InfoSWAP = React.lazy(() => import("./gates/SWAP"));
 
 const GateInfoWrapper = ({ info }) => {
   return (
@@ -28,27 +32,27 @@ const gates = [
         name: "X",
         qubits: 1,
         title: "NOT gate",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoX />} />,
       },
       {
         name: "CX",
         qubits: 2,
         title: "Controlled NOT gate",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoCX />} />,
         qubitsNames: ["target", "control"],
       },
       {
         name: "Tfl",
         qubits: 3,
         title: "Toffoli gate",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoTfl />} />,
         qubitsNames: ["target", "control 1", "control 2"],
       },
       {
         name: "SWAP",
         qubits: 2,
         title: "SWAP gate",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoSWAP />} />,
         qubitsNames: ["qubit 1", "qubit 2"],
       },
     ],
