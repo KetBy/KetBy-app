@@ -1,5 +1,6 @@
-import { Typography } from "@mui/material";
+import { Typography, Divider } from "@mui/material";
 import LatexFigure from "../../components/LatexFigure";
+import Ket1 from "../definitions/Ket1";
 
 export default function CX(props) {
   return (
@@ -9,11 +10,12 @@ export default function CX(props) {
         <i>CX</i>) acts on a pair of qubits: a <b>control</b> and a{" "}
         <b>target</b>. <br />
         It performs a <i>NOT</i> operation (also known as <i>X</i>) on the{" "}
-        <b>target</b> qubit if the <b>control</b> qubit is in state{" "}
-        <LatexFigure inline input="\ket{1}" sx={{ margin: 0 }} />.
+        <b>target</b> qubit if and only if the <b>control</b> qubit is in state{" "}
+        <Ket1 />.
       </Typography>
-      <Typography variant="body2" mt={1}>
-        Matrix representation:
+      <Divider sx={{ mt: 1 }} />
+      <Typography variant="subtitle2" align="center" mt={1}>
+        Matrix representation
       </Typography>
       <LatexFigure
         input="\begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{bmatrix}"

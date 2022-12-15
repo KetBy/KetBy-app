@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { css, keyframes } from "@emotion/react";
 import theme from "../../themes/default";
 import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
@@ -30,22 +29,10 @@ const CustomTabs = styled(Tabs)({
   },
 });
 
-const activeFileTabEffect = keyframes`
-  0% {
-    height: 0;
-    top: 50%;
-  }
-  100% {
-    height: 100%;
-    top: 0;
-  }
-`;
-
 const CustomList = styled(List)({
   "& .MuiListItemButton-root": {
     padding: theme.spacing(0.25, 0.25, 0.25, 1),
     position: "relative",
-    transitionDuration: "0.2s",
     "&:after": {
       position: "absolute",
       content: "''",
@@ -54,13 +41,16 @@ const CustomList = styled(List)({
       width: "2px",
       height: 0,
       background: theme.palette.darkGrey.main,
-      transitionDuration: "0.2s",
     },
     "&.Mui-selected": {
-      background: "transparent",
+      background: theme.palette.primary[50],
       "&:after": {
-        animation: `${activeFileTabEffect} 0.2s normal forwards ease-in`,
+        top: 0,
+        height: "100%",
       },
+    },
+    "&.Mui-focusVisible": {
+      background: "transparent",
     },
     "& .MuiTypography-root": {
       lineHeight: 1.1,
@@ -163,7 +153,7 @@ const FileOptionsMenu = (props) => {
   };
 
   return (
-    <ListItemIcon>
+    <ListItemIcon onClick={(e) => e.stopPropagation()}>
       <IconButton aria-label="more" aria-haspopup="true" onClick={handleClick}>
         <MoreVertIcon />
       </IconButton>
@@ -206,12 +196,12 @@ const ProjectContent = (props) => {
                 selected={index == active}
                 key={index}
                 disableRipple
+                onClick={() => setActive(index)}
               >
-                <ListItemIcon onClick={() => setActive(index)}>
+                <ListItemIcon>
                   <ArticleOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText
-                  onClick={() => setActive(index)}
                   primary={
                     <Typography variant="subtitle2">
                       My circuit #{index + 1}

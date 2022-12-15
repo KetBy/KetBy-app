@@ -84,7 +84,8 @@ const RowButton = ({ index }) => {
           minHeight: 0,
           borderRadius: 0,
           borderWidth: "2px !important",
-          borderColor: `${theme.palette.darkGrey.main} !important`,
+          borderColor: `${theme.palette.primary.main} !important`,
+          color: theme.palette.darkGrey.main,
         }}
         onClick={handleClick}
       >
@@ -194,8 +195,9 @@ const Left = ({ circuit, setCircuit }) => {
               minHeight: 0,
               borderRadius: 0,
               borderWidth: "2px !important",
-              borderColor: `${theme.palette.darkGrey.main} !important`,
-              marginTop: "5px",
+              borderColor: `${theme.palette.primary.main} !important`,
+              color: theme.palette.darkGrey.main,
+              marginTop: theme.spacing(0.5),
             }}
           >
             +

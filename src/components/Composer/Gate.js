@@ -526,7 +526,7 @@ const OptionsMenu = (props) => {
                     ml: 0.5,
                     fontSize: "0.95rem",
                     mb: -0.6,
-                    display: "inline-block",
+                    //display: "inline-block",
                     "& select": {
                       width: "100%",
                     },
@@ -599,6 +599,9 @@ const OptionsMenu = (props) => {
       sx={{
         ml: 1,
         borderRadius: 0,
+        "& .Mui-focusVisible": {
+          background: "transparent",
+        },
       }}
       disableAutoFocusItem
     >

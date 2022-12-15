@@ -1,16 +1,18 @@
-import { Typography } from "@mui/material";
+import { Typography, Divider } from "@mui/material";
 import LatexFigure from "../../components/LatexFigure";
+import Ket0 from "../definitions/Ket0";
+import Ket1 from "../definitions/Ket1";
 
 export default function X(props) {
   return (
     <>
       <Typography variant="body2">
         The <i>NOT</i> gate (also known as <i>Pauli X</i> gate) flips the state{" "}
-        <LatexFigure input="\ket{0}" inline /> to{" "}
-        <LatexFigure input="\ket{1}" inline /> and vice versa.
+        <Ket0 /> to <Ket1 /> and vice versa.
       </Typography>
-      <Typography variant="body2" mt={1}>
-        Matrix representation:
+      <Divider sx={{ mt: 1 }} />
+      <Typography variant="subtitle2" align="center" mt={1}>
+        Matrix representation
       </Typography>
       <LatexFigure
         input="\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}"
