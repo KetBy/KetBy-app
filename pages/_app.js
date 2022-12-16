@@ -9,12 +9,14 @@ import createEmotionCache from "../src/utils/createEmotionCache";
 import "../src/themes/overrides.scss";
 import Menu from "../src/components/Menu";
 import NextNProgress from "nextjs-progressbar";
+import { useRouter } from "next/router";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const router = useRouter();
 
   return (
     <CacheProvider value={emotionCache}>
@@ -29,7 +31,7 @@ export default function MyApp(props) {
           height={4}
           options={{ showSpinner: false }}
         />
-        <Menu />
+        {router.pathname !== "/" && <Menu />}
         <Component {...pageProps} />
       </ThemeProvider>
     </CacheProvider>
