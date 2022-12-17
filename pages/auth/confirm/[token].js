@@ -7,6 +7,8 @@ import Link from "next/link";
 import axios from "../../../src/utils/axios";
 import theme from "../../../src/themes/default";
 
+const isServerReq = (req) => !req.url.startsWith("/_next");
+
 export default function AuthConfirmPage({ data }) {
   return (
     <Box
@@ -62,24 +64,28 @@ export default function AuthConfirmPage({ data }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { token } = context.query;
+export async function getServerSideProps({ query, req }) {
+  const { token } = query;
 
   let data = {};
 
-  await axios
-    .post("/auth/confirm", {
-      token: token,
-    })
-    .then((res) => {
-      data = res.data;
-    })
-    .catch((err) => {
-      data = {
-        success: false,
-        message: "Something went wrong. Please try again later.",
-      };
-    });
+  if (isServerReq(req)) {
+    await axios
+      .post("/auth/confirm", {
+        token: token,
+      })
+      .then((res) => {
+        data = res.data;
+      })
+      .catch((err) => {
+        data = {
+          success: false,
+          message: "Something went wrong. Please try again later.",
+        };
+      });
+  } else {
+    data = null;
+  }
 
   return {
     props: { data },
