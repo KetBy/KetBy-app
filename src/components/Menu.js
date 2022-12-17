@@ -19,7 +19,7 @@ import Link from "next/link";
 const pages = ["My projects", "Explore"];
 const settings = ["My account", "My projects", "Log out"];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -46,6 +46,9 @@ function ResponsiveAppBar() {
         height: `${theme.constants.menuHeight}px`,
         display: "flex",
         justifyContent: "center",
+        background: props.dark
+          ? theme.palette.darkGrey.dark
+          : theme.palette.primary.main,
       }}
     >
       <Box

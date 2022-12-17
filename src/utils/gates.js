@@ -12,7 +12,13 @@ const InfoH = React.lazy(() => import("./gates/H"));
 
 const GateInfoWrapper = ({ info }) => {
   return (
-    <Suspense fallback={<Typography variant="body2">Loading...</Typography>}>
+    <Suspense
+      fallback={
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          Loading...
+        </Typography>
+      }
+    >
       {info}
     </Suspense>
   );
