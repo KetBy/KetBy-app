@@ -21,8 +21,8 @@ export default function AuthConfirmPage({ data }) {
       <Box
         sx={{
           width: "auto",
-
           maxWidth: { xs: "auto", md: "300px" },
+          minWidth: { md: "300px" },
         }}
       >
         <Alert
@@ -65,17 +65,21 @@ export default function AuthConfirmPage({ data }) {
 export async function getServerSideProps(context) {
   const { token } = context.query;
 
-  const res = await axios.post("/auth/confirm", {
-    token: token,
-  });
+  let data = {};
 
-  let data = {
-    success: false,
-    message: "Something went wrong. Please try again later.",
-  };
-  if (res.data) {
-    data = res.data;
-  }
+  await axios
+    .post("/auth/confirm", {
+      token: token,
+    })
+    .then((res) => {
+      data = res.data;
+    })
+    .catch((err) => {
+      data = {
+        success: false,
+        message: "Something went wrong. Please try again later.",
+      };
+    });
 
   return {
     props: { data },

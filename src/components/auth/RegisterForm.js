@@ -16,6 +16,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "../../utils/axios";
 import SocialButtons from "./SocialButtons";
+import theme from "../../themes/default";
 
 export default function RegisterForm(props) {
   const [input, setInput] = React.useState({
@@ -33,6 +34,7 @@ export default function RegisterForm(props) {
   });
 
   const [loading, setLoading] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(true);
   const [message, setMessage] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
 
@@ -85,11 +87,22 @@ export default function RegisterForm(props) {
       });
   };
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      setDisabled(false);
+    }, 250);
+  }, []);
+
   return (
     <>
       {success ? (
         <Box sx={{ width: "100%" }}>
-          <Alert severity="success">{message}</Alert>
+          <Alert
+            severity="success"
+            sx={{ border: `1px solid ${theme.palette.grey.main}` }}
+          >
+            {message}
+          </Alert>
         </Box>
       ) : (
         <Box sx={{ width: "100%" }}>
@@ -164,7 +177,10 @@ export default function RegisterForm(props) {
               </Grid>
               {Boolean(message) && (
                 <Grid item xs={12}>
-                  <Alert severity={success ? "success" : "error"}>
+                  <Alert
+                    severity={success ? "success" : "error"}
+                    sx={{ border: `1px solid ${theme.palette.grey.main}` }}
+                  >
                     {message}
                   </Alert>
                 </Grid>
@@ -177,6 +193,7 @@ export default function RegisterForm(props) {
                   loading={loading}
                   component="button"
                   type="submit"
+                  disabled={disabled}
                 >
                   Register
                 </LoadingButton>
@@ -188,12 +205,14 @@ export default function RegisterForm(props) {
                 </Typography>
               </Grid>
             </Grid>
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              size="invisible"
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-              onChange={handleRecaptchaChange}
-            />
+            {!disabled && (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                onChange={handleRecaptchaChange}
+              />
+            )}
           </Box>
           <Divider sx={{ mt: 3, mb: 2 }}>
             <Typography variant="body2">or continue with</Typography>
