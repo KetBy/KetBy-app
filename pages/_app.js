@@ -28,7 +28,7 @@ export default function MyApp(props) {
         <CssBaseline />
         <NextNProgress
           color={theme.palette.darkGrey.main}
-          height={4}
+          height={3}
           options={{ showSpinner: false }}
         />
         <Menu dark={router.pathname.startsWith("/auth")} />

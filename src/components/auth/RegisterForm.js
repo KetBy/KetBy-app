@@ -9,13 +9,13 @@ import {
   Divider,
   IconButton,
   Alert,
+  Link as MuiLink,
 } from "@mui/material";
+import Link from "next/link";
 import LoadingButton from "@mui/lab/LoadingButton";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/FacebookTwoTone";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "../../utils/axios";
+import SocialButtons from "./SocialButtons";
 
 export default function RegisterForm(props) {
   const [input, setInput] = React.useState({
@@ -117,7 +117,7 @@ export default function RegisterForm(props) {
                   id="last_name"
                   name="last_name"
                   label="Last name"
-                  placeholder="Smtih"
+                  placeholder="Smith"
                   variant="outlined"
                   size="small"
                   type="text"
@@ -180,6 +180,12 @@ export default function RegisterForm(props) {
                 >
                   Register
                 </LoadingButton>
+                <Typography variant="body2" sx={{ mt: 2 }}>
+                  Already have an account?{" "}
+                  <MuiLink component={Link} href="/auth/login">
+                    Log in instead
+                  </MuiLink>
+                </Typography>
               </Grid>
             </Grid>
             <ReCAPTCHA
@@ -192,17 +198,7 @@ export default function RegisterForm(props) {
           <Divider sx={{ mt: 3, mb: 2 }}>
             <Typography variant="body2">or continue with</Typography>
           </Divider>
-          <Box sx={{ textAlign: "center" }}>
-            <IconButton color="primary" disabled>
-              <GitHubIcon />
-            </IconButton>
-            <IconButton color="primary" disabled>
-              <GoogleIcon />
-            </IconButton>
-            <IconButton color="primary" disabled>
-              <FacebookIcon />
-            </IconButton>
-          </Box>
+          <SocialButtons />
         </Box>
       )}
     </>
