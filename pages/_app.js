@@ -31,7 +31,7 @@ export default function MyApp(props) {
           height={4}
           options={{ showSpinner: false }}
         />
-        {router.pathname !== "/" && <Menu />}
+        <Menu dark={router.pathname.startsWith("/auth")} />
         <Component {...pageProps} />
       </ThemeProvider>
     </CacheProvider>
