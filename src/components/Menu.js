@@ -46,14 +46,27 @@ function ResponsiveAppBar(props) {
         height: `${theme.constants.menuHeight}px`,
         display: "flex",
         justifyContent: "center",
-        background: props.dark
-          ? theme.palette.darkGrey.dark
-          : theme.palette.primary.main,
+        background: theme.palette.primary.main,
+        position: "relative",
+        "&:after": {
+          position: "absolute",
+          transitionDuration: "0.2s",
+          content: "''",
+          left: 0,
+          top: 0,
+          width: "100%",
+          background: theme.palette.darkGrey.dark,
+          zIndex: 0,
+          height: props.dark ? "100%" : 0,
+          opacity: props.dark ? 1 : 0,
+        },
       }}
     >
       <Box
         sx={{
           px: 1,
+          position: "relative",
+          zIndex: 10,
         }}
       >
         <Toolbar disableGutters>
