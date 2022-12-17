@@ -33,6 +33,7 @@ export default function RegisterForm(props) {
   });
 
   const [loading, setLoading] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(true);
   const [message, setMessage] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
 
@@ -84,6 +85,12 @@ export default function RegisterForm(props) {
         setLoading(false);
       });
   };
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setDisabled(false);
+    }, 250);
+  }, []);
 
   return (
     <>
@@ -177,6 +184,7 @@ export default function RegisterForm(props) {
                   loading={loading}
                   component="button"
                   type="submit"
+                  disabled={disabled}
                 >
                   Register
                 </LoadingButton>
@@ -188,12 +196,14 @@ export default function RegisterForm(props) {
                 </Typography>
               </Grid>
             </Grid>
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              size="invisible"
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-              onChange={handleRecaptchaChange}
-            />
+            {!disabled && (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                size="invisible"
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                onChange={handleRecaptchaChange}
+              />
+            )}
           </Box>
           <Divider sx={{ mt: 3, mb: 2 }}>
             <Typography variant="body2">or continue with</Typography>
