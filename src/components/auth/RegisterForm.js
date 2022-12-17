@@ -16,6 +16,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "../../utils/axios";
 import SocialButtons from "./SocialButtons";
+import theme from "../../themes/default";
 
 export default function RegisterForm(props) {
   const [input, setInput] = React.useState({
@@ -96,7 +97,12 @@ export default function RegisterForm(props) {
     <>
       {success ? (
         <Box sx={{ width: "100%" }}>
-          <Alert severity="success">{message}</Alert>
+          <Alert
+            severity="success"
+            sx={{ border: `1px solid ${theme.palette.grey.main}` }}
+          >
+            {message}
+          </Alert>
         </Box>
       ) : (
         <Box sx={{ width: "100%" }}>
@@ -171,7 +177,10 @@ export default function RegisterForm(props) {
               </Grid>
               {Boolean(message) && (
                 <Grid item xs={12}>
-                  <Alert severity={success ? "success" : "error"}>
+                  <Alert
+                    severity={success ? "success" : "error"}
+                    sx={{ border: `1px solid ${theme.palette.grey.main}` }}
+                  >
                     {message}
                   </Alert>
                 </Grid>
