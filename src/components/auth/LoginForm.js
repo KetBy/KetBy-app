@@ -20,7 +20,7 @@ import SocialButtons from "./SocialButtons";
 
 export default function LoginForm(props) {
   const router = useRouter();
-  const { next } = router.query;
+  const { next, mustLogIn } = router.query;
 
   const [input, setInput] = React.useState({
     email: "",
@@ -35,12 +35,14 @@ export default function LoginForm(props) {
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
+  const [showMustLogInMsg, setShowMustLogInMsg] = React.useState(true);
 
   const handleInput = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
     setError({ ...error, [e.target.name]: null });
     setMessage(null);
     setSuccess(null);
+    setShowMustLogInMsg(false);
   };
 
   const handleSubmit = async (e) => {
@@ -82,6 +84,18 @@ export default function LoginForm(props) {
       <Box sx={{ width: "100%" }}>
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2} rowSpacing={2}>
+            {mustLogIn != null && showMustLogInMsg && (
+              <Grid item xs={12}>
+                <Alert
+                  severity="warning"
+                  sx={{
+                    border: (theme) => `1px solid ${theme.palette.grey.main}`,
+                  }}
+                >
+                  Please log in to continue.
+                </Alert>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <TextField
                 id="email"
