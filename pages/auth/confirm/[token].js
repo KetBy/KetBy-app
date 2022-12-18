@@ -1,5 +1,8 @@
 import * as React from "react";
-import { Box, Alert, Button, Grid } from "@mui/material";
+import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 
 import Link from "next/link";
 import axios from "../../../src/utils/axios";
