@@ -14,7 +14,7 @@ const GateInfoWrapper = ({ info }) => {
   return (
     <Suspense
       fallback={
-        <Typography variant="body2" sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ mb: 1 }}>
           Loading...
         </Typography>
       }

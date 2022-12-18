@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button, Avatar } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,19 +8,20 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { AddBoxOutlined } from "@mui/icons-material";
 import theme from "../../src/themes/default";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-const pages = ["My projects", "Explore"];
+const pages = ["My projects", "Explore", "Learn"];
 const settings = ["My account", "My projects", "Log out"];
 
 function ResponsiveAppBar(props) {
+  const router = useRouter();
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -88,7 +90,7 @@ function ResponsiveAppBar(props) {
           >
             LOGO
           </Typography>
-
+          {/** Mobile */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -144,6 +146,7 @@ function ResponsiveAppBar(props) {
           >
             LOGO
           </Typography>
+          {/** Mobile end */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -157,8 +160,42 @@ function ResponsiveAppBar(props) {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            {router.pathname != "/auth/login" && (
+              <Button
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: { xs: "none", md: "inline-block" },
+                }}
+                component={Link}
+                href="/auth/login"
+              >
+                Log in
+              </Button>
+            )}
+            {router.pathname != "/auth/register" && (
+              <Button
+                variant="contained"
+                sx={{
+                  background: (theme) => theme.palette.primary[50],
+                  color: (theme) => theme.palette.darkGrey.main,
+                  "&:hover": {
+                    background: (theme) => theme.palette.common.white,
+                  },
+                  display: { xs: "none", md: "inline-block" },
+                  ml: 1,
+                }}
+                component={Link}
+                href="/auth/register"
+              >
+                Register for free
+              </Button>
+            )}
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0, display: { xs: "inline-block", md: "none" } }}
+              >
                 <Avatar alt="Alex Hodo" />
               </IconButton>
             </Tooltip>
