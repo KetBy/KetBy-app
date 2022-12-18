@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Box, Alert, Button, Grid } from "@mui/material";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+
 import Link from "next/link";
 import axios from "../../../src/utils/axios";
 import theme from "../../../src/themes/default";
@@ -35,13 +33,7 @@ export default function AuthConfirmPage({ data }) {
         </Alert>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <Button
-              variant="outlined"
-              fullWidth
-              startIcon={<HomeRoundedIcon />}
-              component={Link}
-              href="/"
-            >
+            <Button variant="outlined" fullWidth component={Link} href="/">
               Back home
             </Button>
           </Grid>
@@ -49,9 +41,6 @@ export default function AuthConfirmPage({ data }) {
             <Button
               variant="contained"
               fullWidth
-              endIcon={
-                data.success ? <LoginRoundedIcon /> : <PersonRoundedIcon />
-              }
               component={Link}
               href={data.success ? "/auth/login" : "/auth/register"}
             >
