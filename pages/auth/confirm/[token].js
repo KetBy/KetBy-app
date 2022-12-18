@@ -1,14 +1,11 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-
+import { Box, Alert, Button, Grid } from "@mui/material";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import Link from "next/link";
 import axios from "../../../src/utils/axios";
 import theme from "../../../src/themes/default";
-
-const isServerReq = (req) => !req.url.startsWith("/_next");
 
 export default function AuthConfirmPage({ data }) {
   return (
@@ -36,7 +33,13 @@ export default function AuthConfirmPage({ data }) {
         </Alert>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <Button variant="outlined" fullWidth component={Link} href="/">
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<HomeRoundedIcon />}
+              component={Link}
+              href="/"
+            >
               Back home
             </Button>
           </Grid>
@@ -44,6 +47,9 @@ export default function AuthConfirmPage({ data }) {
             <Button
               variant="contained"
               fullWidth
+              endIcon={
+                data.success ? <LoginRoundedIcon /> : <PersonRoundedIcon />
+              }
               component={Link}
               href={data.success ? "/auth/login" : "/auth/register"}
             >
@@ -56,28 +62,21 @@ export default function AuthConfirmPage({ data }) {
   );
 }
 
-export async function getServerSideProps({ query, req }) {
-  const { token } = query;
+export async function getServerSideProps(context) {
+  const { token } = context.query;
 
-  let data = {};
+  let data = {
+    success: false,
+    message: "Something went wrong. Please try again later.",
+  };
 
-  if (isServerReq(req)) {
-    await axios
-      .post("/auth/confirm", {
-        token: token,
-      })
-      .then((res) => {
-        data = res.data;
-      })
-      .catch((err) => {
-        data = {
-          success: false,
-          message: "Something went wrong. Please try again later.",
-        };
-      });
-  } else {
-    data = null;
-  }
+  await axios
+    .post("/auth/confirm", {
+      token: token,
+    })
+    .then((res) => {
+      data = res.data;
+    });
 
   return {
     props: { data },
