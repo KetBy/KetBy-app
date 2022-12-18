@@ -12,12 +12,16 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import LoadingButton from "@mui/lab/LoadingButton";
 // import ReCAPTCHA from "react-google-recaptcha";
 import axios from "../../utils/axios";
 import SocialButtons from "./SocialButtons";
 
-export default function RegisterForm(props) {
+export default function LoginForm(props) {
+  const router = useRouter();
+  const { next } = router.query;
+
   const [input, setInput] = React.useState({
     email: "",
     password: "",
@@ -41,17 +45,20 @@ export default function RegisterForm(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //setLoading(true);
+    setLoading(true);
     setMessage(null);
     setSuccess(null);
-    alert("Under development");
-    return;
     axios
       .post("/auth/login", input)
       .then((res) => {
-        setSuccess(res.data.success);
-        setMessage(res.data.message);
-        setLoading(false);
+        console.log(res.data);
+        setMessage("Welcome! You're being redirected...");
+        setSuccess(true);
+        if (next) {
+          router.push(next);
+        } else {
+          router.push("/");
+        }
       })
       .catch((e) => {
         setSuccess(false);
@@ -118,7 +125,12 @@ export default function RegisterForm(props) {
             </Grid>
             {Boolean(message) && (
               <Grid item xs={12}>
-                <Alert severity={success ? "success" : "error"}>
+                <Alert
+                  severity={success ? "success" : "error"}
+                  sx={{
+                    border: (theme) => `1px solid ${theme.palette.grey.main}`,
+                  }}
+                >
                   {message}
                 </Alert>
               </Grid>
