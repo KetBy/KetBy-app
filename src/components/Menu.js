@@ -16,11 +16,10 @@ import theme from "../../src/themes/default";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const pages = ["My projects", "Explore", "Learn"];
-const settings = ["My account", "My projects", "Log out"];
-
 function ResponsiveAppBar(props) {
   const router = useRouter();
+
+  const fullWidth = router.pathname == "/composer";
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -39,6 +38,9 @@ function ResponsiveAppBar(props) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const pages = ["My projects", "Explore", "Learn"];
+  const settings = ["My account", "My projects", "Log out"];
 
   return (
     <AppBar
@@ -64,14 +66,13 @@ function ResponsiveAppBar(props) {
         },
       }}
     >
-      <Box
-        sx={{
-          px: 1,
-          position: "relative",
-          zIndex: 10,
-        }}
+      <Container
+        disableGutters
+        maxWidth={fullWidth ? false : "lg"}
+        sx={{ position: "relative", zIndex: 10 }}
       >
-        <Toolbar disableGutters>
+        <Toolbar>
+          {/** Logo start */}
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -90,7 +91,8 @@ function ResponsiveAppBar(props) {
           >
             LOGO
           </Typography>
-          {/** Mobile */}
+          {/** Logo end */}
+          {/** Mobile start */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -147,6 +149,7 @@ function ResponsiveAppBar(props) {
             LOGO
           </Typography>
           {/** Mobile end */}
+          {/** Left menu items start */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
@@ -158,39 +161,45 @@ function ResponsiveAppBar(props) {
               </Button>
             ))}
           </Box>
-
+          {/** Left menu items end */}
+          {/** Right menu items start */}
           <Box sx={{ flexGrow: 0 }}>
-            {router.pathname != "/auth/login" && (
-              <Button
-                sx={{
-                  my: 2,
-                  color: "white",
-                  display: { xs: "none", md: "inline-block" },
-                }}
-                component={Link}
-                href="/auth/login"
-              >
-                Log in
-              </Button>
-            )}
-            {router.pathname != "/auth/register" && (
-              <Button
-                variant="contained"
-                sx={{
-                  background: (theme) => theme.palette.primary[50],
-                  color: (theme) => theme.palette.darkGrey.main,
-                  "&:hover": {
-                    background: (theme) => theme.palette.common.white,
-                  },
-                  display: { xs: "none", md: "inline-block" },
-                  ml: 1,
-                }}
-                component={Link}
-                href="/auth/register"
-              >
-                Register for free
-              </Button>
-            )}
+            <Box sx={{ display: "flex" }}>
+              {router.pathname != "/auth/login" && (
+                <Button
+                  sx={{
+                    my: 2,
+                    color: "white",
+                    display: { xs: "none", md: "block" },
+                    pr: 1,
+                    pl: 1.5,
+                  }}
+                  component={Link}
+                  href="/auth/login"
+                >
+                  Log in
+                </Button>
+              )}
+              {router.pathname != "/auth/register" && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    background: (theme) => theme.palette.primary[50],
+                    color: (theme) => theme.palette.darkGrey.main,
+                    "&:hover": {
+                      background: (theme) => theme.palette.common.white,
+                    },
+                    display: { xs: "none", md: "block" },
+                    ml: 1,
+                    my: 2,
+                  }}
+                  component={Link}
+                  href="/auth/register"
+                >
+                  Register for free
+                </Button>
+              )}
+            </Box>
             <Tooltip title="Open settings">
               <IconButton
                 onClick={handleOpenUserMenu}
@@ -222,8 +231,9 @@ function ResponsiveAppBar(props) {
               ))}
             </Menu>
           </Box>
+          {/** Right menu items end */}
         </Toolbar>
-      </Box>
+      </Container>
     </AppBar>
   );
 }
