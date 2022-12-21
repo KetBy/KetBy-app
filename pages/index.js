@@ -25,6 +25,9 @@ export default function HomePage() {
           {" or "}
           <Link href="/auth/register">create a new account</Link>.
         </Typography>
+        <Typography variant="body2" sx={{ mt: 3 }}>
+          DigitalOcean build
+        </Typography>
       </Box>
     </>
   );
