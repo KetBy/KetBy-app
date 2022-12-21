@@ -21,6 +21,9 @@ export default function AuthConfirmPage() {
   });
 
   React.useEffect(() => {
+    if (!token) {
+      return;
+    }
     axios
       .post("/auth/confirm", {
         token: token,
@@ -36,7 +39,7 @@ export default function AuthConfirmPage() {
         });
         setLoaded(true);
       });
-  }, []);
+  }, [token]);
 
   return (
     <>

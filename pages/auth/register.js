@@ -166,30 +166,7 @@ const Banner = () => {
         KetBy provides free resources for those who want to dive into world of
         quantum computers.
       </Typography>
-      <Typography
-        variant="custom_link"
-        sx={{
-          color: theme.palette.common.white,
-          m: theme.spacing(1, 0, 1, 0),
-          width: "50%",
-          lineHeight: 1.1,
-          textDecoration: "none",
-          display: "flex",
-          alignItems: "center",
-        }}
-        component="a"
-        href="/about"
-        target="_blank"
-        className="white"
-      >
-        Find out more
-        <OpenInNewRoundedIcon
-          sx={{
-            fontSize: "1rem",
-            ml: 0.5,
-          }}
-        />
-      </Typography>
+
       <Box
         sx={{
           width: "2px",

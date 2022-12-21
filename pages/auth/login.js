@@ -61,8 +61,8 @@ export default function AuthLoginPage() {
             variant="body1"
             sx={{ color: theme.palette.primary[50], fontWeight: 500 }}
           >
-            You'll have to come back a little later, loggin in is currently not
-            available :)
+            You can currently log in, but that's pretty much all. <br />
+            Come back later for more :)
           </Typography>
         </Grid>
       </Grid>

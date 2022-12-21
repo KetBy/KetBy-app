@@ -17,9 +17,11 @@ import LoadingButton from "@mui/lab/LoadingButton";
 // import ReCAPTCHA from "react-google-recaptcha";
 import axios from "../../utils/axios";
 import SocialButtons from "./SocialButtons";
+import { useAppContext } from "../../utils/context";
 
 export default function LoginForm(props) {
   const router = useRouter();
+  const { appState, setAppState } = useAppContext();
   const { next, mustLogIn } = router.query;
 
   const [input, setInput] = React.useState({
@@ -53,7 +55,16 @@ export default function LoginForm(props) {
     axios
       .post("/auth/login", input)
       .then((res) => {
-        console.log(res.data);
+        localStorage.setItem("jwt", res.data.token.original.access_token);
+        axios.defaults.headers[
+          "Authorization"
+        ] = `Bearer ${res.data.token.original.access_token}`;
+        setAppState({
+          ...appState,
+          isLoggedIn: true,
+          user: res.data.token.original.user,
+        });
+
         setMessage("Welcome! You're being redirected...");
         setSuccess(true);
         if (next) {

@@ -2,8 +2,11 @@ import * as React from "react";
 import { Box, Typography } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
+import { useAppContext } from "../src/utils/context";
 
 export default function HomePage() {
+  const appState = useAppContext();
+
   return (
     <>
       <Head>

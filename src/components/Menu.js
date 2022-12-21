@@ -1,22 +1,34 @@
 import * as React from "react";
-import { Button, Avatar } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import { AddBoxOutlined } from "@mui/icons-material";
-import theme from "../../src/themes/default";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  Button,
+  Avatar,
+  Skeleton,
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Tooltip,
+  MenuItem,
+} from "@mui/material";
+import AdbIcon from "@mui/icons-material/Adb";
+import MenuIcon from "@mui/icons-material/Menu";
+import theme from "../../src/themes/default";
+import { useAppContext } from "../utils/context";
+
+const UserAvatar = (props) => {
+  const { ...otherProps } = props;
+  const { appState } = useAppContext();
+
+  return <Avatar {...otherProps} alt="Alex Hodo"></Avatar>;
+};
 
 function ResponsiveAppBar(props) {
+  const { appState, logOut } = useAppContext();
   const router = useRouter();
 
   const fullWidth = router.pathname == "/composer";
@@ -39,8 +51,33 @@ function ResponsiveAppBar(props) {
     setAnchorElUser(null);
   };
 
-  const pages = ["My projects", "Explore", "Learn"];
-  const settings = ["My account", "My projects", "Log out"];
+  const menuItems = appState.isLoggedIn
+    ? [
+        { title: "Quantum composer", url: "/composer" },
+        { title: "Discover", url: "/discover" },
+        { title: "My projects", url: "/account/projects" },
+      ]
+    : [
+        { title: "Quantum composer", url: "/composer" },
+        { title: "Discover", url: "/discover" },
+      ];
+
+  const userMenuItems = appState.isLoggedIn
+    ? [
+        { title: "My account", url: "/account" },
+        { title: "Settings", url: "/account/settings" },
+        {
+          title: "Log out",
+          url: null,
+          onClick: () => {
+            logOut();
+          },
+        },
+      ]
+    : [
+        { title: "Log in", url: "/auth/login" },
+        { title: "Sign up", url: "/auth/register" },
+      ];
 
   return (
     <AppBar
@@ -67,11 +104,10 @@ function ResponsiveAppBar(props) {
       }}
     >
       <Container
-        disableGutters
         maxWidth={fullWidth ? false : "lg"}
         sx={{ position: "relative", zIndex: 10 }}
       >
-        <Toolbar>
+        <Toolbar disableGutters>
           {/** Logo start */}
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
@@ -96,7 +132,6 @@ function ResponsiveAppBar(props) {
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
@@ -121,10 +156,16 @@ function ResponsiveAppBar(props) {
               sx={{
                 display: { xs: "block", md: "none" },
               }}
+              disableAutoFocusItem
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+              {menuItems.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={handleCloseNavMenu}
+                  component={Link}
+                  href={item.url}
+                >
+                  <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -151,66 +192,117 @@ function ResponsiveAppBar(props) {
           {/** Mobile end */}
           {/** Left menu items start */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
+            {appState.statusChecked ? (
+              <>
+                {menuItems.map((item, index) => (
+                  <Button
+                    key={index}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                    component={Link}
+                    href={item.url}
+                  >
+                    {item.title}
+                  </Button>
+                ))}
+              </>
+            ) : (
+              <>
+                {[...Array(2)].map((_, index) => {
+                  return (
+                    <Skeleton
+                      key={index}
+                      width={100}
+                      sx={{ bgcolor: "primary.100", mx: 1 }}
+                    />
+                  );
+                })}
+              </>
+            )}
           </Box>
           {/** Left menu items end */}
           {/** Right menu items start */}
+
           <Box sx={{ flexGrow: 0 }}>
-            <Box sx={{ display: "flex" }}>
-              {router.pathname != "/auth/login" && (
-                <Button
-                  sx={{
-                    my: 2,
-                    color: "white",
-                    display: { xs: "none", md: "block" },
-                    pr: 1,
-                    pl: 1.5,
-                  }}
-                  component={Link}
-                  href="/auth/login"
-                >
-                  Log in
-                </Button>
-              )}
-              {router.pathname != "/auth/register" && (
-                <Button
-                  variant="contained"
-                  sx={{
-                    background: (theme) => theme.palette.primary[50],
-                    color: (theme) => theme.palette.darkGrey.main,
-                    "&:hover": {
-                      background: (theme) => theme.palette.common.white,
-                    },
-                    display: { xs: "none", md: "block" },
-                    ml: 1,
-                    my: 2,
-                  }}
-                  component={Link}
-                  href="/auth/register"
-                >
-                  Register for free
-                </Button>
+            {/** Desktop start */}
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              {appState.statusChecked ? (
+                <>
+                  {appState.isLoggedIn ? (
+                    <Button
+                      onClick={handleOpenUserMenu}
+                      sx={{
+                        my: 2,
+                        color: "white",
+                        pr: 1,
+                        pl: 1.5,
+                      }}
+                    >
+                      @{appState.user.username}
+                      <UserAvatar sx={{ ml: 1 }} />
+                    </Button>
+                  ) : (
+                    <>
+                      {router.pathname != "/auth/login" && (
+                        <Button
+                          sx={{
+                            my: 2,
+                            color: "white",
+                            pr: 1,
+                            pl: 1.5,
+                          }}
+                          component={Link}
+                          href="/auth/login"
+                        >
+                          Log in
+                        </Button>
+                      )}
+                      {router.pathname != "/auth/register" && (
+                        <Button
+                          variant="contained"
+                          sx={{
+                            background: (theme) => theme.palette.primary[50],
+                            color: (theme) => theme.palette.darkGrey.main,
+                            "&:hover": {
+                              background: (theme) => theme.palette.common.white,
+                            },
+                            ml: 1,
+                            my: 2,
+                          }}
+                          component={Link}
+                          href="/auth/register"
+                        >
+                          Register for free
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Box
+                    component={Skeleton}
+                    width={100}
+                    sx={{
+                      backgroundColor: "primary.100",
+                    }}
+                  />
+                </>
               )}
             </Box>
-            <Tooltip title="Open settings">
-              <IconButton
-                onClick={handleOpenUserMenu}
-                sx={{ p: 0, display: { xs: "inline-block", md: "none" } }}
-              >
-                <Avatar alt="Alex Hodo" />
-              </IconButton>
-            </Tooltip>
+            {/** Desktop end */}
+            {/** Mobile start */}
+            <IconButton
+              onClick={handleOpenUserMenu}
+              sx={{ p: 0, display: { xs: "inline-block", md: "none" } }}
+            >
+              <UserAvatar />
+            </IconButton>
+            {/** Mobile end */}
+            {/** User menu start */}
             <Menu
               sx={{ mt: "45px" }}
-              id="menu-appbar"
+              id="menu-user"
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
@@ -223,14 +315,29 @@ function ResponsiveAppBar(props) {
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              disableAutoFocusItem
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {userMenuItems.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={
+                    item.onClick
+                      ? () => {
+                          item.onClick();
+                          handleCloseUserMenu();
+                        }
+                      : handleCloseUserMenu
+                  }
+                  component={item.url ? Link : MenuItem}
+                  href={item.url ? item.url : null}
+                >
+                  <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
+            {/** User menu end */}
           </Box>
+
           {/** Right menu items end */}
         </Toolbar>
       </Container>
