@@ -205,6 +205,7 @@ export default function AuthRegisterPage() {
             display: "grid",
             alignItems: "center",
             justifyContent: "center",
+            bgcolor: "white",
           }}
         >
           <Box sx={{ width: "auto", maxWidth: { xs: "auto", sm: 350 } }}>

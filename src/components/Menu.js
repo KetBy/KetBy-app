@@ -24,7 +24,12 @@ const UserAvatar = (props) => {
   const { ...otherProps } = props;
   const { appState } = useAppContext();
 
-  return <Avatar {...otherProps} alt="Alex Hodo"></Avatar>;
+  return (
+    <Avatar
+      {...otherProps}
+      alt={appState.user ? appState.user.username : null}
+    ></Avatar>
+  );
 };
 
 function ResponsiveAppBar(props) {
@@ -105,7 +110,14 @@ function ResponsiveAppBar(props) {
     >
       <Container
         maxWidth={fullWidth ? false : "lg"}
-        sx={{ position: "relative", zIndex: 10 }}
+        sx={{
+          position: "relative",
+          zIndex: 10,
+          px: 1,
+          transitionDuration: "0.2s",
+          ...{ ...(fullWidth ? { maxWidth: "100%" } : {}) },
+        }}
+        disableGutters={fullWidth}
       >
         <Toolbar disableGutters>
           {/** Logo start */}
@@ -164,6 +176,13 @@ function ResponsiveAppBar(props) {
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={item.url}
+                  sx={{
+                    ...{
+                      ...(router.pathname == item.url
+                        ? { display: "none" }
+                        : {}),
+                    },
+                  }}
                 >
                   <Typography textAlign="center">{item.title}</Typography>
                 </MenuItem>
@@ -198,7 +217,16 @@ function ResponsiveAppBar(props) {
                   <Button
                     key={index}
                     onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: "white", display: "block" }}
+                    sx={{
+                      my: 2,
+                      color: "white",
+                      display: "block",
+                      ...{
+                        ...(router.pathname == item.url
+                          ? { display: "none" }
+                          : {}),
+                      },
+                    }}
                     component={Link}
                     href={item.url}
                   >

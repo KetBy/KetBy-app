@@ -26,6 +26,7 @@ export default function Composer() {
     <Box
       sx={{
         userSelect: "none",
+        bgcolor: "white",
       }}
     >
       <Grid

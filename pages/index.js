@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAppContext } from "../src/utils/context";
 
 export default function HomePage() {
-  const appState = useAppContext();
+  const { appState } = useAppContext();
 
   return (
     <>

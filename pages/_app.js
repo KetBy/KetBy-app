@@ -4,6 +4,7 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
 import { CacheProvider } from "@emotion/react";
 import theme from "../src/themes/default";
@@ -38,7 +39,15 @@ export default function MyApp(props) {
             options={{ showSpinner: false }}
           />
           <Menu dark={router.pathname.startsWith("/auth")} />
-          <Component {...pageProps} />
+          <Box
+            sx={{
+              bgcolor: (theme) => theme.palette.grey[50],
+              minHeight: (theme) =>
+                `calc(100vh - ${theme.constants.menuHeight}px)`,
+            }}
+          >
+            <Component {...pageProps} />
+          </Box>
         </AppWrapper>
       </ThemeProvider>
     </CacheProvider>

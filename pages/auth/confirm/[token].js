@@ -54,6 +54,7 @@ export default function AuthConfirmPage() {
           justifyContent: "center",
           py: 5,
           px: 3,
+          bgcolor: "white",
         }}
       >
         {loaded ? (
