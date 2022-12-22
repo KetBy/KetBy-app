@@ -36,7 +36,7 @@ function ResponsiveAppBar(props) {
   const { appState, logOut } = useAppContext();
   const router = useRouter();
 
-  const fullWidth = router.pathname == "/composer";
+  const fullWidth = router.pathname.startsWith("/composer");
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
