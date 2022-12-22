@@ -1,85 +1,258 @@
 import * as React from "react";
-import { Box, Container, Typography, Grid, Button } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Button,
+  Alert,
+  Drawer,
+  TextField,
+} from "@mui/material";
 import Masonry from "@mui/lab/Masonry";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { useAppContext } from "../../src/utils/context";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useRouter } from "next/router";
 import ProjectCard from "../../src/components/ProjectCard";
+import axios from "../../src/utils/axios";
+
+const NewProjectDrawer = ({ open, toggleDrawer }) => {
+  const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
+  const [message, setMessage] = React.useState(null);
+  const [success, setSuccess] = React.useState(null);
+
+  const defaultInput = {
+    title: "",
+    description: "",
+  };
+
+  const defaultError = {
+    title: null,
+    description: null,
+  };
+
+  const [input, setInput] = React.useState(defaultInput);
+  const [error, setError] = React.useState(defaultError);
+
+  const handleInput = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    setError({ ...error, [e.target.name]: null });
+    setMessage(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+    setSuccess(null);
+    axios
+      .post("/project", input)
+      .then((res) => {
+        setMessage(res.data.message);
+        setSuccess(true);
+        router.push(res.data.redirect_path);
+      })
+      .catch((err) => {
+        setSuccess(false);
+        let res = err.response;
+        try {
+          if (res.data.message) {
+            setMessage(res.data.message);
+          }
+          if (res.data.field_errors) {
+            setError(res.data.field_errors);
+          }
+        } catch (err) {
+          setMessage(`Something went wrong. Please try again later.`);
+        }
+        setLoading(false);
+      });
+  };
+
+  return (
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={toggleDrawer}
+      PaperProps={{
+        sx: {
+          width: "300px !important",
+          maxWidth: (theme) => `calc(100vw - ${theme.spacing(8)})`,
+        },
+      }}
+    >
+      <Grid
+        container
+        sx={{ p: 2 }}
+        rowSpacing={2}
+        spacing={2}
+        component="form"
+        onSubmit={handleSubmit}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h6">Create a new project</Typography>
+          <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+            Create a new project and start building quantum circuits.
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="new-project-title"
+            name="title"
+            label="Title"
+            variant="outlined"
+            size="small"
+            type="text"
+            placeholder="Your project's title"
+            fullWidth
+            required
+            value={input.title}
+            onChange={handleInput}
+            error={Boolean(error.title)}
+            helperText={error.title}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            id="new-project-description"
+            name="description"
+            label="Description (optional)"
+            variant="outlined"
+            size="small"
+            type="text"
+            placeholder="Your project's description"
+            fullWidth
+            value={input.description}
+            onChange={handleInput}
+            error={Boolean(error.description)}
+            helperText={error.description}
+            multiline
+            rows={3}
+          />
+        </Grid>
+        {Boolean(message) && (
+          <Grid item xs={12}>
+            <Alert
+              severity={success ? "success" : "error"}
+              sx={{
+                border: (theme) => `1px solid ${theme.palette.grey.main}`,
+              }}
+            >
+              {message}
+            </Alert>
+          </Grid>
+        )}
+        <Grid item xs={6}>
+          <Button variant="outlined" fullWidth onClick={toggleDrawer}>
+            Cancel
+          </Button>
+        </Grid>
+        <Grid item xs={6}>
+          <LoadingButton
+            variant="contained"
+            type="submit"
+            fullWidth
+            loading={loading}
+          >
+            Create
+          </LoadingButton>
+        </Grid>
+      </Grid>
+    </Drawer>
+  );
+};
 
 export default function AccountProjectsPage(props) {
   const { appState } = useAppContext();
 
-  const thumbnails = [
-    "/projects/EQdkHgzPO1N94SbD0TPAOyPDKIjySbci-thumbnail.svg",
-    ,
-    null,
-    "/projects/neha-maheen-mahfin-3szSK-40AWM-unsplash.jpg",
-  ];
-
-  const titles = [
-    "Quantum error correction",
-    "Hadamard gates",
-    "Shor's algorithm",
-  ];
-
-  const descriptions = [
-    "Nulla eleifend elit erat, sit amet molestie elit accumsan vel. Nulla facilisi. Donec auctor, odio ac tincidunt egestas, erat nisl mollis nibh, quis feugiat ipsum sem ac quam. Nunc dapibus, turpis id aliquam tincidunt, odio urna iaculis ante, vitae sodales dui felis et magna. Aenean rhoncus, ex et euismod semper, sem elit porttitor sapien, a facilisis odio ligula convallis massa. Integer eleifend dictum congue. Suspendisse potenti.",
-    null,
-  ];
-
+  const [loaded, setLoaded] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const [message, setMessage] = React.useState(null);
   const [projects, setProjects] = React.useState([]);
 
   React.useEffect(() => {
-    let newProjects = [];
-    for (let i = 0; i < 5; i++) {
-      newProjects.push({
-        thumbnail: thumbnails[Math.floor(Math.random() * thumbnails.length)],
-        title: titles[Math.floor(Math.random() * titles.length)],
-        description:
-          descriptions[Math.floor(Math.random() * descriptions.length)],
-        forks_count: Math.floor(Math.random() * 10),
-        stars_count: Math.floor(Math.random() * 100),
-        files_count: Math.floor(1 + Math.random() * 10),
+    axios
+      .get("/project")
+      .then((res) => {
+        setProjects(res.data.projects);
+        setLoaded(true);
+      })
+      .catch((err) => {
+        setLoaded(true);
+        setError(true);
+        setMessage(`Something went wrong. Please try again. ${err.message}`);
       });
-    }
-    setProjects(newProjects);
   }, []);
 
+  const [newProjectDrawerOpen, setNewProjectDrawerOpen] = React.useState(false);
+
+  const toggleDrawer = (event) => {
+    setNewProjectDrawerOpen(!newProjectDrawerOpen);
+  };
+
   return (
-    <Box sx={{ py: 2 }}>
-      <Container maxWidth="lg">
-        <Grid container>
-          <Grid item xs={6}>
-            <Typography variant="h4">Your projects</Typography>
+    <>
+      <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
+      <Box sx={{ py: 2 }}>
+        <Container maxWidth="lg">
+          <Grid container>
+            <Grid item xs={6}>
+              <Typography variant="h4" sx={{ lineHeight: 1.2 }}>
+                Your projects
+              </Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ display: "flex", justifyContent: "end" }}>
+              <Button
+                variant="contained"
+                startIcon={<AddRoundedIcon />}
+                onClick={toggleDrawer}
+              >
+                New project
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={6} sx={{ display: "flex", justifyContent: "end" }}>
-            <Button variant="contained" startIcon={<AddRoundedIcon />}>
-              New project
-            </Button>
-          </Grid>
-        </Grid>
-        <Masonry
-          columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
-          spacing={2}
-          sx={{ mt: 1, width: "auto" }}
-        >
-          {projects.map((item, index) => {
-            return (
-              <ProjectCard
-                project={{
-                  title: item.title,
-                  description: item.description,
-                  forks_count: item.forks_count,
-                  stars_count: item.stars_count,
-                  thumbnail_url: item.thumbnail,
-                  files_count: item.files_count,
-                  date: "21/12/2022",
-                }}
-                key={index}
-              />
-            );
-          })}
-        </Masonry>
-      </Container>
-    </Box>
+          {loaded && error && (
+            <Alert
+              severity="error"
+              sx={{
+                mt: 2,
+                border: (theme) => `1px solid ${theme.palette.grey[200]}`,
+              }}
+            >
+              {message}
+            </Alert>
+          )}
+          {loaded && !error && (
+            <>
+              {" "}
+              {projects.length > 0 ? (
+                <Masonry
+                  columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+                  spacing={2}
+                  sx={{ mt: 1, width: "auto" }}
+                >
+                  {projects.map((item, index) => {
+                    return <ProjectCard key={index} project={item} />;
+                  })}
+                </Masonry>
+              ) : (
+                <Alert
+                  severity="info"
+                  sx={{
+                    mt: 2,
+                    border: (theme) => `1px solid ${theme.palette.grey[200]}`,
+                  }}
+                >
+                  You have currently no projects. They will appear here once you
+                  create them.
+                </Alert>
+              )}
+            </>
+          )}
+        </Container>
+      </Box>
+    </>
   );
 }

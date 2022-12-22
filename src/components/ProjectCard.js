@@ -16,10 +16,12 @@ import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import ForkRightRoundedIcon from "@mui/icons-material/ForkRightRounded";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 
+import Link from "next/link";
+
 export default function ProjectCard({ project }) {
   return (
     <Card>
-      <CardActionArea>
+      <CardActionArea component={Link} href={`/composer/${project.token}/0`}>
         {project.thumbnail_url && (
           <CardMedia
             component="img"
@@ -43,7 +45,8 @@ export default function ProjectCard({ project }) {
             {project.title}
           </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            {project.date} - {project.files_count} files
+            {project.date} - {project.files_count}{" "}
+            {`file${project.files_count > 1 ? "s" : ""}`}
           </Typography>
           <Typography
             variant="body2"

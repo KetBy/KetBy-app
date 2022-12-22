@@ -6,7 +6,7 @@ export default function Ket0(props) {
   return (
     <Tooltip
       sx={{ background: "primary" }}
-      placement="right"
+      placement="right-start"
       title={
         <React.Fragment>
           <LatexFigure

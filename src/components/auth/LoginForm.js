@@ -64,7 +64,6 @@ export default function LoginForm(props) {
           isLoggedIn: true,
           user: res.data.token.original.user,
         });
-
         setMessage("Welcome! You're being redirected...");
         setSuccess(true);
         if (next) {

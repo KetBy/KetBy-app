@@ -176,10 +176,11 @@ function ResponsiveAppBar(props) {
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={item.url}
+                  disabled={router.pathname == item.url}
                   sx={{
                     ...{
                       ...(router.pathname == item.url
-                        ? { display: "none" }
+                        ? { background: "rgba(0,0,0,0.1) !important" }
                         : {}),
                     },
                   }}
@@ -219,11 +220,12 @@ function ResponsiveAppBar(props) {
                     onClick={handleCloseNavMenu}
                     sx={{
                       my: 2,
+                      mx: 1,
                       color: "white",
                       display: "block",
                       ...{
                         ...(router.pathname == item.url
-                          ? { display: "none" }
+                          ? { background: "rgba(255,255,255,0.15) !important" }
                           : {}),
                       },
                     }}
