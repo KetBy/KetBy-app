@@ -28,6 +28,7 @@ const UserAvatar = (props) => {
     <Avatar
       {...otherProps}
       alt={appState.user ? appState.user.username : null}
+      src={appState.user ? appState.user.avatar_url : null}
     ></Avatar>
   );
 };
@@ -269,7 +270,9 @@ function ResponsiveAppBar(props) {
                       }}
                     >
                       @{appState.user.username}
-                      <UserAvatar sx={{ ml: 1 }} />
+                      <UserAvatar
+                        sx={{ ml: 1, background: "rgba(255,255,255,1)" }}
+                      />
                     </Button>
                   ) : (
                     <>
@@ -326,7 +329,7 @@ function ResponsiveAppBar(props) {
               onClick={handleOpenUserMenu}
               sx={{ p: 0, display: { xs: "inline-block", md: "none" } }}
             >
-              <UserAvatar />
+              <UserAvatar sx={{ ml: 1, background: "rgba(255,255,255,1)" }} />
             </IconButton>
             {/** Mobile end */}
             {/** User menu start */}

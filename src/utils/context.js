@@ -11,6 +11,8 @@ export function AppWrapper({ children }) {
     user: null,
   });
 
+  const [projects, setProjects] = React.useState(null);
+
   const checkStatus = async () => {
     axios
       .get("/auth/status")
@@ -44,6 +46,23 @@ export function AppWrapper({ children }) {
     checkStatus();
   };
 
+  const loadProjects = () => {
+    if (projects == null) {
+      axios
+        .get("/project")
+        .then((res) => {
+          setProjects(res.data.projects);
+        })
+        .catch((err) => {
+          setProjects([]);
+        });
+    }
+  };
+
+  const addProject = (newProject) => {
+    setProjects([...projects, newProject]);
+  };
+
   React.useEffect(() => {
     if (localStorage.getItem("jwt")) {
       axios.defaults.headers["Authorization"] = `Bearer ${localStorage.getItem(
@@ -54,7 +73,17 @@ export function AppWrapper({ children }) {
   }, []);
 
   return (
-    <AppContext.Provider value={{ appState, setAppState, checkStatus, logOut }}>
+    <AppContext.Provider
+      value={{
+        appState,
+        setAppState,
+        checkStatus,
+        logOut,
+        loadProjects,
+        addProject,
+        _projects: projects,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

@@ -20,7 +20,11 @@ import Link from "next/link";
 
 export default function ProjectCard({ project }) {
   return (
-    <Card>
+    <Card
+      sx={{
+        boxShadow: (theme) => theme.shadowsCustom[2],
+      }}
+    >
       <CardActionArea component={Link} href={`/composer/${project.token}/0`}>
         {project.thumbnail_url && (
           <CardMedia
@@ -47,6 +51,14 @@ export default function ProjectCard({ project }) {
           <Typography variant="body2" color="text.secondary" gutterBottom>
             {project.date} - {project.files_count}{" "}
             {`file${project.files_count > 1 ? "s" : ""}`}
+            <Chip
+              size="small"
+              label={project.public ? "Public" : "Private"}
+              sx={{ ml: 1, display: "inline-flex", alignItself: "center" }}
+              color={project.public ? "success" : "default"}
+              variant="outlined"
+              component="span"
+            />
           </Typography>
           <Typography
             variant="body2"

@@ -16,9 +16,14 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { useRouter } from "next/router";
 import ProjectCard from "../../src/components/ProjectCard";
 import axios from "../../src/utils/axios";
+import RouteGuard from "../../src/components/RouteGuard";
+import CustomCircularProgress from "../../src/components/custom/CircularProgress";
+import ProfileLayout from "../../src/layouts/ProfileLayout";
 
 const NewProjectDrawer = ({ open, toggleDrawer }) => {
+  const { addProject } = useAppContext();
   const router = useRouter();
+
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
@@ -52,6 +57,7 @@ const NewProjectDrawer = ({ open, toggleDrawer }) => {
       .then((res) => {
         setMessage(res.data.message);
         setSuccess(true);
+        addProject(res.data.project);
         router.push(res.data.redirect_path);
       })
       .catch((err) => {
@@ -165,7 +171,7 @@ const NewProjectDrawer = ({ open, toggleDrawer }) => {
 };
 
 export default function AccountProjectsPage(props) {
-  const { appState } = useAppContext();
+  const { appState, loadProjects, _projects } = useAppContext();
 
   const [loaded, setLoaded] = React.useState(false);
   const [error, setError] = React.useState(null);
@@ -173,18 +179,13 @@ export default function AccountProjectsPage(props) {
   const [projects, setProjects] = React.useState([]);
 
   React.useEffect(() => {
-    axios
-      .get("/project")
-      .then((res) => {
-        setProjects(res.data.projects);
-        setLoaded(true);
-      })
-      .catch((err) => {
-        setLoaded(true);
-        setError(true);
-        setMessage(`Something went wrong. Please try again. ${err.message}`);
-      });
-  }, []);
+    if (!appState.statusChecked) return;
+    loadProjects();
+    if (_projects != null) {
+      setProjects(_projects);
+      setLoaded(true);
+    }
+  }, [appState.statusChecked, _projects]);
 
   const [newProjectDrawerOpen, setNewProjectDrawerOpen] = React.useState(false);
 
@@ -193,10 +194,10 @@ export default function AccountProjectsPage(props) {
   };
 
   return (
-    <>
-      <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
-      <Box sx={{ py: 2 }}>
-        <Container maxWidth="lg">
+    <RouteGuard>
+      <ProfileLayout userId={0}>
+        <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
+        <Box>
           <Grid container>
             <Grid item xs={6}>
               <Typography variant="h4" sx={{ lineHeight: 1.2 }}>
@@ -213,6 +214,11 @@ export default function AccountProjectsPage(props) {
               </Button>
             </Grid>
           </Grid>
+          {!loaded && (
+            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+              <CustomCircularProgress />
+            </Box>
+          )}
           {loaded && error && (
             <Alert
               severity="error"
@@ -229,7 +235,7 @@ export default function AccountProjectsPage(props) {
               {" "}
               {projects.length > 0 ? (
                 <Masonry
-                  columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+                  columns={{ xs: 1, md: 2, lg: 3 }}
                   spacing={2}
                   sx={{ mt: 1, width: "auto" }}
                 >
@@ -251,8 +257,8 @@ export default function AccountProjectsPage(props) {
               )}
             </>
           )}
-        </Container>
-      </Box>
-    </>
+        </Box>
+      </ProfileLayout>
+    </RouteGuard>
   );
 }
