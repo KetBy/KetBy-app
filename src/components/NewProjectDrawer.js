@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Container,
@@ -9,19 +10,10 @@ import {
   Drawer,
   TextField,
 } from "@mui/material";
-import Masonry from "@mui/lab/Masonry";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useAppContext } from "../../src/utils/context";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useRouter } from "next/router";
-import ProjectCard from "../../src/components/ProjectCard";
-import axios from "../../src/utils/axios";
-import RouteGuard from "../../src/components/RouteGuard";
-import CustomCircularProgress from "../../src/components/custom/CircularProgress";
-import ProfileLayout from "../../src/layouts/ProfileLayout";
+import axios from "../utils/axios";
 
-const NewProjectDrawer = ({ open, toggleDrawer }) => {
-  const { addProject } = useAppContext();
+export default function NewProjectDrawer({ open, toggleDrawer }) {
   const router = useRouter();
 
   const [loading, setLoading] = React.useState(false);
@@ -57,7 +49,6 @@ const NewProjectDrawer = ({ open, toggleDrawer }) => {
       .then((res) => {
         setMessage(res.data.message);
         setSuccess(true);
-        addProject(res.data.project);
         router.push(res.data.redirect_path);
       })
       .catch((err) => {
@@ -167,98 +158,5 @@ const NewProjectDrawer = ({ open, toggleDrawer }) => {
         </Grid>
       </Grid>
     </Drawer>
-  );
-};
-
-export default function AccountProjectsPage(props) {
-  const { appState, loadProjects, _projects } = useAppContext();
-
-  const [loaded, setLoaded] = React.useState(false);
-  const [error, setError] = React.useState(null);
-  const [message, setMessage] = React.useState(null);
-  const [projects, setProjects] = React.useState([]);
-
-  React.useEffect(() => {
-    if (!appState.statusChecked) return;
-    loadProjects();
-    if (_projects != null) {
-      setProjects(_projects);
-      setLoaded(true);
-    }
-  }, [appState.statusChecked, _projects]);
-
-  const [newProjectDrawerOpen, setNewProjectDrawerOpen] = React.useState(false);
-
-  const toggleDrawer = (event) => {
-    setNewProjectDrawerOpen(!newProjectDrawerOpen);
-  };
-
-  return (
-    <RouteGuard>
-      <ProfileLayout userId={0}>
-        <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
-        <Box>
-          <Grid container>
-            <Grid item xs={6}>
-              <Typography variant="h4" sx={{ lineHeight: 1.2 }}>
-                Your projects
-              </Typography>
-            </Grid>
-            <Grid item xs={6} sx={{ display: "flex", justifyContent: "end" }}>
-              <Button
-                variant="contained"
-                startIcon={<AddRoundedIcon />}
-                onClick={toggleDrawer}
-              >
-                New project
-              </Button>
-            </Grid>
-          </Grid>
-          {!loaded && (
-            <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-              <CustomCircularProgress />
-            </Box>
-          )}
-          {loaded && error && (
-            <Alert
-              severity="error"
-              sx={{
-                mt: 2,
-                border: (theme) => `1px solid ${theme.palette.grey[200]}`,
-              }}
-            >
-              {message}
-            </Alert>
-          )}
-          {loaded && !error && (
-            <>
-              {" "}
-              {projects.length > 0 ? (
-                <Masonry
-                  columns={{ xs: 1, md: 2, lg: 3 }}
-                  spacing={2}
-                  sx={{ mt: 1, width: "auto" }}
-                >
-                  {projects.map((item, index) => {
-                    return <ProjectCard key={index} project={item} />;
-                  })}
-                </Masonry>
-              ) : (
-                <Alert
-                  severity="info"
-                  sx={{
-                    mt: 2,
-                    border: (theme) => `1px solid ${theme.palette.grey[200]}`,
-                  }}
-                >
-                  You have currently no projects. They will appear here once you
-                  create them.
-                </Alert>
-              )}
-            </>
-          )}
-        </Box>
-      </ProfileLayout>
-    </RouteGuard>
   );
 }

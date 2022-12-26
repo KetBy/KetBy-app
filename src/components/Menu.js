@@ -61,7 +61,10 @@ function ResponsiveAppBar(props) {
     ? [
         { title: "Quantum composer", url: "/composer" },
         { title: "Discover", url: "/discover" },
-        { title: "My projects", url: "/account/projects" },
+        {
+          title: "My projects",
+          url: `/u/${appState.user.username}?tab=projects`,
+        },
       ]
     : [
         { title: "Quantum composer", url: "/composer" },
@@ -70,8 +73,11 @@ function ResponsiveAppBar(props) {
 
   const userMenuItems = appState.isLoggedIn
     ? [
-        { title: "My account", url: "/account" },
-        { title: "Settings", url: "/account/settings" },
+        {
+          title: "My account",
+          url: `/u/${appState.user.username}?tab=index`,
+        },
+        { title: "Settings", url: `/u/${appState.user.username}?tab=settings` },
         {
           title: "Log out",
           url: null,
