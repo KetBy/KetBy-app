@@ -99,7 +99,7 @@ const ProfileSectionsTabs = (props) => {
 const ProfileCard = ({ user, tab, setTab }) => {
   return (
     <Card sx={{ boxShadow: (theme) => theme.shadowsCustom[2] }}>
-      <CardMedia sx={{ height: { xs: 80, md: 120 } }} image={user.cover_url} />
+      <CardMedia sx={{ height: { xs: 100, md: 125 } }} image={user.cover_url} />
       <CardContent
         sx={{
           textAlign: { xs: "left", md: "center" },
@@ -203,7 +203,7 @@ const IndexTab = ({ user }) => {
   return (
     <>
       <Grid container spacing={2} rowSpacing={2}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ display: { xs: "none", md: "block" } }}>
           <Typography variant="h4" sx={{ lineHeight: 1.2 }}>
             {user.first_name} {user.last_name}
           </Typography>

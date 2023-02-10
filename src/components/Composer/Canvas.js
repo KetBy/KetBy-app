@@ -453,7 +453,7 @@ const Circuit = ({ circuit, setCircuit }) => {
               });
             })}
             {/* Display the vertical striples */}
-            {[...Array(matrix[0].length - 1)].map((_, i) => {
+            {[...Array(Math.max(matrix[0].length - 1, 0))].map((_, i) => {
               return (
                 <Box
                   sx={{

@@ -247,7 +247,9 @@ const AddNewInstruction = (props) => {
           gate: gate.name,
           qubits: newSelectedQubits,
           params: [],
-          uid: Math.max(...circuit.instructions.map((o) => o.uid)) + 1,
+          uid: isFinite(Math.max(...circuit.instructions.map((o) => o.uid)))
+            ? Math.max(...circuit.instructions.map((o) => o.uid)) + 1
+            : 0,
         }),
       });
       setSelectedQubits([...Array(gate.qubits)]);

@@ -183,7 +183,7 @@ function ResponsiveAppBar(props) {
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={item.url}
-                  disabled={router.pathname == item.url}
+                  disabled={router.asPath == item.url}
                   sx={{
                     ...{
                       ...(router.pathname == item.url
@@ -231,7 +231,7 @@ function ResponsiveAppBar(props) {
                       color: "white",
                       display: "block",
                       ...{
-                        ...(router.pathname == item.url
+                        ...(router.asPath == item.url
                           ? { background: "rgba(255,255,255,0.15) !important" }
                           : {}),
                       },
