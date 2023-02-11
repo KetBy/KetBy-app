@@ -441,6 +441,25 @@ const Circuit = ({ circuit, setCircuit }) => {
               width: `calc(100% - ${theme.spacing(4)} - ${theme.spacing(2)})`,
             }}
           >
+            {/* Display the vertical striples */}
+            {[...Array(Math.max(matrix[0].length - 1, 0))].map((_, i) => {
+              return (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    width: "1px",
+                    height: `calc(${theme.spacing(0.5)} + ${
+                      circuit.meta.qubits
+                    } * ${theme.spacing(5)})`,
+                    background: theme.palette.grey[200],
+                    top: 0,
+                    left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
+                    zIndex: 0,
+                  }}
+                  key={`vertical-stripe-${i}`}
+                />
+              );
+            })}
             {/* Display the horizontal stripes */}
             {[...Array(circuit.meta.qubits)].map((_, i) => {
               return (
@@ -535,25 +554,6 @@ const Circuit = ({ circuit, setCircuit }) => {
                   </Draggable>
                 );
               });
-            })}
-            {/* Display the vertical striples */}
-            {[...Array(Math.max(matrix[0].length - 1, 0))].map((_, i) => {
-              return (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    width: "1px",
-                    height: `calc(${theme.spacing(0.5)} + ${
-                      circuit.meta.qubits
-                    } * ${theme.spacing(5)})`,
-                    background: theme.palette.grey[200],
-                    top: 0,
-                    left: `calc(${i + 1} * ${theme.spacing(6)} - 1px)`,
-                    zIndex: -1,
-                  }}
-                  key={`vertical-stripe-${i}`}
-                />
-              );
             })}
           </Grid>
         </Grid>
