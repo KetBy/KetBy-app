@@ -62,14 +62,81 @@ const convertPxToGridDelta = (x, y) => {
   };
 };
 
-const RowButton = ({ index }) => {
+const RowButton = ({ index, circuit, setCircuit }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleDeleteQubit = (qubit) => {
+    let newInstructions = circuit.instructions.slice();
+    newInstructions = newInstructions.filter(function (obj) {
+      return !obj.qubits.includes(qubit);
+    });
+    newInstructions.map((instruction, index) => {
+      for (let i = 0; i < instruction.qubits.length; i++) {
+        if (instruction.qubits[i] > qubit) {
+          newInstructions[index].qubits[i] -= 1;
+        }
+      }
+    });
+    setCircuit({
+      ...circuit,
+      instructions: newInstructions,
+      meta: {
+        ...circuit.meta,
+        qubits: circuit.meta.qubits - 1,
+      },
+    });
+    handleClose();
+  };
+
+  const handleAddQubitAbove = (qubit) => {
+    // Add a qubit above
+    let newInstructions = circuit.instructions.slice();
+    newInstructions.map((instruction, index) => {
+      for (let i = 0; i < instruction.qubits.length; i++) {
+        if (instruction.qubits[i] >= qubit) {
+          newInstructions[index].qubits[i] += 1;
+        }
+      }
+    });
+    setCircuit({
+      ...circuit,
+      instructions: newInstructions,
+      meta: {
+        ...circuit.meta,
+        qubits: circuit.meta.qubits + 1,
+      },
+    });
+    handleClose();
+  };
+
+  const handleAddQubitBelow = (qubit) => {
+    // Add a qubit below
+    let newInstructions = circuit.instructions.slice();
+    newInstructions.map((instruction, index) => {
+      for (let i = 0; i < instruction.qubits.length; i++) {
+        if (instruction.qubits[i] > qubit) {
+          newInstructions[index].qubits[i] += 1;
+        }
+      }
+    });
+    setCircuit({
+      ...circuit,
+      instructions: newInstructions,
+      meta: {
+        ...circuit.meta,
+        qubits: circuit.meta.qubits + 1,
+      },
+    });
+    handleClose();
   };
 
   return (
@@ -104,7 +171,11 @@ const RowButton = ({ index }) => {
         }}
         sx={{ ml: 1 }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleAddQubitAbove(index);
+          }}
+        >
           <ListItemIcon>
             <ArrowUpwardRoundedIcon
               sx={{
@@ -114,7 +185,11 @@ const RowButton = ({ index }) => {
           </ListItemIcon>
           <Typography variant="body2">Add qubit above</Typography>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleAddQubitBelow(index);
+          }}
+        >
           <ListItemIcon>
             <ArrowDownwardRoundedIcon
               sx={{
@@ -125,7 +200,12 @@ const RowButton = ({ index }) => {
           <Typography variant="body2">Add qubit below</Typography>
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleDeleteQubit(index);
+          }}
+          disabled={circuit.meta.qubits === 1}
+        >
           <ListItemIcon>
             <DeleteOutlineRoundedIcon
               sx={{
@@ -167,7 +247,11 @@ const Left = ({ circuit, setCircuit }) => {
           >
             <Grid container alignItems="center">
               <Grid item xs={12}>
-                <RowButton index={i} />
+                <RowButton
+                  index={i}
+                  circuit={circuit}
+                  setCircuit={setCircuit}
+                />
               </Grid>
             </Grid>
           </Box>

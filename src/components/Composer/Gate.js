@@ -359,6 +359,14 @@ const OptionsMenu = (props) => {
   let previewItems = [];
   let instructionItems = [];
 
+  const handleDelete = () => {
+    setCircuit({
+      ...circuit,
+      instrunctions: circuit.instructions.splice(instructionIndex, 1),
+    });
+    handleClose();
+  };
+
   if (view === "default") {
     previewItems = [
       <MenuItem
@@ -409,16 +417,7 @@ const OptionsMenu = (props) => {
         <Typography variant="body2">Gate info</Typography>
       </MenuItem>,
       <Divider sx={{ my: -0 }} key={2} />,
-      <MenuItem
-        key={3}
-        onClick={() => {
-          setCircuit({
-            ...circuit,
-            instrunctions: circuit.instructions.splice(instructionIndex, 1),
-          });
-          handleClose();
-        }}
-      >
+      <MenuItem key={3} onClick={handleDelete}>
         <ListItemIcon>
           <DeleteOutlineRoundedIcon
             sx={{

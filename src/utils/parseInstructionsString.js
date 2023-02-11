@@ -1,4 +1,7 @@
 export default function parseInstructionsString(input) {
+  if (input == null) {
+    return [];
+  }
   input = input.replace(" ", "").replace("\n", "");
   let output = [];
   let instructions = input.split(";");

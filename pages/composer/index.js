@@ -9,7 +9,7 @@ export default function ComposerPage() {
       <Head>
         <title>Quantum composer | KetBy</title>
       </Head>
-      <Composer />
+      <Composer preview />
     </>
   );
 }

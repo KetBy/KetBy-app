@@ -25,7 +25,7 @@ export default function ProjectCard({ project }) {
         boxShadow: (theme) => theme.shadowsCustom[2],
       }}
     >
-      <CardActionArea component={Link} href={`/composer/${project.token}/0`}>
+      <CardActionArea component={Link} href={`/composer/${project.token}/${project.first_file_index}`}>
         {project.thumbnail_url && (
           <CardMedia
             component="img"

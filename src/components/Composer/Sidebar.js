@@ -182,7 +182,7 @@ const FileOptionsMenu = (props) => {
 };
 
 const ProjectContent = (props) => {
-  const { projectTab } = props;
+  const { projectTab, files, activeFile } = props;
 
   const [active, setActive] = React.useState(0);
 
@@ -190,10 +190,10 @@ const ProjectContent = (props) => {
     return (
       <Box>
         <CustomList component="nav" aria-label="circuits">
-          {[...Array(10)].map((_, index) => {
+          {Object.entries(files).map(([index, file]) => {
             return (
               <ListItemButton
-                selected={index == active}
+                selected={activeFile.file_index == index}
                 key={index}
                 disableRipple
                 onClick={() => setActive(index)}
@@ -203,25 +203,16 @@ const ProjectContent = (props) => {
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="subtitle2">
-                      My circuit #{index + 1}
-                    </Typography>
+                    <Typography variant="subtitle2">{file.title}</Typography>
                   }
                   secondary={
                     <Typography variant="body2" className="meta">
                       <Typography
                         variant="body2"
                         component="span"
-                        className="user"
-                      >
-                        <MuiLink href="#!">alexhodo</MuiLink>
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        component="span"
                         className="time"
                       >
-                        – 2h ago
+                        edited 2h ago
                       </Typography>
                     </Typography>
                   }
@@ -327,7 +318,7 @@ const ExportContent = (props) => {
 
 const Sidebar = (props) => {
   const [projectTab, setProjectTab] = React.useState("circuits");
-  const { collapsed, circuit } = props;
+  const { collapsed, circuit, files, activeFile } = props;
 
   return collapsed ? null : (
     <Box
@@ -338,7 +329,11 @@ const Sidebar = (props) => {
       }}
     >
       <ProjectHeader projectTab={projectTab} setProjectTab={setProjectTab} />
-      <ProjectContent projectTab={projectTab} />
+      <ProjectContent
+        projectTab={projectTab}
+        files={files}
+        activeFile={activeFile}
+      />
       <ExportHeader />
       <ExportContent circuit={circuit} />
     </Box>
