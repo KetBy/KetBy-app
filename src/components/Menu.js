@@ -183,10 +183,10 @@ function ResponsiveAppBar(props) {
                   onClick={handleCloseNavMenu}
                   component={Link}
                   href={item.url}
-                  disabled={router.asPath == item.url}
+                  disabled={router.asPath.startsWith(item.url)}
                   sx={{
                     ...{
-                      ...(router.pathname == item.url
+                      ...(router.asPath.startsWith(item.url)
                         ? { background: "rgba(0,0,0,0.1) !important" }
                         : {}),
                     },
@@ -225,13 +225,14 @@ function ResponsiveAppBar(props) {
                   <Button
                     key={index}
                     onClick={handleCloseNavMenu}
+                    disabled={router.asPath.startsWith(item.url)}
                     sx={{
                       my: 2,
                       mx: 1,
-                      color: "white",
+                      color: "white !important",
                       display: "block",
                       ...{
-                        ...(router.asPath == item.url
+                        ...(router.asPath.startsWith(item.url)
                           ? { background: "rgba(255,255,255,0.15) !important" }
                           : {}),
                       },
