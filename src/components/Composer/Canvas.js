@@ -296,22 +296,16 @@ const Left = ({ circuit, setCircuit }) => {
   /** The circuit canvas */
 }
 const Circuit = ({ circuit, setCircuit }) => {
-  console.log("regenerating");
   let { matrix, colMap } = generateCanvasMatrix(
     circuit.instructions,
     circuit.meta.qubits
   );
+
   const [renderCount, setRenderCount] = React.useState(1);
   const [previewRenderCount, setPreviewRenderCount] = React.useState(0);
-
   const defaultInsTransf = [];
   const [insTransf, setInsTransf] = React.useState(defaultInsTransf);
-
   const [dragging, setDragging] = React.useState(false);
-
-  // console.log(circuit);
-  // console.log(matrix);
-
   const [disableDragging, setDisableDragging] = React.useState(false);
 
   const handleDrag = (e, ui) => {
@@ -330,10 +324,8 @@ const Circuit = ({ circuit, setCircuit }) => {
       delta.x,
       delta.y
     );
-    let oldInstructionIndex = newCircuit.meta.oldInstructionIndex;
-    let newInstructionIndex = newCircuit.meta.newInstructionIndex;
-    // console.log(oldInstructionIndex, newInstructionIndex);
-    // console.log(newCircuit);
+    // let oldInstructionIndex = newCircuit.meta.oldInstructionIndex;
+    // let newInstructionIndex = newCircuit.meta.newInstructionIndex;
     let simulation = generateCanvasMatrix(
       newCircuit.instructions,
       newCircuit.meta.qubits

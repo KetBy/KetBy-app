@@ -11,13 +11,32 @@ import axios from "../../utils/axios";
 import CustomCircularProgress from "../custom/CircularProgress";
 
 const Wrapper = (props) => {
-  const { files, file, setActiveFile, sidebarCollapsed, setSidebarCollapsed } =
-    props;
+  const {
+    preview,
+    files,
+    file,
+    setActiveFile,
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    project,
+  } = props;
 
   const [circuit, setCircuit] = React.useState({
     meta: file.meta,
     instructions: file.content,
   });
+
+  React.useEffect(() => {
+    if (preview) return;
+    axios
+      .put(`/project/${project.token}/${file.file_index}`, {
+        meta: circuit.meta ? circuit.meta : [],
+        content: circuit.instructions ? circuit.instructions : [],
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  }, [circuit]);
 
   return (
     <Grid
@@ -56,7 +75,7 @@ export default function Composer(props) {
 
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
-  const [circuit, setCircuit] = React.useState(null);
+  // const [circuit, setCircuit] = React.useState(null);
   const [files, setFiles] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [project, setProject] = React.useState(null);
@@ -123,15 +142,6 @@ export default function Composer(props) {
               setError(err.message);
               console.log(err);
             });
-        } else {
-          let startCircuit = {
-            meta: {
-              qubits: 1,
-              bits: 0,
-            },
-            instructions: [],
-          };
-          setCircuit(startCircuit);
         }
       }
     }, 300);
@@ -158,6 +168,8 @@ export default function Composer(props) {
           </Box>
         ) : (
           <Wrapper
+            preview={preview}
+            project={project}
             files={files}
             file={files[activeFile]}
             setActiveFile={setActiveFile}
