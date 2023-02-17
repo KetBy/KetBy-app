@@ -16,7 +16,7 @@ const Wrapper = (props) => {
 
   const [circuit, setCircuit] = React.useState({
     meta: file.meta,
-    instructions: parseInstructionsString(file.content),
+    instructions: file.content,
   });
 
   return (
@@ -66,7 +66,7 @@ export default function Composer(props) {
     setTimeout(() => {
       if (preview === true) {
         setProject({
-          id: 1,
+          id: 0,
           title: "Demo project",
           description: "This is just a demo quantum project",
           thumbnail_url: null,
@@ -80,11 +80,12 @@ export default function Composer(props) {
         setFiles({
           1: {
             id: 1,
-            project_id: 1,
+            project_id: 0,
             file_index: 1,
             title: "New file",
-            content:
-              "S[0]; H[1]; T+[2]; I[2]; CX[0,2]; X[1]; SX[2]; Tfl[1,0,3]; X[2]; I[0]; I[1]; I[1]; SWAP[1,3]; SX+[1]; X[0]; X[0]; S+[0]; RX[3]; H[0]; CX[2,0]",
+            content: parseInstructionsString(
+              "S[0]; H[1]; T+[2]; I[2]; CX[0,2]; X[1]; SX[2]; Tfl[1,0,3]; X[2]; I[0]; I[1]; I[1]; SWAP[1,3]; SX+[1]; X[0]; X[0]; S+[0]; RX[3]; H[0]; CX[2,0]"
+            ),
             file_type_name: "qc",
             meta: {
               qubits: 5,

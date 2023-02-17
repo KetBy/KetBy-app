@@ -296,6 +296,7 @@ const Left = ({ circuit, setCircuit }) => {
   /** The circuit canvas */
 }
 const Circuit = ({ circuit, setCircuit }) => {
+  console.log("regenerating");
   let { matrix, colMap } = generateCanvasMatrix(
     circuit.instructions,
     circuit.meta.qubits
