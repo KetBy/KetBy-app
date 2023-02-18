@@ -695,7 +695,8 @@ const Graph2 = (props) => {
 };
 
 const Canvas = (props) => {
-  const { circuit, setCircuit, sidebarCollapsed, setSidebarCollapsed } = props;
+  const { circuit, setCircuit, sidebarCollapsed, setSidebarCollapsed, status } =
+    props;
 
   return (
     <Box>
@@ -716,10 +717,10 @@ const Canvas = (props) => {
               <Typography variant="subtitle2">My circuit #1</Typography>
             </Breadcrumbs>
             <Chip
-              label="Log in to save"
+              label={status}
               size="small"
               variant="outlined"
-              sx={{ ml: 2 }}
+              sx={{ ml: 2, fontStyle: "italic" }}
             />
           </Grid>
         </Grid>

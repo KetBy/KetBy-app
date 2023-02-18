@@ -26,15 +26,32 @@ const Wrapper = (props) => {
     instructions: file.content,
   });
 
+  const [status, setStatus] = React.useState(
+    preview ? "Log in to save" : "Loading..."
+  );
+
+  const [updateCount, setUpdateCount] = React.useState(0);
+
   React.useEffect(() => {
     if (preview) return;
+    if (updateCount > 0) setStatus("Saving changes...");
     axios
       .put(`/project/${project.token}/${file.file_index}`, {
         meta: circuit.meta ? circuit.meta : [],
         content: circuit.instructions ? circuit.instructions : [],
+        count: updateCount,
       })
       .then((res) => {
+        setStatus(res.data.status);
+        setUpdateCount(updateCount + 1);
+      })
+      .catch((res) => {
         console.log(res);
+        if (res.response.data && res.response.data.status) {
+          setStatus(res.response.data.status);
+        } else {
+          setStatus("Could not save changes");
+        }
       });
   }, [circuit]);
 
@@ -56,6 +73,7 @@ const Wrapper = (props) => {
           setCircuit={setCircuit}
           sidebarCollapsed={sidebarCollapsed}
           setSidebarCollapsed={setSidebarCollapsed}
+          status={status}
         />
       </Grid>
       <Grid item width="auto">
