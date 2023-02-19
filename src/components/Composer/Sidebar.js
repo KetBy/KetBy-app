@@ -419,33 +419,36 @@ const Sidebar = (props) => {
       )}
       {/* Mobile sidebar */}
       {openMobile && (
-        <Box
-          sx={{
-            width: "100%",
-            height: `calc(100vh - ${theme.constants.menuHeight}px)`,
-            position: "fixed",
-            zIndex: 999,
-            display: {
-              md: "none",
-            },
-            top: `${theme.constants.menuHeight}px`,
-            right: 0,
-            background: "white",
-          }}
-          className="mobile-sidebar"
-        >
-          <ProjectHeader
-            projectTab={projectTab}
-            setProjectTab={setProjectTab}
-            setOpenMobile={setOpenMobile}
-          />
-          <ProjectContent
-            projectTab={projectTab}
-            files={files}
-            activeFile={activeFile}
-            circuit={circuit}
-          />
-        </Box>
+        <>
+          <style>{"html,body{overflow-y:hidden !important;}"}</style>
+          <Box
+            sx={{
+              width: "100%",
+              height: `calc(100vh - ${theme.constants.menuHeight}px)`,
+              position: "fixed",
+              zIndex: 999,
+              display: {
+                md: "none",
+              },
+              top: `${theme.constants.menuHeight}px`,
+              right: 0,
+              background: "white",
+            }}
+            className="mobile-sidebar"
+          >
+            <ProjectHeader
+              projectTab={projectTab}
+              setProjectTab={setProjectTab}
+              setOpenMobile={setOpenMobile}
+            />
+            <ProjectContent
+              projectTab={projectTab}
+              files={files}
+              activeFile={activeFile}
+              circuit={circuit}
+            />
+          </Box>
+        </>
       )}
     </>
   );

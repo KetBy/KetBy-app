@@ -744,7 +744,20 @@ const Canvas = (props) => {
             cursor: "pointer",
           }}
         >
-          {activeFile.title}
+          <Box
+            component="span"
+            sx={{
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              maxWidth: {
+                xs: theme.spacing(6),
+                md: theme.spacing(12),
+              },
+            }}
+          >
+            {activeFile.title}
+          </Box>
           <KeyboardArrowDownIcon
             sx={{
               fontSize: (theme) => theme.spacing(2),
@@ -821,7 +834,7 @@ const Canvas = (props) => {
         }}
         alignItems="center"
       >
-        <Grid item xs={6}>
+        <Grid item xs={6.25}>
           <Grid container>
             <Grid item xs={12}>
               <Grid container>
@@ -850,14 +863,36 @@ const Canvas = (props) => {
                   item
                   sx={{
                     ml: {
-                      xs: 2,
+                      xs: 1,
                       md: 0,
                     },
                     mt: -0.5,
                   }}
                 >
-                  <Breadcrumbs separator="›" aria-label="breadcrumb">
-                    <Typography variant="subtitle1">{project.title}</Typography>
+                  <Breadcrumbs
+                    separator="›"
+                    aria-label="breadcrumb"
+                    sx={{
+                      "& .MuiBreadcrumbs-separator": {
+                        mx: (theme) => theme.spacing(0.5),
+                      },
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                        maxWidth: {
+                          xs: theme.spacing(4),
+                          sm: theme.spacing(6),
+                          md: theme.spacing(16),
+                        },
+                      }}
+                    >
+                      {project.title}
+                    </Typography>
                     <FileSelector
                       files={files}
                       activeFile={activeFile}
@@ -882,7 +917,7 @@ const Canvas = (props) => {
         </Grid>
         <Grid
           item
-          xs={6}
+          xs={5.75}
           sx={{
             display: "flex",
             justifyContent: "right",
@@ -928,9 +963,29 @@ const Canvas = (props) => {
                 size="small"
                 variant="contained"
                 startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "inline-flex",
+                  },
+                }}
               >
                 Run
               </Button>
+              <IconButton
+                size="small"
+                variant="contained"
+                sx={{
+                  color: "white",
+                  background: (theme) =>
+                    `${theme.palette.primary.main} !important`,
+                  display: {
+                    md: "none",
+                  },
+                }}
+              >
+                <PlayArrowRoundedIcon />
+              </IconButton>
             </Box>
             <IconButton
               onClick={() => {
