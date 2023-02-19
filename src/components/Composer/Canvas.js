@@ -32,6 +32,10 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
+import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -145,8 +149,8 @@ const RowButton = ({ index, circuit, setCircuit }) => {
         variant="outlined"
         size="small"
         sx={{
-          width: theme.spacing(4),
-          height: theme.spacing(4),
+          width: theme.spacing(4.25),
+          height: theme.spacing(4.25),
           minWidth: 0,
           minHeight: 0,
           borderRadius: 0,
@@ -273,8 +277,8 @@ const Left = ({ circuit, setCircuit }) => {
               });
             }}
             sx={{
-              width: theme.spacing(4),
-              height: theme.spacing(4),
+              width: theme.spacing(4.25),
+              height: theme.spacing(4.25),
               minWidth: 0,
               minHeight: 0,
               borderRadius: 0,
@@ -695,8 +699,113 @@ const Graph2 = (props) => {
 };
 
 const Canvas = (props) => {
-  const { circuit, setCircuit, sidebarCollapsed, setSidebarCollapsed, status } =
-    props;
+  const {
+    circuit,
+    setCircuit,
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    status,
+    project,
+    files,
+    activeFile,
+    setActiveFile,
+    setGatesDirectoryOpenMobile,
+  } = props;
+
+  const FileSelector = (props) => {
+    const { files, activeFile, setActiveFile } = props;
+
+    // console.log(files);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <>
+        <Typography
+          variant="subtitle2"
+          aria-label="files"
+          id="file-selector-button"
+          aria-controls={open ? "file-selector" : undefined}
+          aria-expanded={open ? "true" : undefined}
+          aria-haspopup="true"
+          onClick={handleClick}
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          {activeFile.title}
+          <KeyboardArrowDownIcon
+            sx={{
+              fontSize: (theme) => theme.spacing(2),
+            }}
+          />
+        </Typography>
+        <Menu
+          id="file-selector"
+          MenuListProps={{
+            "aria-labelledby": "file-selector-button",
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: 200,
+              width: 200,
+            },
+          }}
+          sx={{
+            "& .MuiPaper-root": {
+              marginTop: theme.spacing(1),
+              minWidth: 180,
+              color:
+                theme.palette.mode === "light"
+                  ? "rgb(55, 65, 81)"
+                  : theme.palette.grey[300],
+              boxShadow:
+                "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+              "& .MuiMenu-list": {
+                padding: "4px 0",
+              },
+              "& .MuiMenuItem-root": {
+                "& .MuiSvgIcon-root": {
+                  fontSize: 18,
+                  color: theme.palette.text.secondary,
+                  marginRight: theme.spacing(1.5),
+                },
+              },
+            },
+          }}
+        >
+          {Object.entries(files).map(([index, file]) => {
+            return (
+              <MenuItem
+                key={index}
+                selected={file.title == activeFile.title}
+                onClick={handleClose}
+              >
+                <ArticleOutlinedIcon />
+                {file.title}
+              </MenuItem>
+            );
+          })}
+          <MenuItem key={"new-file"} onClick={handleClose}>
+            <PostAddOutlinedIcon />
+            Create a new file
+          </MenuItem>
+        </Menu>
+      </>
+    );
+  };
 
   return (
     <Box>
@@ -710,23 +819,68 @@ const Canvas = (props) => {
         }}
         alignItems="center"
       >
-        <Grid item xs={8}>
+        <Grid item xs={6} md={8} sx={{ mt: -0.25 }}>
           <Grid container>
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
-              <Typography variant="subtitle1">New Quantum Project</Typography>
-              <Typography variant="subtitle2">My circuit #1</Typography>
-            </Breadcrumbs>
-            <Chip
-              label={status}
-              size="small"
-              variant="outlined"
-              sx={{ ml: 2, fontStyle: "italic" }}
-            />
+            <Grid item xs={12}>
+              <Grid container>
+                <Grid
+                  item
+                  sx={{
+                    display: {
+                      md: "none",
+                    },
+                  }}
+                >
+                  <IconButton
+                    onClick={() => {
+                      setGatesDirectoryOpenMobile(true);
+                    }}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <ViewModuleOutlinedIcon />
+                  </IconButton>
+                </Grid>
+                <Grid
+                  item
+                  sx={{
+                    ml: {
+                      xs: 2,
+                      md: 0,
+                    },
+                  }}
+                >
+                  <Breadcrumbs separator="›" aria-label="breadcrumb">
+                    <Typography variant="subtitle1">{project.title}</Typography>
+                    <FileSelector
+                      files={files}
+                      activeFile={activeFile}
+                      setActiveFile={setActiveFile}
+                    />
+                  </Breadcrumbs>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      ml: 0,
+                      mt: -1,
+                      fontStyle: "italic",
+                      color: (theme) => theme.palette.grey[500],
+                    }}
+                  >
+                    {status}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
         <Grid
           item
-          xs={4}
+          xs={6}
+          md={4}
           sx={{
             display: "flex",
             justifyContent: "right",

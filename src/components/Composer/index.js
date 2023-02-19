@@ -55,6 +55,9 @@ const Wrapper = (props) => {
       });
   }, [circuit]);
 
+  const [gatesDirectoryOpenMobile, setGatesDirectoryOpenMobile] =
+    React.useState(false);
+
   return (
     <Grid
       container
@@ -65,7 +68,12 @@ const Wrapper = (props) => {
       }}
     >
       <Grid item width="auto">
-        <GatesDirectory circuit={circuit} setCircuit={setCircuit} />
+        <GatesDirectory
+          circuit={circuit}
+          setCircuit={setCircuit}
+          openMobile={gatesDirectoryOpenMobile}
+          setOpenMobile={setGatesDirectoryOpenMobile}
+        />
       </Grid>
       <Grid item xs>
         <Canvas
@@ -74,6 +82,11 @@ const Wrapper = (props) => {
           sidebarCollapsed={sidebarCollapsed}
           setSidebarCollapsed={setSidebarCollapsed}
           status={status}
+          project={project}
+          files={files}
+          activeFile={file}
+          setActiveFile={setActiveFile}
+          setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
         />
       </Grid>
       <Grid item width="auto">

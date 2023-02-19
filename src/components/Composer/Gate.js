@@ -229,7 +229,13 @@ const Representation = (props) => {
   /* Gate menu item responsible for adding a new instruction to the circuit */
 }
 const AddNewInstruction = (props) => {
-  const { circuit, setCircuit, gate, handleClose } = props;
+  const {
+    circuit,
+    setCircuit,
+    gate,
+    handleClose,
+    setGatesDirectoryOpenMobile,
+  } = props;
   const [selectedQubits, setSelectedQubits] = React.useState([
     ...Array(gate.qubits),
   ]);
@@ -254,6 +260,7 @@ const AddNewInstruction = (props) => {
       });
       setSelectedQubits([...Array(gate.qubits)]);
       handleClose();
+      setGatesDirectoryOpenMobile(false); // Close gates directory on mobile
     } else {
       setSelectedQubits(newSelectedQubits);
     }
@@ -324,6 +331,7 @@ const OptionsMenu = (props) => {
     preview,
     instructionIndex,
     gate,
+    setGatesDirectoryOpenMobile,
   } = props;
 
   const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
@@ -381,7 +389,11 @@ const OptionsMenu = (props) => {
             }}
           />
         </ListItemIcon>
-        <AddNewInstruction handleClose={handleClose} {...props} />
+        <AddNewInstruction
+          handleClose={handleClose}
+          setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
+          {...props}
+        />
       </MenuItem>,
       <MenuItem onClick={() => setView("info")} key="view-info">
         <ListItemIcon>
@@ -620,6 +632,7 @@ const Gate = (props) => {
     setCircuit,
     instructionIndex,
     setDisableDragging,
+    setGatesDirectoryOpenMobile,
   } = props;
   const preview = props.preview ? true : false;
 
@@ -771,6 +784,7 @@ const Gate = (props) => {
         preview={preview}
         instructionIndex={instructionIndex}
         gate={gate}
+        setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
       />
     </>
   );

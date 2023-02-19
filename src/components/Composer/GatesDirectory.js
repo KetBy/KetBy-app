@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Box, Grid, Typography, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import theme from "../../themes/default";
 import Gate from "./Gate";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -7,18 +14,35 @@ import ExpandOutlinedIcon from "@mui/icons-material/ExpandRounded";
 import CompressOutlinedIcon from "@mui/icons-material/CompressRounded";
 import ViewListOutlinedIcon from "@mui/icons-material/ViewListOutlined";
 import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 
 const gatesMap = getGatesMap();
 
 const GatesDirectory = (props) => {
   const [display, setDisplay] = React.useState("default"); // default / compact / detailed
-  const { circuit, setCircuit } = props;
+  const { circuit, setCircuit, openMobile, setOpenMobile } = props;
 
   return (
     <Box
       sx={{
-        width: `calc(2px + ${theme.spacing(display === "compact" ? 11 : 31)})`,
-        borderRight: `1px solid ${theme.palette.grey[200]}`,
+        width: {
+          xs: "100%",
+          md: `calc(2px + ${theme.spacing(display === "compact" ? 11 : 31)})`,
+        },
+        borderRight: {
+          xs: "none",
+          md: `1px solid ${theme.palette.grey[200]}`,
+        },
+        position: {
+          xs: "fixed",
+          md: "relative",
+        },
+        zIndex: 999,
+        background: "white",
+        display: {
+          xs: openMobile ? "block" : "none",
+          md: "block",
+        },
       }}
     >
       <Grid
@@ -33,9 +57,49 @@ const GatesDirectory = (props) => {
         alignItems="center"
       >
         <Grid item xs={6}>
-          <Typography variant="subtitle1">
-            {display === "compact" ? "Gts." : "Gates"}
-          </Typography>
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Grid
+              item
+              sx={{
+                display: {
+                  xs: "block",
+                  md: "none",
+                },
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  setOpenMobile(false);
+                }}
+                size="small"
+                sx={{
+                  borderRadius: 0,
+                }}
+                disableTouchRipple
+              >
+                <ClearRoundedIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  ml: {
+                    xs: 1,
+                    md: 0,
+                  },
+                }}
+              >
+                {display === "compact" ? "Gts." : "Gates"}
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid
           item
@@ -65,7 +129,15 @@ const GatesDirectory = (props) => {
               >
                 <ViewListOutlinedIcon />
               </IconButton>
-              <Grid item>
+              <Grid
+                item
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "block",
+                  },
+                }}
+              >
                 <IconButton
                   onClick={() => {
                     setDisplay("compact");
@@ -106,22 +178,32 @@ const GatesDirectory = (props) => {
               >
                 <ViewModuleOutlinedIcon />
               </IconButton>
-              <IconButton
-                onClick={() => {
-                  setDisplay("compact");
-                }}
-                size="small"
+              <Grid
+                item
                 sx={{
-                  borderRadius: 0,
+                  display: {
+                    xs: "none",
+                    md: "block",
+                  },
                 }}
-                disableTouchRipple
               >
-                <CompressOutlinedIcon
-                  sx={{
-                    transform: "rotate(90deg)",
+                <IconButton
+                  onClick={() => {
+                    setDisplay("compact");
                   }}
-                />
-              </IconButton>
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                  }}
+                  disableTouchRipple
+                >
+                  <CompressOutlinedIcon
+                    sx={{
+                      transform: "rotate(90deg)",
+                    }}
+                  />
+                </IconButton>
+              </Grid>
             </Grid>
           )}
           {display == "compact" && (
@@ -186,6 +268,7 @@ const GatesDirectory = (props) => {
                           preview
                           circuit={circuit}
                           setCircuit={setCircuit}
+                          setGatesDirectoryOpenMobile={setOpenMobile}
                         />
                       </Grid>
                     ) : (
@@ -202,6 +285,7 @@ const GatesDirectory = (props) => {
                               preview
                               circuit={circuit}
                               setCircuit={setCircuit}
+                              setGatesDirectoryOpenMobile={setOpenMobile}
                             />
                           </Grid>
                           <Grid
@@ -237,6 +321,7 @@ const GatesDirectory = (props) => {
                       preview
                       circuit={circuit}
                       setCircuit={setCircuit}
+                      setGatesDirectoryOpenMobile={setOpenMobile}
                     />
                   </Grid>
                 );
