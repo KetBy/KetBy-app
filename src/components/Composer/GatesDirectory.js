@@ -49,7 +49,7 @@ const GatesDirectory = (props) => {
         container
         sx={{
           px: 1,
-          pr: 0.5,
+          pr: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
           background: theme.palette.primary[50],

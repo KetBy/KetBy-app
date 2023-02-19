@@ -36,6 +36,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -710,6 +711,7 @@ const Canvas = (props) => {
     activeFile,
     setActiveFile,
     setGatesDirectoryOpenMobile,
+    setSidebarOpenMobile,
   } = props;
 
   const FileSelector = (props) => {
@@ -819,7 +821,7 @@ const Canvas = (props) => {
         }}
         alignItems="center"
       >
-        <Grid item xs={6} md={8} sx={{ mt: -0.25 }}>
+        <Grid item xs={6}>
           <Grid container>
             <Grid item xs={12}>
               <Grid container>
@@ -851,6 +853,7 @@ const Canvas = (props) => {
                       xs: 2,
                       md: 0,
                     },
+                    mt: -0.5,
                   }}
                 >
                   <Breadcrumbs separator="›" aria-label="breadcrumb">
@@ -880,7 +883,6 @@ const Canvas = (props) => {
         <Grid
           item
           xs={6}
-          md={4}
           sx={{
             display: "flex",
             justifyContent: "right",
@@ -937,6 +939,10 @@ const Canvas = (props) => {
               size="small"
               sx={{
                 borderRadius: 0,
+                display: {
+                  xs: "none",
+                  md: "inline-flex",
+                },
               }}
               disableTouchRipple
             >
@@ -945,6 +951,21 @@ const Canvas = (props) => {
               ) : (
                 <KeyboardDoubleArrowRightRoundedIcon />
               )}
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                setSidebarOpenMobile(true);
+              }}
+              size="small"
+              sx={{
+                borderRadius: 0,
+                display: {
+                  md: "none",
+                },
+              }}
+              disableTouchRipple
+            >
+              <MenuRoundedIcon />
             </IconButton>
           </Grid>
         </Grid>

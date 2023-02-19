@@ -57,6 +57,7 @@ const Wrapper = (props) => {
 
   const [gatesDirectoryOpenMobile, setGatesDirectoryOpenMobile] =
     React.useState(false);
+  const [sidebarOpenMobile, setSidebarOpenMobile] = React.useState(false);
 
   return (
     <Grid
@@ -87,6 +88,7 @@ const Wrapper = (props) => {
           activeFile={file}
           setActiveFile={setActiveFile}
           setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
+          setSidebarOpenMobile={setSidebarOpenMobile}
         />
       </Grid>
       <Grid item width="auto">
@@ -95,6 +97,8 @@ const Wrapper = (props) => {
           circuit={circuit}
           files={files}
           activeFile={file}
+          openMobile={sidebarOpenMobile}
+          setOpenMobile={setSidebarOpenMobile}
         />
       </Grid>
     </Grid>

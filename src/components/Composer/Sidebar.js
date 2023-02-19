@@ -20,6 +20,7 @@ import theme from "../../themes/default";
 import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { gatesMap as getGatesMap } from "../../utils/gates";
 
 const CustomTabs = styled(Tabs)({
@@ -79,7 +80,7 @@ const CustomList = styled(List)({
 });
 
 const ProjectHeader = (props) => {
-  const { projectTab, setProjectTab } = props;
+  const { projectTab, setProjectTab, setOpenMobile } = props;
 
   const handleChange = (event, newValue) => {
     setProjectTab(newValue);
@@ -112,29 +113,77 @@ const ProjectHeader = (props) => {
               px: 1,
             }}
           />
+          <Tab
+            label={<Typography variant="subtitle1">Export</Typography>}
+            value="export"
+            sx={{
+              px: 1,
+              display: {
+                md: "none",
+              },
+            }}
+          />
         </CustomTabs>
       </Grid>
-      {projectTab === "circuits" && (
-        <Grid item xs={4}>
+      <Grid item xs={4}>
+        <Grid
+          container
+          sx={{
+            dispaly: "flex",
+            justifyContent: "right",
+          }}
+        >
+          {projectTab === "circuits" && (
+            <Grid item>
+              <Grid
+                container
+                sx={{
+                  justifyContent: "right",
+                }}
+              >
+                <IconButton
+                  onClick={() => {}}
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                  }}
+                  disableTouchRipple
+                >
+                  <PostAddOutlinedIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+          )}
           <Grid
-            container
+            item
             sx={{
-              justifyContent: "right",
+              display: {
+                md: "none",
+              },
             }}
           >
-            <IconButton
-              onClick={() => {}}
-              size="small"
+            <Grid
+              container
               sx={{
-                borderRadius: 0,
+                justifyContent: "right",
               }}
-              disableTouchRipple
             >
-              <PostAddOutlinedIcon />
-            </IconButton>
+              <IconButton
+                onClick={() => {
+                  setOpenMobile(false);
+                }}
+                size="small"
+                sx={{
+                  borderRadius: 0,
+                }}
+                disableTouchRipple
+              >
+                <ClearRoundedIcon />
+              </IconButton>
+            </Grid>
           </Grid>
         </Grid>
-      )}
+      </Grid>
     </Grid>
   );
 };
@@ -181,8 +230,63 @@ const FileOptionsMenu = (props) => {
   );
 };
 
+const ExportContent = (props) => {
+  const { circuit } = props;
+  let gatesMap = getGatesMap();
+
+  return (
+    <Box
+      sx={{
+        height: {
+          xs: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
+            6
+          )} ))`,
+          md: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
+            6 * 2
+          )} ) / 2)`,
+        },
+        overflowY: "auto",
+      }}
+      p={1}
+    >
+      <Typography variant="body2" mb={1}>
+        Internal representation
+      </Typography>
+      <Box
+        sx={{
+          background: theme.palette.grey[50],
+          color: theme.palette.grey[700],
+          p: 1,
+        }}
+      >
+        {circuit.instructions.map((ins, index) => {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              sx={{ fontFamily: "monospace" }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  color: gatesMap[ins.gate].color.main,
+                  fontWeight: 600,
+                }}
+              >
+                {ins.gate}
+              </Box>
+              [{ins.qubits.join(",")}]
+              {ins.params.length > 0 && `[${ins.params.join(",")}]`}
+            </Typography>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+};
+
 const ProjectContent = (props) => {
-  const { projectTab, files, activeFile } = props;
+  const { projectTab, files, activeFile, circuit } = props;
 
   const [active, setActive] = React.useState(0);
 
@@ -230,17 +334,29 @@ const ProjectContent = (props) => {
     return <Box sx={{ p: 1 }}>Settings coming soon...</Box>;
   };
 
+  const Export = (props) => {
+    const { circuit } = props;
+
+    return !circuit ? null : <ExportContent circuit={circuit} />;
+  };
+
   return (
     <Box
       sx={{
-        height: `calc((100vh - ${
-          theme.constants.menuHeight
-        }px - ${theme.spacing(6 * 2)} ) / 2)`,
+        height: {
+          xs: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
+            6
+          )} ))`,
+          md: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
+            6 * 2
+          )} ) / 2)`,
+        },
         overflow: "auto",
       }}
     >
       {projectTab === "circuits" && <Circuits />}
       {projectTab === "settings" && <Settings />}
+      {projectTab === "export" && <Export circuit={circuit} />}
     </Box>
   );
 };
@@ -266,77 +382,72 @@ const ExportHeader = (props) => {
   );
 };
 
-const ExportContent = (props) => {
-  const { circuit } = props;
-  let gatesMap = getGatesMap();
-
-  return (
-    <Box
-      sx={{
-        height: `calc((100vh - ${
-          theme.constants.menuHeight
-        }px - ${theme.spacing(6 * 2)} ) / 2)`,
-        overflowY: "auto",
-      }}
-      p={1}
-    >
-      <Typography variant="body2" mb={1}>
-        Internal representation
-      </Typography>
-      <Box
-        sx={{
-          background: theme.palette.grey[50],
-          color: theme.palette.grey[700],
-          p: 1,
-        }}
-      >
-        {circuit.instructions.map((ins, index) => {
-          return (
-            <Typography
-              key={index}
-              variant="body2"
-              sx={{ fontFamily: "monospace" }}
-            >
-              <Box
-                component="span"
-                sx={{
-                  color: gatesMap[ins.gate].color.main,
-                  fontWeight: 600,
-                }}
-              >
-                {ins.gate}
-              </Box>
-              [{ins.qubits.join(",")}]
-              {ins.params.length > 0 && `[${ins.params.join(",")}]`}
-            </Typography>
-          );
-        })}
-      </Box>
-    </Box>
-  );
-};
-
 const Sidebar = (props) => {
   const [projectTab, setProjectTab] = React.useState("circuits");
-  const { collapsed, circuit, files, activeFile } = props;
+  const { collapsed, circuit, files, activeFile, openMobile, setOpenMobile } =
+    props;
 
-  return collapsed ? null : (
-    <Box
-      sx={{
-        width: `calc(2px + ${theme.spacing(31)})`,
-        borderLeft: `1px solid ${theme.palette.grey[200]}`,
-        height: `calc(100vh - ${theme.constants.menuHeight})`,
-      }}
-    >
-      <ProjectHeader projectTab={projectTab} setProjectTab={setProjectTab} />
-      <ProjectContent
-        projectTab={projectTab}
-        files={files}
-        activeFile={activeFile}
-      />
-      <ExportHeader />
-      <ExportContent circuit={circuit} />
-    </Box>
+  return (
+    <>
+      {/* Desktop sidebar */}
+      {collapsed ? null : (
+        <Box
+          sx={{
+            width: `calc(2px + ${theme.spacing(31)})`,
+            borderLeft: `1px solid ${theme.palette.grey[200]}`,
+            height: `calc(100vh - ${theme.constants.menuHeight}px)`,
+            display: {
+              xs: "none",
+              md: "block",
+            },
+          }}
+        >
+          <ProjectHeader
+            projectTab={projectTab}
+            setProjectTab={setProjectTab}
+            setOpenMobile={setOpenMobile}
+          />
+          <ProjectContent
+            projectTab={projectTab}
+            files={files}
+            activeFile={activeFile}
+          />
+
+          <ExportHeader />
+          <ExportContent circuit={circuit} />
+        </Box>
+      )}
+      {/* Mobile sidebar */}
+      {openMobile && (
+        <Box
+          sx={{
+            width: "100%",
+            height: `calc(100vh - ${theme.constants.menuHeight}px)`,
+            position: "fixed",
+            zIndex: 999,
+            display: {
+              md: "none",
+            },
+            top: `${theme.constants.menuHeight}px`,
+            right: 0,
+            background: "white",
+          }}
+          className="mobile-sidebar"
+        >
+          <ProjectHeader
+            projectTab={projectTab}
+            setProjectTab={setProjectTab}
+            setOpenMobile={setOpenMobile}
+          />
+          <ProjectContent
+            projectTab={projectTab}
+            files={files}
+            activeFile={activeFile}
+            circuit={circuit}
+          />
+        </Box>
+      )}
+    </>
   );
 };
 
