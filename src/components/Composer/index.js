@@ -14,12 +14,15 @@ const Wrapper = (props) => {
   const {
     preview,
     files,
-    file,
     setActiveFile,
+    activeFile,
     sidebarCollapsed,
     setSidebarCollapsed,
     project,
+    setFiles
   } = props;
+
+  const file = files[activeFile]
 
   const [circuit, setCircuit] = React.useState({
     meta: file.meta,
@@ -31,6 +34,13 @@ const Wrapper = (props) => {
   );
 
   const [updateCount, setUpdateCount] = React.useState(0);
+
+  React.useEffect(() => {
+    setCircuit({
+      meta: files[activeFile].meta,
+      instructions: files[activeFile].content
+    })
+  }, [activeFile])
 
   React.useEffect(() => {
     if (preview) return;
@@ -46,7 +56,6 @@ const Wrapper = (props) => {
         setUpdateCount(updateCount + 1);
       })
       .catch((res) => {
-        console.log(res);
         if (res.response.data && res.response.data.status) {
           setStatus(res.response.data.status);
         } else {
@@ -96,9 +105,12 @@ const Wrapper = (props) => {
           collapsed={sidebarCollapsed}
           circuit={circuit}
           files={files}
+          setFiles={setFiles}
           activeFile={file}
+          setActiveFile={setActiveFile}
           openMobile={sidebarOpenMobile}
           setOpenMobile={setSidebarOpenMobile}
+          project={project}
         />
       </Grid>
     </Grid>
@@ -175,7 +187,6 @@ export default function Composer(props) {
             })
             .catch((err) => {
               setError(err.message);
-              console.log(err);
             });
         }
       }
@@ -206,7 +217,8 @@ export default function Composer(props) {
             preview={preview}
             project={project}
             files={files}
-            file={files[activeFile]}
+            setFiles={setFiles}
+            activeFile={activeFile}
             setActiveFile={setActiveFile}
             sidebarCollapsed={sidebarCollapsed}
             setSidebarCollapsed={setSidebarCollapsed}
