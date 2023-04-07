@@ -59,17 +59,13 @@ function ResponsiveAppBar(props) {
 
   const menuItems = appState.isLoggedIn
     ? [
-        { title: "Quantum composer", url: "/composer" },
         { title: "Discover", url: "/discover" },
         {
           title: "My projects",
           url: `/u/${appState.user.username}?tab=projects`,
         },
       ]
-    : [
-        { title: "Quantum composer", url: "/composer" },
-        { title: "Discover", url: "/discover" },
-      ];
+    : [{ title: "Discover", url: "/discover" }];
 
   const userMenuItems = appState.isLoggedIn
     ? [

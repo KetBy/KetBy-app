@@ -16,8 +16,10 @@ import {
   Drawer,
   TextField,
   Button,
-  Alert
+  Alert,
 } from "@mui/material";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import theme from "../../themes/default";
@@ -87,13 +89,20 @@ const CustomList = styled(List)({
 });
 
 const ProjectHeader = (props) => {
-  const { projectTab, setProjectTab, setOpenMobile, project, setFiles, setActiveFile } = props;
+  const {
+    projectTab,
+    setProjectTab,
+    setOpenMobile,
+    project,
+    setFiles,
+    setActiveFile,
+  } = props;
 
   const handleChange = (event, newValue) => {
     setProjectTab(newValue);
   };
 
-  const [newFileDrawerOpen, setNewFileDrawerOpen] = React.useState(false)
+  const [newFileDrawerOpen, setNewFileDrawerOpen] = React.useState(false);
 
   const toggleFileDrawer = (event) => {
     setNewFileDrawerOpen(!newFileDrawerOpen);
@@ -317,10 +326,12 @@ const NewFileDrawer = ({
   project,
   setFiles,
   setActiveFile,
-}) => {  
+}) => {
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState(null);
   const [success, setSuccess] = React.useState(null);
+
+  const router = useRouter();
 
   const defaultInput = {
     title: "",
@@ -354,9 +365,10 @@ const NewFileDrawer = ({
           newFiles[file.file_index] = file;
         });
         setFiles(newFiles);
-        setActiveFile(res.data.file.file_index)
-        toggleDrawer()
-        setLoading(false)
+        // setActiveFile(res.data.file.file_index);
+        router.push(`/composer/${project.token}/${res.data.file.file_index}`);
+        toggleDrawer();
+        setLoading(false);
         setInput(defaultInput);
       })
       .catch((err) => {
@@ -452,9 +464,12 @@ const NewFileDrawer = ({
 };
 
 const ProjectContent = (props) => {
-  const { projectTab, files, activeFile, setActiveFile, circuit } = props;
+  const { projectTab, files, activeFile, setActiveFile, circuit, project } =
+    props;
 
   const [active, setActive] = React.useState(0);
+
+  const router = useRouter();
 
   const Circuits = () => {
     return (
@@ -466,7 +481,14 @@ const ProjectContent = (props) => {
                 selected={activeFile.file_index == index}
                 key={index}
                 disableRipple
-                onClick={() => setActiveFile(index)}
+                sx={{
+                  "&:hover": {
+                    background: "white",
+                  },
+                }}
+                component={Link}
+                href={`/composer/${project.token}/${index}`}
+                scroll={false}
               >
                 <ListItemIcon>
                   <ArticleOutlinedIcon />
@@ -550,8 +572,17 @@ const ExportHeader = (props) => {
 
 const Sidebar = (props) => {
   const [projectTab, setProjectTab] = React.useState("circuits");
-  const { collapsed, circuit, files, setFiles, activeFile, setActiveFile, openMobile, setOpenMobile, project } =
-    props;
+  const {
+    collapsed,
+    circuit,
+    files,
+    setFiles,
+    activeFile,
+    setActiveFile,
+    openMobile,
+    setOpenMobile,
+    project,
+  } = props;
 
   return (
     <>
@@ -581,6 +612,7 @@ const Sidebar = (props) => {
             files={files}
             activeFile={activeFile}
             setActiveFile={setActiveFile}
+            project={project}
           />
 
           <ExportHeader />
@@ -620,6 +652,7 @@ const Sidebar = (props) => {
               activeFile={activeFile}
               circuit={circuit}
               setActiveFile={setActive}
+              project={project}
             />
           </Box>
         </>

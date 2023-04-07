@@ -21,12 +21,8 @@ export default function HomePage() {
           This website is under construction.
         </Typography>
         <Typography>
-          You can explore our <Link href="/composer">quantum composer</Link>
-          {" or "}
+          You can however{" "}
           <Link href="/auth/register">create a new account</Link>.
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 3 }}>
-          DigitalOcean build
         </Typography>
       </Box>
     </>

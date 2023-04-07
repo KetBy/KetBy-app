@@ -337,7 +337,7 @@ const OptionsMenu = (props) => {
   const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
 
   const [selectedQubits, setSelectedQubits] = React.useState(
-    instructionIndex
+    typeof instructionIndex !== "undefined"
       ? circuit.instructions[instructionIndex].qubits.slice()
       : [...Array(gate.qubits)]
   );
@@ -589,9 +589,11 @@ const OptionsMenu = (props) => {
 
   return (
     <Menu
-      id={`options-menu--${instructionIndex ? instructionIndex : gate.name}`}
+      id={`options-menu--${
+        typeof instructionIndex !== "undefined" ? instructionIndex : gate.name
+      }`}
       aria-labelledby={`options-menu--${
-        instructionIndex ? instructionIndex : gate.name
+        typeof instructionIndex !== "undefined" ? instructionIndex : gate.name
       }`}
       anchorEl={anchorEl}
       open={open}

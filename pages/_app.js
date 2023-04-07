@@ -13,9 +13,12 @@ import "../src/themes/overrides.scss";
 import Menu from "../src/components/Menu";
 import { AppWrapper } from "../src/utils/context";
 
-const NextNProgress = dynamic(() => import("nextjs-progressbar"), {
-  loading: () => null,
-});
+const NextProgressbar = dynamic(
+  () => import("./../src/components/custom/NextProgressbar.js"),
+  {
+    loading: () => null,
+  }
+);
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -34,11 +37,7 @@ export default function MyApp(props) {
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <AppWrapper>
-          <NextNProgress
-            color={theme.palette.darkGrey.main}
-            height={3}
-            options={{ showSpinner: false }}
-          />
+          <NextProgressbar color={theme.palette.red.main} height={4} />
           <Menu dark={router.pathname.startsWith("/auth")} />
           <Box
             sx={{

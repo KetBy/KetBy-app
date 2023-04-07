@@ -12,38 +12,27 @@ import CustomCircularProgress from "../custom/CircularProgress";
 
 const Wrapper = (props) => {
   const {
-    preview,
     files,
     setActiveFile,
     activeFile,
     sidebarCollapsed,
     setSidebarCollapsed,
     project,
-    setFiles
+    setFiles,
   } = props;
 
-  const file = files[activeFile]
+  const file = files[activeFile];
 
   const [circuit, setCircuit] = React.useState({
     meta: file.meta,
     instructions: file.content,
   });
 
-  const [status, setStatus] = React.useState(
-    preview ? "Log in to save" : "Loading..."
-  );
+  const [status, setStatus] = React.useState("Loading...");
 
   const [updateCount, setUpdateCount] = React.useState(0);
 
   React.useEffect(() => {
-    setCircuit({
-      meta: files[activeFile].meta,
-      instructions: files[activeFile].content
-    })
-  }, [activeFile])
-
-  React.useEffect(() => {
-    if (preview) return;
     if (updateCount > 0) setStatus("Saving changes...");
     axios
       .put(`/project/${project.token}/${file.file_index}`, {
@@ -118,7 +107,7 @@ const Wrapper = (props) => {
 };
 
 export default function Composer(props) {
-  const { projectToken, fileIndex, preview } = props;
+  const { projectToken, fileIndex } = props;
 
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
@@ -128,70 +117,38 @@ export default function Composer(props) {
   const [project, setProject] = React.useState(null);
   const [activeFile, setActiveFile] = React.useState(null);
 
+  const [uniqueKey, setUniqueKey] = React.useState(1);
+
   React.useEffect(() => {
-    setTimeout(() => {
-      if (preview === true) {
-        setProject({
-          id: 0,
-          title: "Demo project",
-          description: "This is just a demo quantum project",
-          thumbnail_url: null,
-          public: 1,
-          forked_from: null,
-          forks_count: 0,
-          stars_count: 0,
-          next_file_index: 2,
-          token: "-",
-        });
-        setFiles({
-          1: {
-            id: 1,
-            project_id: 0,
-            file_index: 1,
-            title: "New file",
-            content: parseInstructionsString(
-              "S[0]; H[1]; T+[2]; I[2]; CX[0,2]; X[1]; SX[2]; Tfl[1,0,3]; X[2]; I[0]; I[1]; I[1]; SWAP[1,3]; SX+[1]; X[0]; X[0]; S+[0]; RX[3]; H[0]; CX[2,0]"
-            ),
-            file_type_name: "qc",
-            meta: {
-              qubits: 5,
-              bits: 0,
-            },
-          },
-        });
-        setActiveFile(1);
-        setLoading(false);
-      } else {
-        if (projectToken && fileIndex) {
-          axios
-            .get(`/project/${projectToken}`, {
-              fileIndex: parseInt(fileIndex),
-            })
-            .then((res) => {
-              let data = res.data;
-              if (data.success) {
-                setProject(data.project);
-                let newFiles = {};
-                data.files.map((file, index) => {
-                  newFiles[file.file_index] = file;
-                });
-                setFiles(newFiles);
-                if (typeof newFiles[fileIndex] == "undefined") {
-                  throw new Exception("This file does not exist");
-                }
-                setActiveFile(fileIndex);
-                setLoading(false);
-              } else {
-                throw new Exception("Something went wrong.");
-              }
-            })
-            .catch((err) => {
-              setError(err.message);
+    if (projectToken && fileIndex) {
+      axios
+        .get(`/project/${projectToken}`, {
+          fileIndex: parseInt(fileIndex),
+        })
+        .then((res) => {
+          let data = res.data;
+          if (data.success) {
+            setProject(data.project);
+            let newFiles = {};
+            data.files.map((file, index) => {
+              newFiles[file.file_index] = file;
             });
-        }
-      }
-    }, 300);
-  }, []);
+            setFiles(newFiles);
+            if (typeof newFiles[fileIndex] == "undefined") {
+              throw new Exception("This file does not exist");
+            }
+            setActiveFile(fileIndex);
+            setLoading(false);
+            setUniqueKey(uniqueKey + 1);
+          } else {
+            throw new Exception("Something went wrong.");
+          }
+        })
+        .catch((err) => {
+          setError(err.message);
+        });
+    }
+  }, [projectToken, fileIndex]);
 
   return (
     <Box
@@ -214,7 +171,6 @@ export default function Composer(props) {
           </Box>
         ) : (
           <Wrapper
-            preview={preview}
             project={project}
             files={files}
             setFiles={setFiles}
@@ -222,6 +178,7 @@ export default function Composer(props) {
             setActiveFile={setActiveFile}
             sidebarCollapsed={sidebarCollapsed}
             setSidebarCollapsed={setSidebarCollapsed}
+            key={uniqueKey}
           />
         )}
       </>
