@@ -1,3 +1,4 @@
+import "./../src/utils/MuiClassNameSetup.js";
 import * as React from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
@@ -37,7 +38,11 @@ export default function MyApp(props) {
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <AppWrapper>
-          <NextProgressbar color={theme.palette.red.main} height={4} />
+          <NextProgressbar
+            color={theme.palette.red.main}
+            height={3}
+            options={{ showSpinner: false }}
+          />
           <Menu dark={router.pathname.startsWith("/auth")} />
           <Box
             sx={{

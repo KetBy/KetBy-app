@@ -135,8 +135,8 @@ const theme = createTheme({
           width: 32,
           height: 20,
           padding: 0,
-          "& .MuiSwitch-switchBase": {
-            "&.Mui-checked": {
+          "& .KetBy__Switch-switchBase": {
+            "&.KetBy__-checked": {
               transform: "translateX(11px)",
               color: "#fff",
             },
@@ -147,7 +147,7 @@ const theme = createTheme({
           width: 20,
           padding: 0,
           color: "#fff",
-          "&.Mui-checked + .MuiSwitch-track": {
+          "&.KetBy__-checked + .KetBy__Switch-track": {
             opacity: 1,
           },
         },

@@ -779,7 +779,7 @@ const Canvas = (props) => {
             },
           }}
           sx={{
-            "& .MuiPaper-root": {
+            "& .KetBy__Paper-root": {
               marginTop: theme.spacing(1),
               minWidth: 180,
               color:
@@ -788,11 +788,11 @@ const Canvas = (props) => {
                   : theme.palette.grey[300],
               boxShadow:
                 "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
-              "& .MuiMenu-list": {
+              "& .KetBy__Menu-list": {
                 padding: "4px 0",
               },
-              "& .MuiMenuItem-root": {
-                "& .MuiSvgIcon-root": {
+              "& .KetBy__MenuItem-root": {
+                "& .KetBy__SvgIcon-root": {
                   fontSize: 18,
                   color: theme.palette.text.secondary,
                   marginRight: theme.spacing(1.5),
@@ -873,7 +873,7 @@ const Canvas = (props) => {
                     separator="›"
                     aria-label="breadcrumb"
                     sx={{
-                      "& .MuiBreadcrumbs-separator": {
+                      "& .KetBy__Breadcrumbs-separator": {
                         mx: (theme) => theme.spacing(0.5),
                       },
                     }}
@@ -885,8 +885,8 @@ const Canvas = (props) => {
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                         maxWidth: {
-                          xs: theme.spacing(4),
-                          sm: theme.spacing(6),
+                          xs: theme.spacing(10),
+                          sm: theme.spacing(12),
                           md: theme.spacing(16),
                         },
                       }}

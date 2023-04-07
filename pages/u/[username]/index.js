@@ -28,14 +28,14 @@ import NewProjectDrawer from "../../../src/components/NewProjectDrawer";
 import { styled } from "@mui/system";
 
 const CustomTabs = styled(Tabs)(({ theme }) => ({
-  "&.MuiTabs-vertical": {
+  "&.KetBy__Tabs-vertical": {
     mb: `calc(-${theme.spacing(1)} + 2px)`,
-    "& .MuiTab-root": {
+    "& .KetBy__Tab-root": {
       transitionDuration: "0.2s",
       "&:hover": {
         background: theme.palette.grey[50],
       },
-      "&.Mui-selected": {
+      "&.KetBy__-selected": {
         background: theme.palette.primary[50],
       },
     },

@@ -33,14 +33,14 @@ import axios from "../../utils/axios";
 import { gatesMap as getGatesMap } from "../../utils/gates";
 
 const CustomTabs = styled(Tabs)({
-  "& .MuiTab-root": {
+  "& .KetBy__Tab-root": {
     px: 1,
     minWidth: "auto",
   },
 });
 
 const CustomList = styled(List)({
-  "& .MuiListItemButton-root": {
+  "& .KetBy__ListItemButton-root": {
     padding: theme.spacing(0.25, 0.25, 0.25, 1),
     position: "relative",
     "&:after": {
@@ -52,17 +52,17 @@ const CustomList = styled(List)({
       height: 0,
       background: theme.palette.darkGrey.main,
     },
-    "&.Mui-selected": {
+    "&.KetBy__-selected": {
       background: theme.palette.primary[50],
       "&:after": {
         top: 0,
         height: "100%",
       },
     },
-    "&.Mui-focusVisible": {
+    "&.KetBy__-focusVisible": {
       background: "transparent",
     },
-    "& .MuiTypography-root": {
+    "& .KetBy__Typography-root": {
       lineHeight: 1.1,
       "&.meta": {
         "& .user, & .time": {
@@ -79,11 +79,11 @@ const CustomList = styled(List)({
       },
     },
   },
-  "& .MuiListItemIcon-root": {
+  "& .KetBy__ListItemIcon-root": {
     minWidth: 0,
     marginRight: theme.spacing(1),
   },
-  "& .MuiSvgIcon-root": {
+  "& .KetBy__SvgIcon-root": {
     fontSize: 20,
   },
 });
@@ -480,11 +480,22 @@ const ProjectContent = (props) => {
               <ListItemButton
                 selected={activeFile.file_index == index}
                 key={index}
-                disableRipple
                 sx={{
+                  background: `${
+                    activeFile.file_index == index
+                      ? theme.palette.primary[50]
+                      : "white"
+                  } !important`,
                   "&:hover": {
                     background: "white",
                   },
+                  borderLeft: `${
+                    activeFile.file_index == index ? 2 : 2
+                  }px solid ${
+                    activeFile.file_index == index
+                      ? theme.palette.primary.main
+                      : "white"
+                  }`,
                 }}
                 component={Link}
                 href={`/composer/${project.token}/${index}`}
