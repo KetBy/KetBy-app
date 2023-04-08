@@ -11,6 +11,8 @@ export function AppWrapper({ children }) {
     user: null,
   });
 
+  const [projectMemo, setProjectMemo] = React.useState(null);
+
   const checkStatus = async () => {
     axios
       .get("/auth/status")
@@ -60,6 +62,8 @@ export function AppWrapper({ children }) {
         setAppState,
         checkStatus,
         logOut,
+        projectMemo,
+        setProjectMemo,
       }}
     >
       {children}

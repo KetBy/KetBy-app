@@ -17,11 +17,13 @@ import {
   TextField,
   Button,
   Alert,
+  Tooltip,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import theme from "../../themes/default";
 import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
@@ -96,16 +98,12 @@ const ProjectHeader = (props) => {
     project,
     setFiles,
     setActiveFile,
+    toggleFileDrawer,
+    newFileDrawerOpen,
   } = props;
 
   const handleChange = (event, newValue) => {
     setProjectTab(newValue);
-  };
-
-  const [newFileDrawerOpen, setNewFileDrawerOpen] = React.useState(false);
-
-  const toggleFileDrawer = (event) => {
-    setNewFileDrawerOpen(!newFileDrawerOpen);
   };
 
   return (
@@ -173,18 +171,20 @@ const ProjectHeader = (props) => {
                     justifyContent: "right",
                   }}
                 >
-                  <IconButton
-                    onClick={() => {
-                      toggleFileDrawer();
-                    }}
-                    size="small"
-                    sx={{
-                      borderRadius: 0,
-                    }}
-                    disableTouchRipple
-                  >
-                    <PostAddOutlinedIcon />
-                  </IconButton>
+                  <Tooltip title="Create new file">
+                    <IconButton
+                      onClick={() => {
+                        toggleFileDrawer();
+                      }}
+                      size="small"
+                      sx={{
+                        borderRadius: 0,
+                      }}
+                      disableTouchRipple
+                    >
+                      <PostAddOutlinedIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               </Grid>
             )}
@@ -224,7 +224,7 @@ const ProjectHeader = (props) => {
 };
 
 const FileOptionsMenu = (props) => {
-  const { file } = props;
+  const { file, isActive } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -246,20 +246,33 @@ const FileOptionsMenu = (props) => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        disableAutoFocusItem
       >
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <DeleteOutlineRoundedIcon
+            <DriveFileRenameOutlineOutlinedIcon
               sx={{
                 fontSize: "1.25rem",
-                color: theme.palette.error.main,
               }}
             />
           </ListItemIcon>
-          <Typography variant="body2" color="error">
-            Delete
-          </Typography>
+          <Typography variant="body2">Rename</Typography>
         </MenuItem>
+        {!isActive && (
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <DeleteOutlineRoundedIcon
+                sx={{
+                  fontSize: "1.25rem",
+                  color: theme.palette.error.main,
+                }}
+              />
+            </ListItemIcon>
+            <Typography variant="body2" color="error">
+              Delete
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
     </ListItemIcon>
   );
@@ -471,15 +484,39 @@ const ProjectContent = (props) => {
 
   const router = useRouter();
 
+  const [fileInfo, setFileInfo] = React.useState(
+    Object.entries(files).reduce((acc, [key]) => {
+      acc[key] = activeFile.file_index == key ? "" : "edited 2h ago";
+      return acc;
+    }, {})
+  );
+
+  const scrollRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (router.asPath !== router.route) {
+      // Save the current scroll position
+      const { scrollTop } = scrollRef.current;
+      sessionStorage.setItem(router.asPath, scrollTop);
+    }
+  }, [router]);
+
+  React.useEffect(() => {
+    // Restore the previous scroll position
+    const scrollTop = sessionStorage.getItem(router.asPath) || 0;
+    scrollRef.current.scrollTo({ top: scrollTop });
+  }, []);
+
   const Circuits = () => {
     return (
-      <Box>
+      <Box ref={scrollRef}>
         <CustomList component="nav" aria-label="circuits">
           {Object.entries(files).map(([index, file]) => {
             return (
               <ListItemButton
                 selected={activeFile.file_index == index}
                 key={index}
+                disableRipple
                 sx={{
                   background: `${
                     activeFile.file_index == index
@@ -496,10 +533,20 @@ const ProjectContent = (props) => {
                       ? theme.palette.primary.main
                       : "white"
                   }`,
+                  height: 42,
                 }}
-                component={Link}
-                href={`/composer/${project.token}/${index}`}
-                scroll={false}
+                {...(activeFile.file_index != index
+                  ? {
+                      component: Link,
+                      href: `/composer/${project.token}/${index}`,
+                      onClick: () => {
+                        setFileInfo({
+                          ...fileInfo,
+                          [file.file_index]: "loading...",
+                        });
+                      },
+                    }
+                  : {})}
               >
                 <ListItemIcon>
                   <ArticleOutlinedIcon />
@@ -509,18 +556,25 @@ const ProjectContent = (props) => {
                     <Typography variant="subtitle2">{file.title}</Typography>
                   }
                   secondary={
-                    <Typography variant="body2" className="meta">
-                      <Typography
-                        variant="body2"
-                        component="span"
-                        className="time"
-                      >
-                        edited 2h ago
+                    fileInfo[file.file_index] ? (
+                      <Typography variant="body2" className="meta">
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className="time"
+                        >
+                          {fileInfo[file.file_index]}
+                        </Typography>
                       </Typography>
-                    </Typography>
+                    ) : (
+                      ""
+                    )
                   }
                 />
-                <FileOptionsMenu file={{ id: index }} />
+                <FileOptionsMenu
+                  file={{ id: index }}
+                  isActive={activeFile.file_index == index}
+                />
               </ListItemButton>
             );
           })}
@@ -593,6 +647,8 @@ const Sidebar = (props) => {
     openMobile,
     setOpenMobile,
     project,
+    toggleFileDrawer,
+    newFileDrawerOpen,
   } = props;
 
   return (
@@ -617,6 +673,8 @@ const Sidebar = (props) => {
             project={project}
             setFiles={setFiles}
             setActiveFile={setActiveFile}
+            toggleFileDrawer={toggleFileDrawer}
+            newFileDrawerOpen={newFileDrawerOpen}
           />
           <ProjectContent
             projectTab={projectTab}
@@ -624,6 +682,8 @@ const Sidebar = (props) => {
             activeFile={activeFile}
             setActiveFile={setActiveFile}
             project={project}
+            toggleFileDrawer={toggleFileDrawer}
+            newFileDrawerOpen={newFileDrawerOpen}
           />
 
           <ExportHeader />
@@ -662,7 +722,6 @@ const Sidebar = (props) => {
               files={files}
               activeFile={activeFile}
               circuit={circuit}
-              setActiveFile={setActive}
               project={project}
             />
           </Box>

@@ -39,8 +39,12 @@ export default function MyApp(props) {
         <CssBaseline />
         <AppWrapper>
           <NextProgressbar
-            color={theme.palette.red.main}
-            height={3}
+            color={
+              router.pathname.startsWith("/auth")
+                ? theme.palette.primary.main
+                : theme.palette.darkGrey.main
+            }
+            height={4}
             options={{ showSpinner: false }}
           />
           <Menu dark={router.pathname.startsWith("/auth")} />

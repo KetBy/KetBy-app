@@ -9,6 +9,7 @@ import generateCanvasMatrix from "../../utils/generateCanvasMatrix";
 import theme from "../../themes/default";
 import axios from "../../utils/axios";
 import CustomCircularProgress from "../custom/CircularProgress";
+import { useAppContext } from "../../utils/context";
 
 const Wrapper = (props) => {
   const {
@@ -31,6 +32,12 @@ const Wrapper = (props) => {
   const [status, setStatus] = React.useState("Loading...");
 
   const [updateCount, setUpdateCount] = React.useState(0);
+
+  const [newFileDrawerOpen, setNewFileDrawerOpen] = React.useState(false);
+
+  const toggleFileDrawer = (event) => {
+    setNewFileDrawerOpen(!newFileDrawerOpen);
+  };
 
   React.useEffect(() => {
     if (updateCount > 0) setStatus("Saving changes...");
@@ -87,6 +94,8 @@ const Wrapper = (props) => {
           setActiveFile={setActiveFile}
           setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
           setSidebarOpenMobile={setSidebarOpenMobile}
+          toggleFileDrawer={toggleFileDrawer}
+          newFileDrawerOpen={newFileDrawerOpen}
         />
       </Grid>
       <Grid item width="auto">
@@ -100,6 +109,8 @@ const Wrapper = (props) => {
           openMobile={sidebarOpenMobile}
           setOpenMobile={setSidebarOpenMobile}
           project={project}
+          toggleFileDrawer={toggleFileDrawer}
+          newFileDrawerOpen={newFileDrawerOpen}
         />
       </Grid>
     </Grid>
@@ -109,18 +120,26 @@ const Wrapper = (props) => {
 export default function Composer(props) {
   const { projectToken, fileIndex } = props;
 
+  const { projectMemo, setProjectMemo } = useAppContext();
+
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
-  // const [circuit, setCircuit] = React.useState(null);
   const [files, setFiles] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [project, setProject] = React.useState(null);
   const [activeFile, setActiveFile] = React.useState(null);
-
   const [uniqueKey, setUniqueKey] = React.useState(1);
 
   React.useEffect(() => {
     if (projectToken && fileIndex) {
+      if (projectMemo && projectMemo.token == projectToken) {
+        setProject(projectMemo);
+        setFiles(projectMemo.files_obj);
+        setActiveFile(fileIndex);
+        setLoading(false);
+        setUniqueKey(uniqueKey + 1);
+        return;
+      }
       axios
         .get(`/project/${projectToken}`, {
           fileIndex: parseInt(fileIndex),
@@ -140,6 +159,7 @@ export default function Composer(props) {
             setActiveFile(fileIndex);
             setLoading(false);
             setUniqueKey(uniqueKey + 1);
+            setProjectMemo({ files_obj: newFiles, ...project });
           } else {
             throw new Exception("Something went wrong.");
           }
@@ -148,7 +168,7 @@ export default function Composer(props) {
           setError(err.message);
         });
     }
-  }, [projectToken, fileIndex]);
+  }, [fileIndex]);
 
   return (
     <Box

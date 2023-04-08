@@ -12,7 +12,9 @@ import {
   MenuItem,
   ListItemIcon,
   Divider,
+  Tooltip,
 } from "@mui/material";
+import Link from "next/link";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
@@ -712,10 +714,12 @@ const Canvas = (props) => {
     setActiveFile,
     setGatesDirectoryOpenMobile,
     setSidebarOpenMobile,
+    newFileDrawerOpen,
+    toggleFileDrawer,
   } = props;
 
   const FileSelector = (props) => {
-    const { files, activeFile, setActiveFile } = props;
+    const { files, activeFile, project, toggleFileDrawer } = props;
 
     // console.log(files);
 
@@ -730,40 +734,42 @@ const Canvas = (props) => {
 
     return (
       <>
-        <Typography
-          variant="subtitle2"
-          aria-label="files"
-          id="file-selector-button"
-          aria-controls={open ? "file-selector" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-haspopup="true"
-          onClick={handleClick}
-          sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            cursor: "pointer",
-          }}
-        >
-          <Box
-            component="span"
+        <Tooltip title="Browse files">
+          <Typography
+            variant="subtitle2"
+            aria-label="files"
+            id="file-selector-button"
+            aria-controls={open ? "file-selector" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
             sx={{
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              maxWidth: {
-                xs: theme.spacing(6),
-                md: theme.spacing(12),
-              },
+              display: "inline-flex",
+              alignItems: "center",
+              cursor: "pointer",
             }}
           >
-            {activeFile.title}
-          </Box>
-          <KeyboardArrowDownIcon
-            sx={{
-              fontSize: (theme) => theme.spacing(2),
-            }}
-          />
-        </Typography>
+            <Box
+              component="span"
+              sx={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                maxWidth: {
+                  xs: theme.spacing(6),
+                  md: theme.spacing(12),
+                },
+              }}
+            >
+              {activeFile.title}
+            </Box>
+            <KeyboardArrowDownIcon
+              sx={{
+                fontSize: (theme) => theme.spacing(2),
+              }}
+            />
+          </Typography>
+        </Tooltip>
         <Menu
           id="file-selector"
           MenuListProps={{
@@ -801,22 +807,37 @@ const Canvas = (props) => {
             },
           }}
         >
+          <MenuItem
+            key={"new-file"}
+            onClick={() => {
+              toggleFileDrawer();
+              handleClose();
+            }}
+            sx={{ background: "white !important" }}
+          >
+            <PostAddOutlinedIcon />
+            Create a new file
+          </MenuItem>
           {Object.entries(files).map(([index, file]) => {
             return (
               <MenuItem
                 key={index}
-                selected={file.title == activeFile.title}
                 onClick={handleClose}
+                component={Link}
+                href={`/composer/${project.token}/${file.file_index}`}
+                disableRipple
+                sx={{
+                  background:
+                    file.file_index == activeFile.file_index
+                      ? theme.palette.primary[50]
+                      : "white !important",
+                }}
               >
                 <ArticleOutlinedIcon />
                 {file.title}
               </MenuItem>
             );
           })}
-          <MenuItem key={"new-file"} onClick={handleClose}>
-            <PostAddOutlinedIcon />
-            Create a new file
-          </MenuItem>
         </Menu>
       </>
     );
@@ -885,7 +906,7 @@ const Canvas = (props) => {
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                         maxWidth: {
-                          xs: theme.spacing(10),
+                          xs: theme.spacing(8),
                           sm: theme.spacing(12),
                           md: theme.spacing(16),
                         },
@@ -897,6 +918,8 @@ const Canvas = (props) => {
                       files={files}
                       activeFile={activeFile}
                       setActiveFile={setActiveFile}
+                      project={project}
+                      toggleFileDrawer={toggleFileDrawer}
                     />
                   </Breadcrumbs>
                   <Typography
@@ -931,27 +954,31 @@ const Canvas = (props) => {
               justifyContent: "right",
             }}
           >
-            <IconButton
-              onClick={() => {}}
-              size="small"
-              sx={{
-                borderRadius: 0,
-              }}
-              disableTouchRipple
-            >
-              <UndoRoundedIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => {}}
-              size="small"
-              sx={{
-                borderRadius: 0,
-              }}
-              disableTouchRipple
-              disabled
-            >
-              <RedoRoundedIcon />
-            </IconButton>
+            <Tooltip title="Undo">
+              <IconButton
+                onClick={() => {}}
+                size="small"
+                sx={{
+                  borderRadius: 0,
+                }}
+                disableTouchRipple
+              >
+                <UndoRoundedIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Redo">
+              <IconButton
+                onClick={() => {}}
+                size="small"
+                sx={{
+                  borderRadius: 0,
+                }}
+                disableTouchRipple
+                disabled
+              >
+                <RedoRoundedIcon />
+              </IconButton>
+            </Tooltip>
             <Box
               sx={{
                 display: "flex",
@@ -959,69 +986,77 @@ const Canvas = (props) => {
                 mx: 0.5,
               }}
             >
-              <Button
+              <Tooltip title="Run the circuit">
+                <Button
+                  size="small"
+                  variant="contained"
+                  startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+                  sx={{
+                    display: {
+                      xs: "none",
+                      md: "inline-flex",
+                    },
+                  }}
+                >
+                  Run
+                </Button>
+              </Tooltip>
+              <Tooltip title="Run the circuit">
+                <IconButton
+                  size="small"
+                  variant="contained"
+                  sx={{
+                    color: "white",
+                    background: (theme) =>
+                      `${theme.palette.primary.main} !important`,
+                    display: {
+                      md: "none",
+                    },
+                  }}
+                >
+                  <PlayArrowRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <Tooltip title="Toggle sidebar" placement="bottom-end">
+              <IconButton
+                onClick={() => {
+                  setSidebarCollapsed(!sidebarCollapsed);
+                }}
                 size="small"
-                variant="contained"
-                startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
                 sx={{
+                  borderRadius: 0,
                   display: {
                     xs: "none",
                     md: "inline-flex",
                   },
                 }}
+                disableTouchRipple
               >
-                Run
-              </Button>
+                {sidebarCollapsed ? (
+                  <KeyboardDoubleArrowLeftRoundedIcon />
+                ) : (
+                  <KeyboardDoubleArrowRightRoundedIcon />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Toggle sidebar" placement="bottom-end">
               <IconButton
+                onClick={() => {
+                  setSidebarOpenMobile(true);
+                }}
                 size="small"
-                variant="contained"
                 sx={{
-                  color: "white",
-                  background: (theme) =>
-                    `${theme.palette.primary.main} !important`,
+                  borderRadius: 0,
                   display: {
                     md: "none",
                   },
                 }}
+                disableTouchRipple
               >
-                <PlayArrowRoundedIcon />
+                <MenuRoundedIcon />
               </IconButton>
-            </Box>
-            <IconButton
-              onClick={() => {
-                setSidebarCollapsed(!sidebarCollapsed);
-              }}
-              size="small"
-              sx={{
-                borderRadius: 0,
-                display: {
-                  xs: "none",
-                  md: "inline-flex",
-                },
-              }}
-              disableTouchRipple
-            >
-              {sidebarCollapsed ? (
-                <KeyboardDoubleArrowLeftRoundedIcon />
-              ) : (
-                <KeyboardDoubleArrowRightRoundedIcon />
-              )}
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                setSidebarOpenMobile(true);
-              }}
-              size="small"
-              sx={{
-                borderRadius: 0,
-                display: {
-                  md: "none",
-                },
-              }}
-              disableTouchRipple
-            >
-              <MenuRoundedIcon />
-            </IconButton>
+            </Tooltip>
           </Grid>
         </Grid>
       </Grid>
