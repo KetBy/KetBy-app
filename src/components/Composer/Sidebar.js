@@ -716,6 +716,8 @@ const Sidebar = (props) => {
               project={project}
               setFiles={setFiles}
               setActiveFile={setActiveFile}
+              toggleFileDrawer={toggleFileDrawer}
+              newFileDrawerOpen={newFileDrawerOpen}
             />
             <ProjectContent
               projectTab={projectTab}
