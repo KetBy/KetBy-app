@@ -19,6 +19,8 @@ import AdbIcon from "@mui/icons-material/Adb";
 import MenuIcon from "@mui/icons-material/Menu";
 import theme from "../../src/themes/default";
 import { useAppContext } from "../utils/context";
+import AnimatedLogo from "../../public/assets/animated_logo.svg";
+import AnimatedInvertedLogo from "../../public/assets/animated_inverted_logo.svg";
 
 const UserAvatar = (props) => {
   const { ...otherProps } = props;
@@ -87,6 +89,36 @@ function ResponsiveAppBar(props) {
         { title: "Sign up", url: "/auth/register" },
       ];
 
+  const Logo = ({ mobile }) => {
+    return (
+      <Box
+        sx={{
+          display: {
+            xs: mobile ? "flex" : "none",
+            md: mobile ? "none" : "flex",
+          },
+          mr: 1,
+          flex: {
+            xs: "100%",
+            md: 0,
+          },
+        }}
+        component={Link}
+        href="/"
+      >
+        <Box
+          sx={{
+            height: 48,
+            width: 48,
+            cursor: "pointer",
+          }}
+          component="img"
+          src={props.dark ? AnimatedLogo.src : AnimatedInvertedLogo.src}
+        />
+      </Box>
+    );
+  };
+
   return (
     <AppBar
       position="static"
@@ -124,24 +156,7 @@ function ResponsiveAppBar(props) {
       >
         <Toolbar disableGutters>
           {/** Logo start */}
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-            component={Link}
-          >
-            LOGO
-          </Typography>
+          <Logo />
           {/** Logo end */}
           {/** Mobile start */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -193,25 +208,7 @@ function ResponsiveAppBar(props) {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-            component={Link}
-          >
-            LOGO
-          </Typography>
+          <Logo mobile />
           {/** Mobile end */}
           {/** Left menu items start */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
