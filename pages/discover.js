@@ -1,3 +1,8 @@
+import { Box, Container } from "@mui/material";
 export default function DiscoverPage(props) {
-  return <>Discover page coming soon</>;
+  return (
+    <Container maxWidth="lg">
+      <Box sx={{ py: 3 }}>Coming soon</Box>
+    </Container>
+  );
 }

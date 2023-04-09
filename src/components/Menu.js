@@ -28,9 +28,12 @@ const UserAvatar = (props) => {
 
   return (
     <Avatar
+      src={
+        appState.user
+          ? appState.user.avatar_url
+          : `${process.env.CDN_URL}/users/default_avatar.svg`
+      }
       {...otherProps}
-      alt={appState.user ? appState.user.username : null}
-      src={appState.user ? appState.user.avatar_url : null}
     ></Avatar>
   );
 };
@@ -138,7 +141,8 @@ function ResponsiveAppBar(props) {
           width: "100%",
           background: theme.palette.darkGrey.dark,
           zIndex: 0,
-          height: props.dark ? "100%" : 0,
+          // height: props.dark ? "100%" : 0,
+          height: "100%",
           opacity: props.dark ? 1 : 0,
         },
       }}
@@ -327,9 +331,14 @@ function ResponsiveAppBar(props) {
             {/** Mobile start */}
             <IconButton
               onClick={handleOpenUserMenu}
-              sx={{ p: 0, display: { xs: "inline-block", md: "none" } }}
+              sx={{
+                p: 0,
+                display: { xs: "inline-block", md: "none" },
+                ml: 1,
+                mr: 1,
+              }}
             >
-              <UserAvatar sx={{ ml: 1, background: "rgba(255,255,255,1)" }} />
+              <UserAvatar />
             </IconButton>
             {/** Mobile end */}
             {/** User menu start */}
