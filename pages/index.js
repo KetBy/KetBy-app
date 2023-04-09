@@ -9,6 +9,7 @@ import {
   MouseParallaxContainer,
   MouseParallaxChild,
 } from "react-parallax-mouse";
+import HeroBg from "../public/assets/page/home_hero_bg.svg";
 
 const Hero = (props) => {
   const { appState } = useAppContext();
@@ -312,6 +313,10 @@ const Hero = (props) => {
       <Box
         sx={{
           background: theme.palette.secondary[200],
+          backgroundImage: `url(${HeroBg.src})`,
+          backgroundPosition: "bottom center",
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "auto 50%",
         }}
       >
         <Container maxWidth="lg">
