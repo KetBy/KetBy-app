@@ -29,7 +29,7 @@ export default function ProbabilitiesChart({ probabilities }) {
         type: "bar",
         showBackground: true,
         backgroundStyle: {
-          color: "rgba(180, 180, 180, 0.2)",
+          color: "rgba(72, 74, 91, 0.05)",
         },
         color: theme.palette.primary.main,
       },
