@@ -39,6 +39,9 @@ const Wrapper = (props) => {
     setNewFileDrawerOpen(!newFileDrawerOpen);
   };
 
+  const [probabilities, setProbabilities] = React.useState(null);
+  const [probabilitiesError, setProbabilitiesError] = React.useState(null);
+
   React.useEffect(() => {
     if (updateCount > 0) setStatus("Saving changes...");
     axios
@@ -50,6 +53,21 @@ const Wrapper = (props) => {
       .then((res) => {
         setStatus(res.data.status);
         setUpdateCount(updateCount + 1);
+        if (res.data.results.probabilities) {
+          setProbabilities(res.data.results.probabilities);
+          setProbabilitiesError(null);
+        } else {
+          setProbabilities(null);
+          if (circuit.meta.qubits > 4) {
+            setProbabilitiesError(
+              "Probabilities are only computed for circuits with up to 4 qubits."
+            );
+          } else {
+            setProbabilitiesError(
+              "Probabilities could have not been computed."
+            );
+          }
+        }
       })
       .catch((res) => {
         if (res.response.data && res.response.data.status) {
@@ -96,6 +114,8 @@ const Wrapper = (props) => {
           setSidebarOpenMobile={setSidebarOpenMobile}
           toggleFileDrawer={toggleFileDrawer}
           newFileDrawerOpen={newFileDrawerOpen}
+          probabilities={probabilities}
+          probabilitiesError={probabilitiesError}
         />
       </Grid>
       <Grid item width="auto">

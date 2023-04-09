@@ -8,13 +8,15 @@ import CircularProgress, {
 // Inspired by the former Facebook spinners.
 export default function CustomCircularProgress(props) {
   return (
-    <Box sx={{ position: "relative", display: "inline" }}>
+    <Box
+      sx={{ position: "relative", display: props.small ? "flex" : "inline" }}
+    >
       <CircularProgress
         variant="determinate"
         sx={{
           color: (theme) => theme.palette.grey[200],
         }}
-        size={40}
+        size={props.small ? 20 : 40}
         thickness={4}
         {...props}
         value={100}
@@ -24,14 +26,14 @@ export default function CustomCircularProgress(props) {
         disableShrink
         sx={{
           color: (theme) => theme.palette.primary.main,
-          animationDuration: "550ms",
+          animationDuration: "600ms",
           position: "absolute",
           left: 0,
           [`& .${circularProgressClasses.circle}`]: {
             strokeLinecap: "round",
           },
         }}
-        size={40}
+        size={props.small ? 20 : 40}
         thickness={4}
         {...props}
       />

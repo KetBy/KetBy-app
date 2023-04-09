@@ -15,11 +15,13 @@ import {
   Tooltip,
 } from "@mui/material";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
 import Gate from "./Gate";
 import PhaseDisk from "./PhaseDisk";
 import LatexFigure from "../LatexFigure";
+import CustomCircularProgress from "./../custom/CircularProgress";
 
 import Draggable from "react-draggable";
 
@@ -39,6 +41,10 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+
+const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
+  loading: () => null,
+});
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -596,7 +602,7 @@ const Right = ({ circuit }) => {
   );
 };
 
-const Graph1 = (props) => {
+const Graph1 = ({ status, probabilities, probabilitiesError }) => {
   return (
     <Grid
       item
@@ -612,13 +618,12 @@ const Graph1 = (props) => {
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           height: theme.spacing(6),
           background: theme.palette.primary[50],
+          display: "flex",
+          alignItems: "center",
         }}
-        alignItems="center"
       >
         <Grid item xs={8}>
-          <Grid container>
-            <Typography variant="subtitle1">Statevector</Typography>
-          </Grid>
+          <Typography variant="subtitle1">Probabilities</Typography>
         </Grid>
         <Grid
           item
@@ -626,18 +631,12 @@ const Graph1 = (props) => {
           sx={{
             display: "flex",
             justifyContent: "right",
+            alignItems: "stretch",
           }}
         >
-          <Grid
-            container
-            sx={{
-              display: "flex",
-              alignItems: "stretch",
-              justifyContent: "right",
-            }}
-          >
-            buttons
-          </Grid>
+          {(status == "Saving changes..." || status == "Loading...") && (
+            <CustomCircularProgress small={1} />
+          )}
         </Grid>
       </Grid>
       <Box
@@ -651,9 +650,29 @@ const Graph1 = (props) => {
           overflowY: "auto",
         }}
       >
-        {[...Array(20)].map((_, __) => {
-          return <Box key={__}>Lorem ipsum</Box>;
-        })}
+        {probabilities && <ProbabilitiesChart probabilities={probabilities} />}
+        {probabilitiesError && (
+          <Box
+            sx={{
+              textAlign: "center",
+              display: "flex",
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              align="center"
+              variant="body2"
+              sx={{
+                color: theme.palette.red.dark,
+                m: theme.spacing(3, 6),
+                lineHeight: 1,
+              }}
+            >
+              {probabilitiesError}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Grid>
   );
@@ -716,6 +735,8 @@ const Canvas = (props) => {
     setSidebarOpenMobile,
     newFileDrawerOpen,
     toggleFileDrawer,
+    probabilities,
+    probabilitiesError,
   } = props;
 
   const FileSelector = (props) => {
@@ -974,7 +995,6 @@ const Canvas = (props) => {
                   borderRadius: 0,
                 }}
                 disableTouchRipple
-                disabled
               >
                 <RedoRoundedIcon />
               </IconButton>
@@ -1091,8 +1111,12 @@ const Canvas = (props) => {
       </Grid>
       {/* Container of the graphical representations */}
       <Grid container>
-        <Graph1 />
-        <Graph2 />
+        <Graph1
+          status={status}
+          probabilities={probabilities}
+          probabilitiesError={probabilitiesError}
+        />
+        <Graph2 status={status} />
       </Grid>
     </Box>
   );

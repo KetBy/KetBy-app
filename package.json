@@ -20,6 +20,7 @@
     "@mui/material": "latest",
     "@next/font": "latest",
     "axios": "^1.2.1",
+    "echarts-for-react": "^3.0.2",
     "next": "latest",
     "nextjs-progressbar": "^0.0.16",
     "prop-types": "latest",
