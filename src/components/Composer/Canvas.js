@@ -645,6 +645,7 @@ const Graph1 = ({
         position: "relative",
         maxWidth: {
           xs: "100%",
+          md: "50%",
         },
       }}
     >
@@ -758,6 +759,7 @@ const Graph2 = (props) => {
       sx={{
         maxWidth: {
           xs: "100%",
+          md: "50%",
         },
       }}
     >
@@ -956,7 +958,6 @@ const Canvas = (props) => {
 
   return (
     <>
-      <style>{"html,body{overflow-y:hidden !important;}"}</style>
       <Box>
         <Grid
           container
@@ -1242,10 +1243,7 @@ const Canvas = (props) => {
               xs: "fixed",
               md: "relative",
             },
-            width: {
-              xs: "100%",
-              md: "auto",
-            },
+            width: "100%",
             height: {
               xs: `calc(100vh - ${
                 theme.constants.menuHeight
