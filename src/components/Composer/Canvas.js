@@ -955,317 +955,320 @@ const Canvas = (props) => {
   };
 
   return (
-    <Box>
-      <Grid
-        container
-        sx={{
-          p: 1,
-          borderBottom: `1px solid ${theme.palette.grey[200]}`,
-          height: theme.spacing(6),
-          background: theme.palette.primary[50],
-        }}
-        alignItems="center"
-      >
-        <Grid item xs={6.25}>
-          <Grid container>
-            <Grid item xs={12}>
-              <Grid container>
-                <Grid
-                  item
-                  sx={{
-                    display: {
-                      md: "none",
-                    },
-                  }}
-                >
-                  <IconButton
-                    onClick={() => {
-                      setGatesDirectoryOpenMobile(true);
-                    }}
-                    size="small"
+    <>
+      <style>{"html,body{overflow-y:hidden !important;}"}</style>
+      <Box>
+        <Grid
+          container
+          sx={{
+            p: 1,
+            borderBottom: `1px solid ${theme.palette.grey[200]}`,
+            height: theme.spacing(6),
+            background: theme.palette.primary[50],
+          }}
+          alignItems="center"
+        >
+          <Grid item xs={6.25}>
+            <Grid container>
+              <Grid item xs={12}>
+                <Grid container>
+                  <Grid
+                    item
                     sx={{
-                      borderRadius: 0,
-                    }}
-                    disableTouchRipple
-                  >
-                    <ViewModuleOutlinedIcon />
-                  </IconButton>
-                </Grid>
-                <Grid
-                  item
-                  sx={{
-                    ml: {
-                      xs: 1,
-                      md: 0,
-                    },
-                    mt: -0.5,
-                  }}
-                >
-                  <Breadcrumbs
-                    separator="›"
-                    aria-label="breadcrumb"
-                    sx={{
-                      "& .ketby-Breadcrumbs-separator": {
-                        mx: (theme) => theme.spacing(0.5),
+                      display: {
+                        md: "none",
                       },
                     }}
                   >
-                    <Typography
-                      variant="subtitle1"
+                    <IconButton
+                      onClick={() => {
+                        setGatesDirectoryOpenMobile(true);
+                      }}
+                      size="small"
                       sx={{
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        maxWidth: {
-                          xs: theme.spacing(8),
-                          sm: theme.spacing(12),
-                          md: theme.spacing(16),
+                        borderRadius: 0,
+                      }}
+                      disableTouchRipple
+                    >
+                      <ViewModuleOutlinedIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid
+                    item
+                    sx={{
+                      ml: {
+                        xs: 1,
+                        md: 0,
+                      },
+                      mt: -0.5,
+                    }}
+                  >
+                    <Breadcrumbs
+                      separator="›"
+                      aria-label="breadcrumb"
+                      sx={{
+                        "& .ketby-Breadcrumbs-separator": {
+                          mx: (theme) => theme.spacing(0.5),
                         },
                       }}
                     >
-                      {project.title}
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
+                          maxWidth: {
+                            xs: theme.spacing(8),
+                            sm: theme.spacing(12),
+                            md: theme.spacing(16),
+                          },
+                        }}
+                      >
+                        {project.title}
+                      </Typography>
+                      <FileSelector
+                        files={files}
+                        activeFile={activeFile}
+                        setActiveFile={setActiveFile}
+                        project={project}
+                        toggleFileDrawer={toggleFileDrawer}
+                      />
+                    </Breadcrumbs>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        ml: 0,
+                        mt: -1,
+                        fontStyle: "italic",
+                        color: (theme) => theme.palette.grey[500],
+                      }}
+                    >
+                      {status}
                     </Typography>
-                    <FileSelector
-                      files={files}
-                      activeFile={activeFile}
-                      setActiveFile={setActiveFile}
-                      project={project}
-                      toggleFileDrawer={toggleFileDrawer}
-                    />
-                  </Breadcrumbs>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      ml: 0,
-                      mt: -1,
-                      fontStyle: "italic",
-                      color: (theme) => theme.palette.grey[500],
-                    }}
-                  >
-                    {status}
-                  </Typography>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid
-          item
-          xs={5.75}
-          sx={{
-            display: "flex",
-            justifyContent: "right",
-          }}
-        >
           <Grid
-            container
+            item
+            xs={5.75}
             sx={{
               display: "flex",
-              alignItems: "stretch",
               justifyContent: "right",
             }}
           >
-            <IconButton
-              onClick={() => {
-                toggleGraphsMobileOpen();
-              }}
-              size="small"
-              sx={{
-                borderRadius: 0,
-                display: {
-                  xs: "auto",
-                  md: "none",
-                },
-              }}
-              disableTouchRipple
-            >
-              <BarChartRoundedIcon />
-            </IconButton>
-            <Tooltip title="Undo">
-              <IconButton
-                onClick={() => {}}
-                size="small"
-                sx={{
-                  borderRadius: 0,
-                }}
-                disableTouchRipple
-              >
-                <UndoRoundedIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Redo">
-              <IconButton
-                onClick={() => {}}
-                size="small"
-                sx={{
-                  borderRadius: 0,
-                }}
-                disableTouchRipple
-              >
-                <RedoRoundedIcon />
-              </IconButton>
-            </Tooltip>
-            <Box
+            <Grid
+              container
               sx={{
                 display: "flex",
-                alignItems: "center",
-                mx: 0.5,
+                alignItems: "stretch",
+                justifyContent: "right",
               }}
             >
-              <Tooltip title="Run the circuit">
-                <Button
-                  size="small"
-                  variant="contained"
-                  startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
-                  sx={{
-                    display: {
-                      xs: "none",
-                      md: "inline-flex",
-                    },
-                  }}
-                >
-                  Run
-                </Button>
-              </Tooltip>
-              <Tooltip title="Run the circuit">
-                <IconButton
-                  size="small"
-                  variant="contained"
-                  sx={{
-                    color: "white",
-                    background: (theme) =>
-                      `${theme.palette.primary.main} !important`,
-                    display: {
-                      md: "none",
-                    },
-                  }}
-                >
-                  <PlayArrowRoundedIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-            <Tooltip title="Toggle sidebar" placement="bottom-end">
               <IconButton
                 onClick={() => {
-                  setSidebarCollapsed(!sidebarCollapsed);
+                  toggleGraphsMobileOpen();
                 }}
                 size="small"
                 sx={{
                   borderRadius: 0,
                   display: {
-                    xs: "none",
-                    md: "inline-flex",
-                  },
-                }}
-                disableTouchRipple
-              >
-                {sidebarCollapsed ? (
-                  <KeyboardDoubleArrowLeftRoundedIcon />
-                ) : (
-                  <KeyboardDoubleArrowRightRoundedIcon />
-                )}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Toggle sidebar" placement="bottom-end">
-              <IconButton
-                onClick={() => {
-                  setSidebarOpenMobile(true);
-                }}
-                size="small"
-                sx={{
-                  borderRadius: 0,
-                  display: {
+                    xs: "auto",
                     md: "none",
                   },
                 }}
                 disableTouchRipple
               >
-                <MenuRoundedIcon />
+                <BarChartRoundedIcon />
               </IconButton>
-            </Tooltip>
+              <Tooltip title="Undo">
+                <IconButton
+                  onClick={() => {}}
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                  }}
+                  disableTouchRipple
+                >
+                  <UndoRoundedIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Redo">
+                <IconButton
+                  onClick={() => {}}
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                  }}
+                  disableTouchRipple
+                >
+                  <RedoRoundedIcon />
+                </IconButton>
+              </Tooltip>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mx: 0.5,
+                }}
+              >
+                <Tooltip title="Run the circuit">
+                  <Button
+                    size="small"
+                    variant="contained"
+                    startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+                    sx={{
+                      display: {
+                        xs: "none",
+                        md: "inline-flex",
+                      },
+                    }}
+                  >
+                    Run
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Run the circuit">
+                  <IconButton
+                    size="small"
+                    variant="contained"
+                    sx={{
+                      color: "white",
+                      background: (theme) =>
+                        `${theme.palette.primary.main} !important`,
+                      display: {
+                        md: "none",
+                      },
+                    }}
+                  >
+                    <PlayArrowRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <Tooltip title="Toggle sidebar" placement="bottom-end">
+                <IconButton
+                  onClick={() => {
+                    setSidebarCollapsed(!sidebarCollapsed);
+                  }}
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                    display: {
+                      xs: "none",
+                      md: "inline-flex",
+                    },
+                  }}
+                  disableTouchRipple
+                >
+                  {sidebarCollapsed ? (
+                    <KeyboardDoubleArrowLeftRoundedIcon />
+                  ) : (
+                    <KeyboardDoubleArrowRightRoundedIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Toggle sidebar" placement="bottom-end">
+                <IconButton
+                  onClick={() => {
+                    setSidebarOpenMobile(true);
+                  }}
+                  size="small"
+                  sx={{
+                    borderRadius: 0,
+                    display: {
+                      md: "none",
+                    },
+                  }}
+                  disableTouchRipple
+                >
+                  <MenuRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      {/* Container of the canvas, left and right */}
-      <Grid
-        container
-        sx={{
-          height: {
-            xs: `calc(5/5 * (100vh - (${
-              theme.constants.menuHeight
-            }px + ${theme.spacing(6)})))`,
-            md: `calc(3/5 * (100vh - (${
-              theme.constants.menuHeight
-            }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,
-          },
-          borderBottom: {
-            xs: "none",
-            md: `1px solid ${theme.palette.grey[200]}`,
-          },
-          overflowY: "auto",
-          position: "relative",
-          py: 1,
-        }}
-      >
-        <Grid item width="auto">
-          <Left circuit={circuit} setCircuit={setCircuit} />
-        </Grid>
+        {/* Container of the canvas, left and right */}
         <Grid
-          item
-          xs
+          container
           sx={{
-            overflowX: "auto",
+            height: {
+              xs: `calc(5/5 * (100vh - (${
+                theme.constants.menuHeight
+              }px + ${theme.spacing(6)})))`,
+              md: `calc(3/5 * (100vh - (${
+                theme.constants.menuHeight
+              }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,
+            },
+            borderBottom: {
+              xs: "none",
+              md: `1px solid ${theme.palette.grey[200]}`,
+            },
+            overflowY: "auto",
+            position: "relative",
+            py: 1,
           }}
         >
-          <Circuit circuit={circuit} setCircuit={setCircuit} />
+          <Grid item width="auto">
+            <Left circuit={circuit} setCircuit={setCircuit} />
+          </Grid>
+          <Grid
+            item
+            xs
+            sx={{
+              overflowX: "auto",
+            }}
+          >
+            <Circuit circuit={circuit} setCircuit={setCircuit} />
+          </Grid>
+          <Grid item width="auto">
+            <Right circuit={circuit} />
+          </Grid>
         </Grid>
-        <Grid item width="auto">
-          <Right circuit={circuit} />
+        {/* Container of the graphical representations */}
+        <Grid
+          container
+          sx={{
+            background: "white",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
+            display: {
+              xs: graphsMobileOpen ? "auto" : "none",
+              md: "flex",
+            },
+            position: {
+              xs: "fixed",
+              md: "relative",
+            },
+            width: {
+              xs: "100%",
+              md: "auto",
+            },
+            height: {
+              xs: `calc(100vh - ${
+                theme.constants.menuHeight
+              }px - ${theme.spacing(6)})`,
+              md: "auto",
+            },
+            top: {
+              xs: `calc(${theme.constants.menuHeight}px + ${theme.spacing(6)})`,
+              md: "auto",
+            },
+            zIndex: 499,
+          }}
+        >
+          <Graph1
+            status={status}
+            probabilities={probabilities}
+            probabilitiesError={probabilitiesError}
+            toggleGraphsMobileOpen={toggleGraphsMobileOpen}
+          />
+          <Graph2 status={status} />
         </Grid>
-      </Grid>
-      {/* Container of the graphical representations */}
-      <Grid
-        container
-        sx={{
-          background: "white",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-          display: {
-            xs: graphsMobileOpen ? "auto" : "none",
-            md: "flex",
-          },
-          position: {
-            xs: "fixed",
-            md: "relative",
-          },
-          width: {
-            xs: "100%",
-            md: "auto",
-          },
-          height: {
-            xs: `calc(100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
-              6
-            )})`,
-            md: "auto",
-          },
-          top: {
-            xs: `calc(${theme.constants.menuHeight}px + ${theme.spacing(6)})`,
-            md: "auto",
-          },
-          zIndex: 499,
-        }}
-      >
-        <Graph1
-          status={status}
-          probabilities={probabilities}
-          probabilitiesError={probabilitiesError}
-          toggleGraphsMobileOpen={toggleGraphsMobileOpen}
-        />
-        <Graph2 status={status} />
-      </Grid>
-    </Box>
+      </Box>
+    </>
   );
 };
 
