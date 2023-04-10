@@ -31,8 +31,10 @@ import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "../../utils/axios";
+import CustomCircularProgress from "./../custom/CircularProgress";
 
 import { gatesMap as getGatesMap } from "../../utils/gates";
+import CustomLinearProgress from "../custom/LinearProgress";
 
 const CustomTabs = styled(Tabs)({
   "& .KetBy__Tab-root": {
@@ -533,7 +535,7 @@ const ProjectContent = (props) => {
                       ? theme.palette.primary.main
                       : "white"
                   }`,
-                  height: 42,
+                  height: 40,
                 }}
                 {...(activeFile.file_index != index
                   ? {
@@ -553,9 +555,23 @@ const ProjectContent = (props) => {
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Typography variant="subtitle2">{file.title}</Typography>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography component="span" sx={{ mr: 1 }}>
+                        {file.title}
+                      </Typography>{" "}
+                      {fileInfo[file.file_index] == "loading..." && (
+                        <CustomCircularProgress small={1} />
+                      )}
+                    </Typography>
                   }
-                  secondary={
+                />
+                {/*secondary={
                     fileInfo[file.file_index] ? (
                       <Typography variant="body2" className="meta">
                         <Typography
@@ -569,8 +585,7 @@ const ProjectContent = (props) => {
                     ) : (
                       ""
                     )
-                  }
-                />
+                  }*/}
                 <FileOptionsMenu
                   file={{ id: index }}
                   isActive={activeFile.file_index == index}

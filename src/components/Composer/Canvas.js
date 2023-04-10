@@ -22,6 +22,7 @@ import Gate from "./Gate";
 import PhaseDisk from "./PhaseDisk";
 import LatexFigure from "../LatexFigure";
 import CustomCircularProgress from "./../custom/CircularProgress";
+import CustomLinearProgress from "./../custom/LinearProgress";
 
 import Draggable from "react-draggable";
 
@@ -609,8 +610,22 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
       xs={6}
       sx={{
         borderRight: `1px solid ${theme.palette.grey[200]}`,
+        position: "relative",
       }}
     >
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          top: `calc(${theme.spacing(6)} - 3px)`,
+          left: 0,
+          opacity:
+            status == "Saving changes..." || status == "Loading..." ? 1 : 0,
+          transitionDuration: "0.2s",
+        }}
+      >
+        <CustomLinearProgress small={1} />
+      </Box>
       <Grid
         container
         sx={{
@@ -622,21 +637,8 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
           alignItems: "center",
         }}
       >
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <Typography variant="subtitle1">Probabilities</Typography>
-        </Grid>
-        <Grid
-          item
-          xs={4}
-          sx={{
-            display: "flex",
-            justifyContent: "right",
-            alignItems: "stretch",
-          }}
-        >
-          {(status == "Saving changes..." || status == "Loading...") && (
-            <CustomCircularProgress small={1} />
-          )}
         </Grid>
       </Grid>
       <Box

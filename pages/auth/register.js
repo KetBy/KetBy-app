@@ -197,16 +197,16 @@ export default function AuthRegisterPage() {
           md={6}
           sx={{
             minHeight: {
-              sx: "auto",
+              xs: "-webkit-fill-available",
               md: `calc(100vh - ${theme.constants.menuHeight}px)`,
             },
-            p: theme.spacing(6, 3),
-            pb: 2,
+            p: 3,
             display: "grid",
             alignItems: "center",
             justifyContent: "center",
             bgcolor: "white",
           }}
+          style={{}}
         >
           <Box sx={{ width: "auto", maxWidth: { xs: "auto", sm: 350 } }}>
             <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
@@ -229,11 +229,14 @@ export default function AuthRegisterPage() {
               sx: "auto",
               md: `calc(100vh - ${theme.constants.menuHeight}px)`,
             },
+            display: {
+              xs: "none",
+              md: "flex",
+            },
             backgroundImage: `url(${gradient_bg.src})`,
             backgroundSize: "cover",
             backgroundPosition: "center center",
             p: theme.spacing(6),
-            display: "flex",
             alignItems: "center",
           }}
         >

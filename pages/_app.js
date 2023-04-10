@@ -51,10 +51,13 @@ export default function MyApp(props) {
           <Box
             sx={{
               bgcolor: (theme) => theme.palette.grey[50],
-              minHeight: (theme) =>
-                `calc(100vh - ${theme.constants.menuHeight}px)`,
+              minHeight: {
+                xs: "-webkit-fill-available",
+                md: `calc(100vh - ${theme.constants.menuHeight}px)`,
+              },
             }}
           >
+            <Box sx={{ height: (theme) => theme.constants.menuHeight }} />
             <Component {...pageProps} />
           </Box>
         </AppWrapper>

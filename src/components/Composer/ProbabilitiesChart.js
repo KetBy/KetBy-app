@@ -3,7 +3,6 @@ import ReactECharts from "echarts-for-react";
 import theme from "../../themes/default";
 
 export default function ProbabilitiesChart({ probabilities }) {
-  console.log(probabilities);
   const option = {
     xAxis: {
       type: "category",
@@ -42,7 +41,6 @@ export default function ProbabilitiesChart({ probabilities }) {
       containLabel: true,
     },
   };
-  console.log(option);
 
   return <ReactECharts option={option} style={{ height: "100%" }} />;
 }

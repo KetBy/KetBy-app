@@ -117,6 +117,7 @@ function ResponsiveAppBar(props) {
           }}
           component="img"
           src={props.dark ? AnimatedLogo.src : AnimatedInvertedLogo.src}
+          alt="KetBy"
         />
       </Box>
     );
@@ -124,14 +125,13 @@ function ResponsiveAppBar(props) {
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         boxShadow: "none",
         height: `${theme.constants.menuHeight}px`,
         display: "flex",
         justifyContent: "center",
         background: theme.palette.primary.main,
-        position: "relative",
         "&:after": {
           position: "absolute",
           transitionDuration: "0.2s",

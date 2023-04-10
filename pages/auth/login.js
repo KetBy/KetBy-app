@@ -21,7 +21,10 @@ export default function AuthLoginPage() {
           xs={12}
           md={6}
           sx={{
-            minHeight: `calc(100vh - ${theme.constants.menuHeight}px)`,
+            minHeight: {
+              xs: "-webkit-fill-available",
+              md: `calc(100vh - ${theme.constants.menuHeight}px)`,
+            },
             p: 3,
             display: "grid",
             alignItems: "center",
