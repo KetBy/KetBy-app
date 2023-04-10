@@ -48,7 +48,10 @@ export default function AuthConfirmPage() {
       </Head>
       <Box
         sx={{
-          minHeight: `calc(100vh - ${theme.constants.menuHeight}px)`,
+          minHeight: {
+            xs: `-webkit-fill-available`,
+            md: `calc(100vh - ${theme.constants.menuHeight}px)`,
+          },
           display: "grid",
           alignItems: "center",
           justifyContent: "center",
