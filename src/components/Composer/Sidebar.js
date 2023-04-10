@@ -37,14 +37,14 @@ import { gatesMap as getGatesMap } from "../../utils/gates";
 import CustomLinearProgress from "../custom/LinearProgress";
 
 const CustomTabs = styled(Tabs)({
-  "& .KetBy__Tab-root": {
+  "& .ketby-Tab-root": {
     px: 1,
     minWidth: "auto",
   },
 });
 
 const CustomList = styled(List)({
-  "& .KetBy__ListItemButton-root": {
+  "& .ketby-ListItemButton-root": {
     padding: theme.spacing(0.25, 0.25, 0.25, 1),
     position: "relative",
     "&:after": {
@@ -56,17 +56,17 @@ const CustomList = styled(List)({
       height: 0,
       background: theme.palette.darkGrey.main,
     },
-    "&.KetBy__-selected": {
+    "&.ketby--selected": {
       background: theme.palette.primary[50],
       "&:after": {
         top: 0,
         height: "100%",
       },
     },
-    "&.KetBy__-focusVisible": {
+    "&.ketby--focusVisible": {
       background: "transparent",
     },
-    "& .KetBy__Typography-root": {
+    "& .ketby-Typography-root": {
       lineHeight: 1.1,
       "&.meta": {
         "& .user, & .time": {
@@ -83,11 +83,11 @@ const CustomList = styled(List)({
       },
     },
   },
-  "& .KetBy__ListItemIcon-root": {
+  "& .ketby-ListItemIcon-root": {
     minWidth: 0,
     marginRight: theme.spacing(1),
   },
-  "& .KetBy__SvgIcon-root": {
+  "& .ketby-SvgIcon-root": {
     fontSize: 20,
   },
 });
@@ -562,7 +562,11 @@ const ProjectContent = (props) => {
                         alignItems: "center",
                       }}
                     >
-                      <Typography component="span" sx={{ mr: 1 }}>
+                      <Typography
+                        variant="subtitle2"
+                        component="span"
+                        sx={{ mr: 1 }}
+                      >
                         {file.title}
                       </Typography>{" "}
                       {fileInfo[file.file_index] == "loading..." && (

@@ -248,7 +248,7 @@ const Hero = (props) => {
                 md: 166 + 2.5,
               },
               zIndex: 7,
-              backdropFilter: "saturate(25) blur(3px)",
+              backdropFilter: "saturate(100) blur(5px)",
               border: `5px solid ${theme.palette.grey[50]}`,
               color: "white",
               fontSize: {
@@ -259,6 +259,7 @@ const Hero = (props) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              boxShadow: theme.shadowsCustom[1],
             }}
           >
             Y
@@ -277,7 +278,6 @@ const Hero = (props) => {
                 xs: 75,
                 md: 150,
               },
-              background: "rgba(241, 55, 101, 0.9)",
               top: {
                 xs: 75 / 2,
                 md: 75,
@@ -288,7 +288,7 @@ const Hero = (props) => {
               },
               background: "rgba(241, 55, 101, 0.9)",
               zIndex: 8,
-              backdropFilter: "saturate(25) blur(3px)",
+              backdropFilter: "saturate(100) blur(5px)",
               border: `5px solid ${theme.palette.grey[50]}`,
               color: "white",
               fontSize: {
@@ -299,6 +299,7 @@ const Hero = (props) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              boxShadow: theme.shadowsCustom[1],
             }}
           >
             H
@@ -424,7 +425,10 @@ const Hero = (props) => {
               xs={12}
               md={6}
               sx={{
-                display: "flex",
+                display: {
+                  xs: "none",
+                  md: "flex",
+                },
                 justifyContent: {
                   xs: "center",
                   md: "end",

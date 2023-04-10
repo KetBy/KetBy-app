@@ -28,14 +28,14 @@ import NewProjectDrawer from "../../../src/components/NewProjectDrawer";
 import { styled } from "@mui/system";
 
 const CustomTabs = styled(Tabs)(({ theme }) => ({
-  "&.KetBy__Tabs-vertical": {
+  "&.ketby-Tabs-vertical": {
     mb: `calc(-${theme.spacing(1)} + 2px)`,
-    "& .KetBy__Tab-root": {
+    "& .ketby-Tab-root": {
       transitionDuration: "0.2s",
       "&:hover": {
         background: theme.palette.grey[50],
       },
-      "&.KetBy__-selected": {
+      "&.ketby--selected": {
         background: theme.palette.primary[50],
       },
     },
@@ -311,9 +311,9 @@ const ProjectsTab = ({ user }) => {
   return (
     <>
       <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
-      <Grid container>
-        <Grid item xs={8}>
-          <Typography variant="h4" sx={{ lineHeight: 1.2 }}>
+      <Grid container alignItems="center">
+        <Grid item xs={6}>
+          <Typography variant="h4" sx={{ lineHeight: 1 }}>
             {appState.isLoggedIn && appState.user.username == user.username
               ? "Your"
               : `${user.first_name} ${user.last_name}'s`}{" "}
@@ -321,14 +321,16 @@ const ProjectsTab = ({ user }) => {
           </Typography>
         </Grid>
         {appState.isLoggedIn && appState.user.username == user.username && (
-          <Grid item xs={4} sx={{ display: "flex", justifyContent: "end" }}>
-            <Button
-              variant="contained"
-              startIcon={<AddRoundedIcon />}
-              onClick={toggleDrawer}
-            >
-              New project
-            </Button>
+          <Grid item xs={6} sx={{ display: "flex", justifyContent: "end" }}>
+            <Box>
+              <Button
+                variant="contained"
+                startIcon={<AddRoundedIcon />}
+                onClick={toggleDrawer}
+              >
+                New project
+              </Button>
+            </Box>
           </Grid>
         )}
         <Grid item xs={12}>

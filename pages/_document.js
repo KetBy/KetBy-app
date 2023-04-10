@@ -13,6 +13,23 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="emotion-insertion-point" content="" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href={`${process.env.NEXT_PUBLIC_APP_URL}/apple-touch-icon.png`}
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href={`${process.env.NEXT_PUBLIC_APP_URL}/favicon-32x32.png`}
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href={`${process.env.NEXT_PUBLIC_APP_URL}/favicon-16x16.png`}
+          />
           {this.props.emotionStyleTags}
         </Head>
         <body>

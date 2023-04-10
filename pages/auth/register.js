@@ -200,7 +200,7 @@ export default function AuthRegisterPage() {
               xs: "-webkit-fill-available",
               md: `calc(100vh - ${theme.constants.menuHeight}px)`,
             },
-            p: 3,
+            p: theme.spacing(0, 3),
             display: "grid",
             alignItems: "center",
             justifyContent: "center",
@@ -208,7 +208,7 @@ export default function AuthRegisterPage() {
           }}
           style={{}}
         >
-          <Box sx={{ width: "auto", maxWidth: { xs: "auto", sm: 350 } }}>
+          <Box sx={{ my: 3, width: "auto", maxWidth: { xs: "auto", sm: 350 } }}>
             <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
               Welcome!
             </Typography>

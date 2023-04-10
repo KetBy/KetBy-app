@@ -44,21 +44,26 @@ export default function MyApp(props) {
                 ? theme.palette.primary.main
                 : theme.palette.darkGrey.main
             }
-            height={4}
+            height={3}
             options={{ showSpinner: false }}
           />
           <Menu dark={router.pathname.startsWith("/auth")} />
           <Box
             sx={{
               bgcolor: (theme) => theme.palette.grey[50],
-              minHeight: {
-                xs: "-webkit-fill-available",
-                md: `calc(100vh - ${theme.constants.menuHeight}px)`,
-              },
+              mt: `${theme.constants.menuHeight}px`,
             }}
           >
-            <Box sx={{ height: (theme) => theme.constants.menuHeight }} />
-            <Component {...pageProps} />
+            <Box
+              sx={{
+                minHeight: {
+                  xs: "-webkit-fill-available",
+                  md: `calc(100vh - ${theme.constants.menuHeight}px)`,
+                },
+              }}
+            >
+              <Component {...pageProps} />
+            </Box>
           </Box>
         </AppWrapper>
       </ThemeProvider>

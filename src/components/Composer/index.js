@@ -86,7 +86,10 @@ const Wrapper = (props) => {
     <Grid
       container
       sx={{
-        height: `calc(100vh - ${theme.constants.menuHeight}px) !important`,
+        height: {
+          xs: "-webkit-fill-available",
+          md: `calc(100vh - ${theme.constants.menuHeight}px)`,
+        },
         display: "flex",
         alignItems: "stretch",
       }}

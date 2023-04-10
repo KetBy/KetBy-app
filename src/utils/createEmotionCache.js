@@ -15,5 +15,5 @@ export default function createEmotionCache() {
     insertionPoint = emotionInsertionPoint ?? undefined;
   }
 
-  return createCache({ key: "ketby-", insertionPoint });
+  return createCache({ key: "ketby", insertionPoint });
 }

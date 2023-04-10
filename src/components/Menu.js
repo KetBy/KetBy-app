@@ -31,7 +31,7 @@ const UserAvatar = (props) => {
       src={
         appState.user
           ? appState.user.avatar_url
-          : `${process.env.CDN_URL}/users/default_avatar.svg`
+          : `${process.env.NEXT_PUBLIC_CDN_URL}/users/default_avatar.svg`
       }
       {...otherProps}
     ></Avatar>
@@ -132,6 +132,7 @@ function ResponsiveAppBar(props) {
         display: "flex",
         justifyContent: "center",
         background: theme.palette.primary.main,
+        boxShadow: theme.shadowsCustom[0],
         "&:after": {
           position: "absolute",
           transitionDuration: "0.2s",

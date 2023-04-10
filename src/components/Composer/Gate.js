@@ -614,7 +614,7 @@ const OptionsMenu = (props) => {
       sx={{
         ml: 1,
         borderRadius: 0,
-        "& .KetBy__-focusVisible": {
+        "& .ketby--focusVisible": {
           background: "transparent",
         },
       }}

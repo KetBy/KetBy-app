@@ -42,9 +42,33 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import { calculateOverrideValues } from "next/dist/server/font-utils";
 
 const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
-  loading: () => null,
+  loading: () => (
+    <Box
+      sx={{
+        textAlign: "center",
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{
+          display: "block",
+          textAlign: "center",
+          flex: 1,
+        }}
+      >
+        Rendering...
+      </Typography>
+    </Box>
+  ),
 });
 
 const gatesMap = getGatesMap();
@@ -603,14 +627,25 @@ const Right = ({ circuit }) => {
   );
 };
 
-const Graph1 = ({ status, probabilities, probabilitiesError }) => {
+const Graph1 = ({
+  status,
+  probabilities,
+  probabilitiesError,
+  toggleGraphsMobileOpen,
+}) => {
   return (
     <Grid
       item
       xs={6}
       sx={{
-        borderRight: `1px solid ${theme.palette.grey[200]}`,
+        borderRight: {
+          xs: "none",
+          md: `1px solid ${theme.palette.grey[200]}`,
+        },
         position: "relative",
+        maxWidth: {
+          xs: "100%",
+        },
       }}
     >
       <Box
@@ -637,18 +672,51 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
           alignItems: "center",
         }}
       >
-        <Grid item xs={12}>
+        <Grid item xs={8} md={8}>
           <Typography variant="subtitle1">Probabilities</Typography>
+        </Grid>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: {
+              xs: "flex",
+              md: "none",
+            },
+            justifyContent: "end",
+          }}
+        >
+          <Typography variant="subtitle1">
+            <IconButton
+              size="small"
+              sx={{
+                borderRadius: 0,
+              }}
+              disableTouchRipple
+              onClick={() => {
+                toggleGraphsMobileOpen();
+              }}
+            >
+              <ClearRoundedIcon />
+            </IconButton>
+          </Typography>
         </Grid>
       </Grid>
       <Box
         sx={{
           p: 1,
-          height: `calc(2/5 * (100vh - (${
-            theme.constants.menuHeight
-          }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
-            6
-          )} + ${theme.spacing(6)})))`,
+          height: {
+            xs: `calc(2.5/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
+              6
+            )} + ${theme.spacing(6)})))`,
+            md: `calc(2/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
+              6
+            )} + ${theme.spacing(6)})))`,
+          },
           overflowY: "auto",
         }}
       >
@@ -660,6 +728,7 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
               display: "flex",
               width: "100%",
               alignItems: "center",
+              height: "100%",
             }}
           >
             <Typography
@@ -667,8 +736,9 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
               variant="body2"
               sx={{
                 color: theme.palette.red.dark,
-                m: theme.spacing(3, 6),
+                margin: "0 auto",
                 lineHeight: 1,
+                p: 3,
               }}
             >
               {probabilitiesError}
@@ -682,12 +752,24 @@ const Graph1 = ({ status, probabilities, probabilitiesError }) => {
 
 const Graph2 = (props) => {
   return (
-    <Grid item xs={6}>
+    <Grid
+      item
+      xs={6}
+      sx={{
+        maxWidth: {
+          xs: "100%",
+        },
+      }}
+    >
       <Grid
         container
         sx={{
           p: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          borderTop: {
+            xs: `1px solid ${theme.palette.grey[200]}`,
+            md: "none",
+          },
           height: theme.spacing(6),
           background: theme.palette.primary[50],
         }}
@@ -808,7 +890,7 @@ const Canvas = (props) => {
             },
           }}
           sx={{
-            "& .KetBy__Paper-root": {
+            "& .ketby-Paper-root": {
               marginTop: theme.spacing(1),
               minWidth: 180,
               color:
@@ -817,11 +899,11 @@ const Canvas = (props) => {
                   : theme.palette.grey[300],
               boxShadow:
                 "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
-              "& .KetBy__Menu-list": {
+              "& .ketby-Menu-list": {
                 padding: "4px 0",
               },
-              "& .KetBy__MenuItem-root": {
-                "& .KetBy__SvgIcon-root": {
+              "& .ketby-MenuItem-root": {
+                "& .ketby-SvgIcon-root": {
                   fontSize: 18,
                   color: theme.palette.text.secondary,
                   marginRight: theme.spacing(1.5),
@@ -864,6 +946,12 @@ const Canvas = (props) => {
         </Menu>
       </>
     );
+  };
+
+  const [graphsMobileOpen, setGraphsMobileOpen] = React.useState(false);
+
+  const toggleGraphsMobileOpen = () => {
+    setGraphsMobileOpen(!graphsMobileOpen);
   };
 
   return (
@@ -917,7 +1005,7 @@ const Canvas = (props) => {
                     separator="›"
                     aria-label="breadcrumb"
                     sx={{
-                      "& .KetBy__Breadcrumbs-separator": {
+                      "& .ketby-Breadcrumbs-separator": {
                         mx: (theme) => theme.spacing(0.5),
                       },
                     }}
@@ -977,6 +1065,22 @@ const Canvas = (props) => {
               justifyContent: "right",
             }}
           >
+            <IconButton
+              onClick={() => {
+                toggleGraphsMobileOpen();
+              }}
+              size="small"
+              sx={{
+                borderRadius: 0,
+                display: {
+                  xs: "auto",
+                  md: "none",
+                },
+              }}
+              disableTouchRipple
+            >
+              <BarChartRoundedIcon />
+            </IconButton>
             <Tooltip title="Undo">
               <IconButton
                 onClick={() => {}}
@@ -1086,10 +1190,18 @@ const Canvas = (props) => {
       <Grid
         container
         sx={{
-          height: `calc(3/5 * (100vh - (${
-            theme.constants.menuHeight
-          }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,
-          borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          height: {
+            xs: `calc(5/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)})))`,
+            md: `calc(3/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,
+          },
+          borderBottom: {
+            xs: "none",
+            md: `1px solid ${theme.palette.grey[200]}`,
+          },
           overflowY: "auto",
           position: "relative",
           py: 1,
@@ -1112,11 +1224,44 @@ const Canvas = (props) => {
         </Grid>
       </Grid>
       {/* Container of the graphical representations */}
-      <Grid container>
+      <Grid
+        container
+        sx={{
+          background: "white",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          display: {
+            xs: graphsMobileOpen ? "auto" : "none",
+            md: "flex",
+          },
+          position: {
+            xs: "fixed",
+            md: "relative",
+          },
+          width: {
+            xs: "100%",
+            md: "auto",
+          },
+          height: {
+            xs: `calc(100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
+              6
+            )})`,
+            md: "auto",
+          },
+          top: {
+            xs: `calc(${theme.constants.menuHeight}px + ${theme.spacing(6)})`,
+            md: "auto",
+          },
+          zIndex: 499,
+        }}
+      >
         <Graph1
           status={status}
           probabilities={probabilities}
           probabilitiesError={probabilitiesError}
+          toggleGraphsMobileOpen={toggleGraphsMobileOpen}
         />
         <Graph2 status={status} />
       </Grid>
