@@ -1197,9 +1197,7 @@ const Canvas = (props) => {
           container
           sx={{
             height: {
-              xs: `calc(5/5 * (100vh - (${
-                theme.constants.menuHeight
-              }px + ${theme.spacing(6)})))`,
+              xs: `auto`,
               md: `calc(3/5 * (100vh - (${
                 theme.constants.menuHeight
               }px + ${theme.spacing(6)} + ${theme.spacing(1)})))`,

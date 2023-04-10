@@ -248,7 +248,7 @@ const Hero = (props) => {
                 md: 166 + 2.5,
               },
               zIndex: 7,
-              backdropFilter: "saturate(100) blur(5px)",
+              backdropFilter: "saturate(25) blur(4px)",
               border: `5px solid ${theme.palette.grey[50]}`,
               color: "white",
               fontSize: {
@@ -288,7 +288,7 @@ const Hero = (props) => {
               },
               background: "rgba(241, 55, 101, 0.9)",
               zIndex: 8,
-              backdropFilter: "saturate(100) blur(5px)",
+              backdropFilter: "saturate(25) blur(4px)",
               border: `5px solid ${theme.palette.grey[50]}`,
               color: "white",
               fontSize: {
