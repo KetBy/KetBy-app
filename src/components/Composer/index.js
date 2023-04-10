@@ -198,11 +198,6 @@ export default function Composer(props) {
       sx={{
         userSelect: "none",
         bgcolor: "white",
-        maxHeight: {
-          xs: "-webkit-fill-available",
-          md: `calc(100vh - ${theme.constants.menuHeight}px)`,
-        },
-        overflowY: "auto",
       }}
     >
       <>

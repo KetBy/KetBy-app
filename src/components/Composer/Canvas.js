@@ -958,6 +958,9 @@ const Canvas = (props) => {
 
   return (
     <>
+      {graphsMobileOpen && (
+        <style>{"html,body{overflow-y:hidden !important;}"}</style>
+      )}
       <Box>
         <Grid
           container

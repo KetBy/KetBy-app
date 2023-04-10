@@ -712,6 +712,7 @@ const Sidebar = (props) => {
       {/* Mobile sidebar */}
       {openMobile && (
         <>
+          <style>{"html,body{overflow-y:hidden !important;}"}</style>
           <Box
             sx={{
               width: "100%",
