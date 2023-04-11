@@ -10,7 +10,8 @@ export default function ProbabilitiesChart({ probabilities }) {
       interval: 0,
       axisLabel: {
         interval: 0,
-        rotate: probabilities.length > 8 ? 60 : 0,
+        rotate:
+          probabilities.length > 8 ? (probabilities.length > 16 ? 90 : 60) : 0,
       },
     },
     yAxis: {

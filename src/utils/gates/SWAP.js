@@ -1,11 +1,16 @@
 import { Typography, Divider } from "@mui/material";
 import LatexFigure from "../../components/LatexFigure";
+import { GateTitle } from "../../components/Composer/Gate";
+import { gatesMap } from "../gates";
+
+const gates = gatesMap();
 
 export default function SWAP(props) {
   return (
     <>
-      <Typography variant="body2">
-        The <i>SWAP</i> gate swaps the states of two qubits.
+      <Typography variant="body2" align="justify">
+        The <GateTitle gate={gates["SWAP"]} /> gate swaps the states of two
+        qubits.
       </Typography>
       <Divider sx={{ mt: 1 }} />
       <Typography variant="subtitle2" align="center" mt={1}>

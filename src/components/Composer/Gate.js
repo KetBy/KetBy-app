@@ -36,7 +36,7 @@ const formattedName = (name) => {
     text = (
       <>
         {name.replace("+", "")}
-        <sup>{dagger}</sup>
+        {dagger}
       </>
     );
   }
@@ -51,6 +51,20 @@ const formattedName = (name) => {
     );
   }
   return text;
+};
+
+export const GateTitle = ({ gate, title }) => {
+  return (
+    <Typography variant="body2" sx={{ display: "inline-block" }}>
+      <Typography
+        component="span"
+        variant="body2"
+        sx={{ color: gate.color.main, fontWeight: 600 }}
+      >
+        {formattedName(title ? title : gate.name)}
+      </Typography>{" "}
+    </Typography>
+  );
 };
 
 const NOTGate = (props) => {
@@ -136,7 +150,7 @@ const SWAPGate = (props) => {
   );
 };
 
-const Representation = (props) => {
+export const Representation = (props) => {
   const { gate, preview } = props;
 
   if (preview) {
@@ -268,17 +282,7 @@ const AddNewInstruction = (props) => {
 
   return (
     <Box>
-      <Typography variant="body2" sx={{ display: "inline-block" }}>
-        Add{" "}
-        <Typography
-          component="span"
-          variant="body2"
-          sx={{ color: gate.color.main, fontWeight: 600 }}
-        >
-          {formattedName(gate.name)}
-        </Typography>{" "}
-        to{" "}
-      </Typography>
+      Add <GateTitle gate={gate} /> to
       {[...Array(gate.qubits)].map((_, i) => {
         return (
           <NativeSelect
@@ -613,9 +617,11 @@ const OptionsMenu = (props) => {
       }}
       sx={{
         ml: 1,
-        borderRadius: 0,
         "& .ketby--focusVisible": {
           background: "transparent",
+        },
+        "& .ketby-Paper-root": {
+          borderTopLeftRadius: "2px",
         },
       }}
       disableAutoFocusItem

@@ -7,8 +7,14 @@ const InfoX = React.lazy(() => import("./gates/X"));
 const InfoCX = React.lazy(() => import("./gates/CX"));
 const InfoTfl = React.lazy(() => import("./gates/Tfl"));
 const InfoSWAP = React.lazy(() => import("./gates/SWAP"));
-
 const InfoH = React.lazy(() => import("./gates/H"));
+const InfoS = React.lazy(() => import("./gates/S"));
+const InfoSDagger = React.lazy(() => import("./gates/S+"));
+const InfoP = React.lazy(() => import("./gates/P"));
+const InfoZ = React.lazy(() => import("./gates/Z"));
+const InfoY = React.lazy(() => import("./gates/Y"));
+const InfoT = React.lazy(() => import("./gates/T"));
+const InfoTDagger = React.lazy(() => import("./gates/T+"));
 
 const GateInfoWrapper = ({ info }) => {
   return (
@@ -84,40 +90,40 @@ const gates = [
     contrastColor: theme.palette.common.white,
     gates: [
       {
-        name: "T",
+        name: "P",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
-      },
-      {
-        name: "S",
-        qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "Phase gate",
+        desc: <GateInfoWrapper info={<InfoP />} />,
       },
       {
         name: "Z",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "Z gate",
+        desc: <GateInfoWrapper info={<InfoZ />} />,
       },
       {
-        name: "T+",
+        name: "S",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "S gate",
+        desc: <GateInfoWrapper info={<InfoS />} />,
       },
       {
         name: "S+",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "S† gate",
+        desc: <GateInfoWrapper info={<InfoSDagger />} />,
       },
       {
-        name: "P",
+        name: "T",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "T gate",
+        desc: <GateInfoWrapper info={<InfoT />} />,
+      },
+      {
+        name: "T+",
+        qubits: 1,
+        title: "T† gate",
+        desc: <GateInfoWrapper info={<InfoTDagger />} />,
       },
       {
         name: "RZ",
@@ -148,7 +154,7 @@ const gates = [
         name: "Y",
         qubits: 1,
         title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        desc: <GateInfoWrapper info={<InfoY />} />,
       },
       {
         name: "RX",

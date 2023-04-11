@@ -5,13 +5,17 @@ import KetPlus from "../definitions/KetPlus";
 import KetMinus from "../definitions/KetMinus";
 import Ket0 from "../definitions/Ket0";
 import Ket1 from "../definitions/Ket1";
+import { GateTitle } from "../../components/Composer/Gate";
+import { gatesMap } from "../gates";
+
+const gates = gatesMap();
 
 export default function H(props) {
   return (
     <>
-      <Typography variant="body2">
-        The <i>Hadamard</i> gate (also known as <i>H</i> gate) is used to create
-        superpositions. <br />
+      <Typography variant="body2" align="justify">
+        The <i>Hadamard</i> gate (a.k.a. <GateTitle gate={gates["H"]} /> gate)
+        is used to create super-positions. <br />
         It rotates the states <Ket0 />
         {" and "}
         <Ket1 />

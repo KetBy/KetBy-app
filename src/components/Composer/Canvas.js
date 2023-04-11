@@ -207,7 +207,12 @@ const RowButton = ({ index, circuit, setCircuit }) => {
           vertical: "top",
           horizontal: "right",
         }}
-        sx={{ ml: 1 }}
+        sx={{
+          ml: 1,
+          "& .ketby-Paper-root": {
+            borderTopLeftRadius: "2px",
+          },
+        }}
       >
         <MenuItem
           onClick={() => {

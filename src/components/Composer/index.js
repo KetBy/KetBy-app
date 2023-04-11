@@ -58,9 +58,9 @@ const Wrapper = (props) => {
           setProbabilitiesError(null);
         } else {
           setProbabilities(null);
-          if (circuit.meta.qubits > 4) {
+          if (circuit.meta.qubits > 5) {
             setProbabilitiesError(
-              "Probabilities are only computed for circuits with up to 4 qubits."
+              "Probabilities are only computed for circuits with up to 5 qubits."
             );
           } else {
             setProbabilitiesError(
