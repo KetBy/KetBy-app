@@ -100,12 +100,6 @@ const theme = createTheme({
       styleOverrides: {},
     },
     MuiSelect: {
-      defaultProps: {
-        IconComponent: {
-          type: {},
-          compare: null,
-        },
-      },
       styleOverrides: {
         iconFilled: {
           top: "calc(50% - .25em)",

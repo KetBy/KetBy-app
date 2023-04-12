@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Typography } from "@mui/material";
 import theme from "../themes/default";
+import LatexFigure from "../components/LatexFigure";
 
 const InfoI = React.lazy(() => import("./gates/I"));
 const InfoX = React.lazy(() => import("./gates/X"));
@@ -89,6 +90,12 @@ const gates = [
         qubits: 1,
         title: "Phase gate",
         desc: <GateInfoWrapper info={<InfoP />} />,
+        parameters: [
+          {
+            name: "Φ",
+            title: "Angle Φ",
+          },
+        ],
       },
       {
         name: "Z",
@@ -187,6 +194,7 @@ export const gatesMap = () => {
         title: gate.title,
         desc: gate.desc,
         qubitsNames: gate.qubitsNames,
+        parameters: gate.parameters ? gate.parameters : null,
       };
     });
   });

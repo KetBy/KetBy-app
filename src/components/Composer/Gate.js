@@ -7,9 +7,11 @@ import {
   MenuItem,
   ListItemIcon,
   NativeSelect,
+  Select,
   IconButton,
   Grid,
   Button,
+  TextField,
 } from "@mui/material";
 import theme from "../../themes/default";
 import gates, { gatesMap as getGatesMap } from "../../utils/gates";
@@ -22,6 +24,7 @@ import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftR
 import CX_gate_svg from "../../../public/assets/composer/CX_gate.svg";
 import Tfl_gate_svg from "../../../public/assets/composer/Tfl_gate.svg";
 import SWAP_gate_svg from "../../../public/assets/composer/SWAP_gate.svg";
+import LatexFigure from "../LatexFigure";
 
 const gatesMap = getGatesMap();
 
@@ -62,7 +65,7 @@ export const GateTitle = ({ gate, title }) => {
         sx={{ color: gate.color.main, fontWeight: 600 }}
       >
         {formattedName(title ? title : gate.name)}
-      </Typography>{" "}
+      </Typography>
     </Typography>
   );
 };
@@ -232,9 +235,18 @@ export const Representation = (props) => {
         position: "relative",
         border: `2px solid white`,
         fontSize: "0.9rem",
+        flexDirection: "column",
       }}
     >
-      {text}
+      <Box
+        sx={{
+          width: "100%",
+          display: "block",
+          textAlign: "center",
+        }}
+      >
+        {text}
+      </Box>
     </Box>
   );
 };
@@ -254,9 +266,8 @@ const AddNewInstruction = (props) => {
     ...Array(gate.qubits),
   ]);
 
-  const handleSelect = (e) => {
+  const handleSelect = (e, qubitIndex) => {
     let value = parseInt(e.target.value);
-    let qubitIndex = parseInt(e.target.dataset.qubitIndex);
     let newSelectedQubits = selectedQubits.slice(); // copy by value
     newSelectedQubits[qubitIndex] = value;
     // If all qubits set, add new instruction
@@ -266,7 +277,7 @@ const AddNewInstruction = (props) => {
         instructions: circuit.instructions.concat({
           gate: gate.name,
           qubits: newSelectedQubits,
-          params: [],
+          params: gate.parameters ? Array(gate.parameters.length).fill(0) : [],
           uid: isFinite(Math.max(...circuit.instructions.map((o) => o.uid)))
             ? Math.max(...circuit.instructions.map((o) => o.uid)) + 1
             : 0,
@@ -285,7 +296,7 @@ const AddNewInstruction = (props) => {
       Add <GateTitle gate={gate} /> to
       {[...Array(gate.qubits)].map((_, i) => {
         return (
-          <NativeSelect
+          <Select
             key={i}
             size="small"
             defaultValue={-1}
@@ -299,26 +310,23 @@ const AddNewInstruction = (props) => {
                 width: "auto",
               },
             }}
-            onChange={handleSelect}
-            inputProps={{
-              "data-qubit-index": i,
-            }}
+            onChange={(e) => handleSelect(e, i)}
           >
-            <option disabled value={-1}>
+            <MenuItem disabled value={-1}>
               {gate.qubits > 1 ? gate.qubitsNames[i] : "qubit"}
-            </option>
+            </MenuItem>
             {[...Array(circuit.meta.qubits)].map((_, index) => {
               return (
-                <option
+                <MenuItem
                   value={index}
                   key={index}
                   disabled={selectedQubits.includes(index)}
                 >
                   Q{index}
-                </option>
+                </MenuItem>
               );
             })}
-          </NativeSelect>
+          </Select>
         );
       })}
     </Box>
@@ -484,9 +492,8 @@ const OptionsMenu = (props) => {
       </MenuItem>,
     ];
   } else if (view === "edit") {
-    const handleSelect = (e) => {
+    const handleSelect = (e, qubitIndex) => {
       let value = parseInt(e.target.value);
-      let qubitIndex = parseInt(e.target.dataset.qubitIndex);
       let newSelectedQubits = selectedQubits.slice(); // copy by value
       newSelectedQubits[qubitIndex] = value;
       setSelectedQubits(newSelectedQubits);
@@ -508,14 +515,16 @@ const OptionsMenu = (props) => {
           "&:hover": { background: "transparent" },
           display: "block",
           width: "200px",
-          pb: 1,
+          pb: 1.5,
+          pt: 1,
         }}
         key={1}
       >
         <Grid
           rowSpacing={2}
           container
-          sx={{ display: "flex", alignItems: "end", mb: 0.5 }}
+          sx={{ display: "flex", mb: 0.5 }}
+          alignItems="center"
         >
           {[...Array(gate.qubits)].map((_, i) => {
             return [
@@ -533,41 +542,85 @@ const OptionsMenu = (props) => {
                   </Typography>
                 )}
               </Grid>,
-              <Grid item xs={6} key={`option-value--${i}`} sx={{ pr: 0.5 }}>
-                <NativeSelect
+              <Grid item xs={6} key={`option-value--${i}`} sx={{}}>
+                <Select
                   fullWidth
                   key={i}
                   size="small"
                   value={selectedQubits[i]}
                   sx={{
-                    ml: 0.5,
-                    fontSize: "0.95rem",
-                    mb: -0.6,
-                    //display: "inline-block",
-                    "& select": {
-                      width: "100%",
-                    },
+                    mr: 0.5,
+                    fontSize: "0.9rem",
+                    mb: -1,
                   }}
-                  onChange={handleSelect}
-                  inputProps={{
-                    "data-qubit-index": i,
-                  }}
+                  onChange={(e) => handleSelect(e, i)}
                 >
                   {[...Array(circuit.meta.qubits)].map((_, index) => {
                     return (
-                      <option
+                      <MenuItem
                         value={index}
                         key={index}
                         disabled={selectedQubits.includes(index)}
                       >
                         Q{index}
-                      </option>
+                      </MenuItem>
                     );
                   })}
-                </NativeSelect>
+                </Select>
               </Grid>,
             ];
           })}
+          {gate.parameters && (
+            <Grid item xs={12}>
+              <Divider mb={0} />
+            </Grid>
+          )}
+          {gate.parameters &&
+            gate.parameters.map((parameter, index) => {
+              return [
+                <Grid
+                  item
+                  xs={6}
+                  key={`param-title--${index}`}
+                  sx={{
+                    "&.ketby-Grid-item": {
+                      pt: 1,
+                    },
+                    mb: index == gate.parameters.length - 1 ? -1 : 0,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      "&::first-letter": { textTransform: "capitalize" },
+                    }}
+                  >
+                    {parameter.title}
+                  </Typography>
+                </Grid>,
+                <Grid
+                  item
+                  xs={6}
+                  key={`param-value--${index}`}
+                  sx={{
+                    "&.ketby-Grid-item": {
+                      pt: 1,
+                    },
+                    mb: index == gate.parameters.length - 1 ? -1 : 0,
+                  }}
+                >
+                  <TextField
+                    size="small"
+                    label={parameter.name}
+                    sx={{
+                      "& .ketby-InputBase-input": {
+                        p: theme.spacing(1, 1.5),
+                      },
+                    }}
+                  />
+                </Grid>,
+              ];
+            })}
         </Grid>
       </MenuItem>,
       <MenuItem
@@ -584,6 +637,8 @@ const OptionsMenu = (props) => {
           variant="contained"
           size="small"
           onClick={() => handleSave()}
+          fullWidth
+          sx={{ m: theme.spacing(0.5, 0, 0.5, 0) }}
         >
           Save
         </Button>
@@ -617,14 +672,13 @@ const OptionsMenu = (props) => {
       }}
       sx={{
         ml: 1,
-        "& .ketby--focusVisible": {
-          background: "transparent",
+        "& .Mui-focusVisible": {
+          background: "transparent !important",
         },
         "& .ketby-Paper-root": {
           borderTopLeftRadius: "2px",
         },
       }}
-      disableAutoFocusItem
     >
       {preview ? previewItems : instructionItems}
     </Menu>
