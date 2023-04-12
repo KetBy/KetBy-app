@@ -326,7 +326,7 @@ const ExportContent = (props) => {
                 {ins.gate}
               </Box>
               [{ins.qubits.join(",")}]
-              {ins.params.length > 0 && `[${ins.params.join(",")}]`}
+              {ins.params.length > 0 && `(${ins.params.join(",")})`}
             </Typography>
           );
         })}

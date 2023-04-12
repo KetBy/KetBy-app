@@ -348,11 +348,23 @@ const OptionsMenu = (props) => {
 
   const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
 
-  const [selectedQubits, setSelectedQubits] = React.useState(
+  const initialSelectedQubits =
     typeof instructionIndex !== "undefined"
       ? circuit.instructions[instructionIndex].qubits.slice()
-      : [...Array(gate.qubits)]
+      : [...Array(gate.qubits)];
+
+  const initialParameters =
+    typeof instructionIndex !== "undefined"
+      ? circuit.instructions[instructionIndex].params.slice()
+      : [];
+
+  const [selectedQubits, setSelectedQubits] = React.useState(
+    initialSelectedQubits
   );
+
+  const [parameters, setParameters] = React.useState(initialParameters);
+
+  const [saveError, setSaveError] = React.useState(null);
 
   const ViewHeader = ({ title }) => {
     return (
@@ -499,9 +511,61 @@ const OptionsMenu = (props) => {
       setSelectedQubits(newSelectedQubits);
     };
 
+    const handleParamInput = (e, paramIndex) => {
+      let value = e.target.value;
+      let newParameters = parameters.slice(); // copy by value
+      newParameters[paramIndex] = value;
+      setParameters(newParameters);
+    };
+
     const handleSave = () => {
+      // Validate the parameters
+      if (parameters.length) {
+        for (let i = 0; i < parameters.length; i++) {
+          if (parameters[i] == "") {
+            setSaveError(
+              <>
+                Please enter a value for parameter {gate.parameters[i]["name"]}.{" "}
+                <br />
+                You can use integers,{" "}
+                <Typography variant="code" component="code">
+                  /
+                </Typography>{" "}
+                and{" "}
+                <Typography variant="code" component="code">
+                  pi
+                </Typography>
+                . You can also enter{" "}
+                <Typography variant="code" component="code">
+                  0
+                </Typography>{" "}
+                instead of leaving it empty.
+              </>
+            );
+            return;
+          }
+          if (!/^\-?(\d+|\d*pi)(\/(\-?(\d+|\d*pi)))?$/.test(parameters[i])) {
+            setSaveError(
+              <>
+                Invalid value for parameter {gate.parameters[i]["name"]}. <br />
+                Please only use integers,{" "}
+                <Typography variant="code" component="code">
+                  /
+                </Typography>{" "}
+                and{" "}
+                <Typography variant="code" component="code">
+                  pi
+                </Typography>
+                .
+              </>
+            );
+            return;
+          }
+        }
+      }
       let newInstructions = circuit.instructions.slice();
       newInstructions[instructionIndex].qubits = selectedQubits;
+      newInstructions[instructionIndex].params = parameters;
       setCircuit({ ...circuit, instructions: newInstructions });
       handleClose();
     };
@@ -530,11 +594,14 @@ const OptionsMenu = (props) => {
             return [
               <Grid item xs={6} key={`option-title--${i}`}>
                 {gate.qubits == 1 ? (
-                  <Typography variant="body2">Qubit</Typography>
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    Qubit
+                  </Typography>
                 ) : (
                   <Typography
                     variant="body2"
                     sx={{
+                      mt: 1,
                       "&::first-letter": { textTransform: "capitalize" },
                     }}
                   >
@@ -617,6 +684,8 @@ const OptionsMenu = (props) => {
                         p: theme.spacing(1, 1.5),
                       },
                     }}
+                    value={parameters[index]}
+                    onChange={(e) => handleParamInput(e, index)}
                   />
                 </Grid>,
               ];
@@ -629,6 +698,8 @@ const OptionsMenu = (props) => {
           "&:hover": { background: "transparent" },
           textAlign: "right",
           display: "block",
+          whiteSpace: "normal",
+          width: "200px",
         }}
         key={2}
       >
@@ -642,6 +713,15 @@ const OptionsMenu = (props) => {
         >
           Save
         </Button>
+        {saveError && (
+          <Typography
+            variant="body2"
+            align="left"
+            sx={{ lineHeight: 1.2, my: 1, color: theme.palette.red.dark }}
+          >
+            {saveError}
+          </Typography>
+        )}
       </MenuItem>,
     ];
   }
@@ -660,7 +740,10 @@ const OptionsMenu = (props) => {
         handleClose();
         setTimeout(() => {
           setView("default");
-        }, 250);
+          setParameters(initialParameters);
+          setSelectedQubits(initialSelectedQubits);
+          setSaveError(null);
+        }, 150);
       }}
       anchorOrigin={{
         vertical: "top",

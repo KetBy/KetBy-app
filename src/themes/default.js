@@ -447,6 +447,15 @@ const theme = createTheme({
       fontWeight: 400,
       scrollMarginTop: "calc(var(--MuiDocs-header-height) + 32px)",
     },
+    code: {
+      fontFamily: "monospace",
+      background: "#E0E3E7",
+      display: "inline-block",
+      border: "1px solid #B2BAC2",
+      padding: "1px 5px",
+      borderRadius: "3px",
+      color: "#3E5060",
+    },
     caption: {
       display: "inline-block",
       fontSize: "0.75rem",
