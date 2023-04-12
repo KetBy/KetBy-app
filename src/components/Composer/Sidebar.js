@@ -482,16 +482,7 @@ const ProjectContent = (props) => {
   const { projectTab, files, activeFile, setActiveFile, circuit, project } =
     props;
 
-  const [active, setActive] = React.useState(0);
-
   const router = useRouter();
-
-  const [fileInfo, setFileInfo] = React.useState(
-    Object.entries(files).reduce((acc, [key]) => {
-      acc[key] = activeFile.file_index == key ? "" : "edited 2h ago";
-      return acc;
-    }, {})
-  );
 
   const scrollRef = React.useRef(null);
 
@@ -509,92 +500,77 @@ const ProjectContent = (props) => {
     scrollRef.current.scrollTo({ top: scrollTop });
   }, []);
 
+  const Circuit = ({ file, activeFile, index }) => {
+    const [loading, setLoading] = React.useState(false);
+
+    return (
+      <ListItemButton
+        onClick={() => {
+          setLoading(true);
+        }}
+        selected={activeFile.file_index == index}
+        key={index}
+        disableRipple
+        sx={{
+          background: `${
+            activeFile.file_index == index ? theme.palette.primary[50] : "white"
+          } !important`,
+          "&:hover": {
+            background: "white",
+          },
+          borderLeft: `${activeFile.file_index == index ? 2 : 2}px solid ${
+            activeFile.file_index == index
+              ? theme.palette.primary.main
+              : "white"
+          }`,
+          height: 40,
+        }}
+        {...(activeFile.file_index != index
+          ? {
+              component: Link,
+              href: `/composer/${project.token}/${index}`,
+            }
+          : {})}
+      >
+        <ListItemIcon>
+          <ArticleOutlinedIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <Typography
+              variant="subtitle2"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="subtitle2" component="span" sx={{ mr: 1 }}>
+                {file.title}
+              </Typography>{" "}
+              {loading && <CustomCircularProgress small={1} />}
+            </Typography>
+          }
+        />
+        <FileOptionsMenu
+          file={{ id: index }}
+          isActive={activeFile.file_index == index}
+        />
+      </ListItemButton>
+    );
+  };
+
   const Circuits = () => {
     return (
       <Box ref={scrollRef}>
         <CustomList component="nav" aria-label="circuits">
           {Object.entries(files).map(([index, file]) => {
             return (
-              <ListItemButton
-                selected={activeFile.file_index == index}
+              <Circuit
+                file={file}
+                activeFile={activeFile}
                 key={index}
-                disableRipple
-                sx={{
-                  background: `${
-                    activeFile.file_index == index
-                      ? theme.palette.primary[50]
-                      : "white"
-                  } !important`,
-                  "&:hover": {
-                    background: "white",
-                  },
-                  borderLeft: `${
-                    activeFile.file_index == index ? 2 : 2
-                  }px solid ${
-                    activeFile.file_index == index
-                      ? theme.palette.primary.main
-                      : "white"
-                  }`,
-                  height: 40,
-                }}
-                {...(activeFile.file_index != index
-                  ? {
-                      component: Link,
-                      href: `/composer/${project.token}/${index}`,
-                      onClick: () => {
-                        setFileInfo({
-                          ...fileInfo,
-                          [file.file_index]: "loading...",
-                        });
-                      },
-                    }
-                  : {})}
-              >
-                <ListItemIcon>
-                  <ArticleOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle2"
-                        component="span"
-                        sx={{ mr: 1 }}
-                      >
-                        {file.title}
-                      </Typography>{" "}
-                      {fileInfo[file.file_index] == "loading..." && (
-                        <CustomCircularProgress small={1} />
-                      )}
-                    </Typography>
-                  }
-                />
-                {/*secondary={
-                    fileInfo[file.file_index] ? (
-                      <Typography variant="body2" className="meta">
-                        <Typography
-                          variant="body2"
-                          component="span"
-                          className="time"
-                        >
-                          {fileInfo[file.file_index]}
-                        </Typography>
-                      </Typography>
-                    ) : (
-                      ""
-                    )
-                  }*/}
-                <FileOptionsMenu
-                  file={{ id: index }}
-                  isActive={activeFile.file_index == index}
-                />
-              </ListItemButton>
+                index={index}
+              />
             );
           })}
         </CustomList>
@@ -712,7 +688,6 @@ const Sidebar = (props) => {
       {/* Mobile sidebar */}
       {openMobile && (
         <>
-          <style>{"html,body{overflow-y:hidden !important;}"}</style>
           <Box
             sx={{
               width: "100%",

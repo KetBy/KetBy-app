@@ -23,6 +23,7 @@ import PhaseDisk from "./PhaseDisk";
 import LatexFigure from "../LatexFigure";
 import CustomCircularProgress from "./../custom/CircularProgress";
 import CustomLinearProgress from "./../custom/LinearProgress";
+import axios from "../../utils/axios";
 
 import Draggable from "react-draggable";
 
@@ -44,7 +45,9 @@ import ViewModuleOutlinedIcon from "@mui/icons-material/ViewModuleOutlined";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import { calculateOverrideValues } from "next/dist/server/font-utils";
+import { SignalWifiStatusbarNullRounded } from "@mui/icons-material";
 
 const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
   loading: () => (
@@ -633,11 +636,44 @@ const Right = ({ circuit }) => {
 };
 
 const Graph1 = ({
-  status,
-  probabilities,
-  probabilitiesError,
   toggleGraphsMobileOpen,
+  project,
+  activeFile,
+  files,
+  updateCount,
 }) => {
+  const [probabilities, setProbabilities] = React.useState(null);
+  const [probabilitiesError, setProbabilitiesError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [downloadUrl, setDownloadUrl] = React.useState(null);
+
+  React.useEffect(() => {
+    if (updateCount < 1) return;
+    setLoading(true);
+    axios
+      .get(`/project/${project.token}/${activeFile.file_index}/stats`)
+      .then((res) => {
+        if (res.data.download_url) {
+          setDownloadUrl(res.data.download_url);
+        } else {
+          setDownloadUrl(null);
+        }
+        if (res.data.success) {
+          setProbabilities(res.data.results.probabilities);
+          setProbabilitiesError(null);
+        } else {
+          setProbabilitiesError(res.data.message);
+          setProbabilities(null);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setProbabilitiesError("Something went wrong. Please try again later.");
+        setProbabilities(null);
+        setLoading(false);
+      });
+  }, [updateCount]);
+
   return (
     <Grid
       item
@@ -658,14 +694,12 @@ const Graph1 = ({
         sx={{
           position: "absolute",
           width: "100%",
-          top: `calc(${theme.spacing(6)} - 3px)`,
+          top: `calc(${theme.spacing(6)} - 1px)`,
           left: 0,
-          opacity:
-            status == "Saving changes..." || status == "Loading..." ? 1 : 0,
           transitionDuration: "0.2s",
         }}
       >
-        <CustomLinearProgress small={1} />
+        {loading && <CustomLinearProgress small={1} />}
       </Box>
       <Grid
         container
@@ -679,24 +713,40 @@ const Graph1 = ({
         }}
       >
         <Grid item xs={8} md={8}>
-          <Typography variant="subtitle1">Probabilities</Typography>
+          <Typography variant="subtitle1">Outcome probabilities</Typography>
         </Grid>
         <Grid
           item
           xs={4}
           sx={{
-            display: {
-              xs: "flex",
-              md: "none",
-            },
             justifyContent: "end",
+            display: "flex",
           }}
         >
           <Typography variant="subtitle1">
+            <Tooltip title="Download as CSV" placement="top-end">
+              <IconButton
+                size="small"
+                sx={{
+                  borderRadius: 0,
+                  opacity: downloadUrl ? 1 : 0,
+                }}
+                disableTouchRipple
+                component="a"
+                target="_blank"
+                href={downloadUrl ? downloadUrl : "#!"}
+              >
+                <DownloadRoundedIcon />
+              </IconButton>
+            </Tooltip>
             <IconButton
               size="small"
               sx={{
                 borderRadius: 0,
+                display: {
+                  xs: "inline-flex",
+                  md: "none",
+                },
               }}
               disableTouchRipple
               onClick={() => {
@@ -826,8 +876,7 @@ const Canvas = (props) => {
     setSidebarOpenMobile,
     newFileDrawerOpen,
     toggleFileDrawer,
-    probabilities,
-    probabilitiesError,
+    updateCount,
   } = props;
 
   const FileSelector = (props) => {
@@ -963,9 +1012,6 @@ const Canvas = (props) => {
 
   return (
     <>
-      {graphsMobileOpen && (
-        <style>{"html,body{overflow-y:hidden !important;}"}</style>
-      )}
       <Box>
         <Grid
           container
@@ -1264,10 +1310,11 @@ const Canvas = (props) => {
           }}
         >
           <Graph1
-            status={status}
-            probabilities={probabilities}
-            probabilitiesError={probabilitiesError}
             toggleGraphsMobileOpen={toggleGraphsMobileOpen}
+            project={project}
+            activeFile={activeFile}
+            updateCount={updateCount}
+            files={files}
           />
           <Graph2 status={status} />
         </Grid>

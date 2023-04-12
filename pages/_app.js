@@ -44,7 +44,7 @@ export default function MyApp(props) {
                 ? theme.palette.primary.main
                 : theme.palette.darkGrey.main
             }
-            height={3}
+            height={4}
             options={{ showSpinner: false }}
           />
           <Menu dark={router.pathname.startsWith("/auth")} />

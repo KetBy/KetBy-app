@@ -32,10 +32,18 @@ const GateInfoWrapper = ({ info }) => {
 
 const gates = [
   {
-    name: "Classical gates",
+    name: "Basic gates",
     color: theme.palette.darkGrey,
     contrastColor: theme.palette.common.white,
     gates: [
+      {
+        name: "H",
+        qubits: 1,
+        title: "Hadamard gate",
+        desc: <GateInfoWrapper info={<InfoH />} />,
+        color: theme.palette.red,
+        contrastColor: theme.palette.common.white,
+      },
       {
         name: "I",
         qubits: 1,
@@ -68,19 +76,6 @@ const gates = [
         title: "SWAP gate",
         desc: <GateInfoWrapper info={<InfoSWAP />} />,
         qubitsNames: ["qubit 1", "qubit 2"],
-      },
-    ],
-  },
-  {
-    name: "Hadamard gate",
-    color: theme.palette.red,
-    contrastColor: theme.palette.common.white,
-    gates: [
-      {
-        name: "H",
-        qubits: 1,
-        title: "Hadamard gate",
-        desc: <GateInfoWrapper info={<InfoH />} />,
       },
     ],
   },
@@ -184,8 +179,10 @@ export const gatesMap = () => {
     category.gates.map((gate, gateIndex) => {
       res[gate.name] = {
         name: gate.name,
-        color: category.color,
-        contrastColor: category.contrastColor,
+        color: gate.color ? gate.color : category.color,
+        contrastColor: gate.contrastColor
+          ? gate.contrastColor
+          : category.contrastColor,
         qubits: gate.qubits,
         title: gate.title,
         desc: gate.desc,

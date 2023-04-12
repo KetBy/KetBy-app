@@ -13,9 +13,11 @@ export default function ProbabilitiesChart({ probabilities }) {
         rotate:
           probabilities.length > 8 ? (probabilities.length > 16 ? 90 : 60) : 0,
       },
+      name: "Outcome",
     },
     yAxis: {
       type: "value",
+      name: "Probability",
       min: 0,
       max: 1,
     },
@@ -32,13 +34,14 @@ export default function ProbabilitiesChart({ probabilities }) {
           color: "rgba(72, 74, 91, 0.05)",
         },
         color: theme.palette.primary.main,
+        barMaxWidth: 12,
       },
     ],
     grid: {
       top: theme.spacing(1),
       bottom: theme.spacing(0),
       left: theme.spacing(1),
-      right: theme.spacing(2),
+      right: theme.spacing(1),
       containLabel: true,
     },
   };

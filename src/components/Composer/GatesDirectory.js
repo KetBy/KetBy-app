@@ -6,6 +6,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import theme from "../../themes/default";
 import Gate from "./Gate";
@@ -24,9 +25,6 @@ const GatesDirectory = (props) => {
 
   return (
     <>
-      {openMobile && (
-        <style>{"html,body{overflow-y:hidden !important;}"}</style>
-      )}
       <Box
         sx={{
           width: {
@@ -60,7 +58,13 @@ const GatesDirectory = (props) => {
           }}
           alignItems="center"
         >
-          <Grid item xs={6}>
+          <Grid
+            item
+            xs={6}
+            sx={{
+              display: display == "compact" ? "none" : "flex",
+            }}
+          >
             <Grid
               container
               sx={{
@@ -100,14 +104,14 @@ const GatesDirectory = (props) => {
                     },
                   }}
                 >
-                  {display === "compact" ? "Gts." : "Gates"}
+                  {display === "compact" ? "" : "Gates"}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={display == "compact" ? 12 : 6}
             sx={{
               textAlign: "right",
             }}
@@ -121,18 +125,20 @@ const GatesDirectory = (props) => {
                   justifyContent: "right",
                 }}
               >
-                <IconButton
-                  onClick={() => {
-                    setDisplay("detailed");
-                  }}
-                  size="small"
-                  sx={{
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  <ViewListOutlinedIcon />
-                </IconButton>
+                <Tooltip title="Show details">
+                  <IconButton
+                    onClick={() => {
+                      setDisplay("detailed");
+                    }}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <ViewListOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
                 <Grid
                   item
                   sx={{
@@ -142,22 +148,24 @@ const GatesDirectory = (props) => {
                     },
                   }}
                 >
-                  <IconButton
-                    onClick={() => {
-                      setDisplay("compact");
-                    }}
-                    size="small"
-                    sx={{
-                      borderRadius: 0,
-                    }}
-                    disableTouchRipple
-                  >
-                    <CompressOutlinedIcon
-                      sx={{
-                        transform: "rotate(90deg)",
+                  <Tooltip title="Compress gates" placement="bottom-end">
+                    <IconButton
+                      onClick={() => {
+                        setDisplay("compact");
                       }}
-                    />
-                  </IconButton>
+                      size="small"
+                      sx={{
+                        borderRadius: 0,
+                      }}
+                      disableTouchRipple
+                    >
+                      <CompressOutlinedIcon
+                        sx={{
+                          transform: "rotate(90deg)",
+                        }}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               </Grid>
             )}
@@ -170,18 +178,20 @@ const GatesDirectory = (props) => {
                   justifyContent: "right",
                 }}
               >
-                <IconButton
-                  onClick={() => {
-                    setDisplay("default");
-                  }}
-                  size="small"
-                  sx={{
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  <ViewModuleOutlinedIcon />
-                </IconButton>
+                <Tooltip title="Hide details">
+                  <IconButton
+                    onClick={() => {
+                      setDisplay("default");
+                    }}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <ViewModuleOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
                 <Grid
                   item
                   sx={{
@@ -191,22 +201,24 @@ const GatesDirectory = (props) => {
                     },
                   }}
                 >
-                  <IconButton
-                    onClick={() => {
-                      setDisplay("compact");
-                    }}
-                    size="small"
-                    sx={{
-                      borderRadius: 0,
-                    }}
-                    disableTouchRipple
-                  >
-                    <CompressOutlinedIcon
-                      sx={{
-                        transform: "rotate(90deg)",
+                  <Tooltip title="Compress gates" placement="bottom-end">
+                    <IconButton
+                      onClick={() => {
+                        setDisplay("compact");
                       }}
-                    />
-                  </IconButton>
+                      size="small"
+                      sx={{
+                        borderRadius: 0,
+                      }}
+                      disableTouchRipple
+                    >
+                      <CompressOutlinedIcon
+                        sx={{
+                          transform: "rotate(90deg)",
+                        }}
+                      />
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               </Grid>
             )}
@@ -219,22 +231,25 @@ const GatesDirectory = (props) => {
                   justifyContent: "right",
                 }}
               >
-                <IconButton
-                  onClick={() => {
-                    setDisplay("default");
-                  }}
-                  size="small"
-                  sx={{
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  <ExpandOutlinedIcon
-                    sx={{
-                      transform: "rotate(90deg)",
+                <Tooltip title="Expand gates">
+                  <IconButton
+                    onClick={() => {
+                      setDisplay("default");
                     }}
-                  />
-                </IconButton>
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                      width: "100%",
+                    }}
+                    disableTouchRipple
+                  >
+                    <ExpandOutlinedIcon
+                      sx={{
+                        transform: "rotate(90deg)",
+                      }}
+                    />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             )}
           </Grid>
