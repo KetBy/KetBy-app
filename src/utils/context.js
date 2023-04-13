@@ -12,6 +12,7 @@ export function AppWrapper({ children }) {
   });
 
   const [projectMemo, setProjectMemo] = React.useState(null);
+  const [shouldUpdateProject, setShouldUpdateProject] = React.useState(true);
 
   const checkStatus = async () => {
     axios
@@ -64,6 +65,8 @@ export function AppWrapper({ children }) {
         logOut,
         projectMemo,
         setProjectMemo,
+        shouldUpdateProject,
+        setShouldUpdateProject,
       }}
     >
       {children}

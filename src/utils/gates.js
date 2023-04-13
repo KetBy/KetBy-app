@@ -16,6 +16,7 @@ const InfoZ = React.lazy(() => import("./gates/Z"));
 const InfoY = React.lazy(() => import("./gates/Y"));
 const InfoT = React.lazy(() => import("./gates/T"));
 const InfoTDagger = React.lazy(() => import("./gates/T+"));
+const InfoU = React.lazy(() => import("./gates/U"));
 
 const GateInfoWrapper = ({ info }) => {
   return (
@@ -92,8 +93,8 @@ const gates = [
         desc: <GateInfoWrapper info={<InfoP />} />,
         parameters: [
           {
-            name: "Φ",
-            title: "Angle Φ",
+            name: "φ",
+            title: "Angle φ",
           },
         ],
       },
@@ -130,8 +131,14 @@ const gates = [
       {
         name: "RZ",
         qubits: 1,
-        title: "Lorem ipsum",
+        title: "RZ gate",
         desc: "Lorem ipsum",
+        parameters: [
+          {
+            name: "φ",
+            title: "Angle φ",
+          },
+        ],
       },
     ],
   },
@@ -141,6 +148,56 @@ const gates = [
     contrastColor: theme.palette.common.white,
     gates: [
       {
+        name: "U",
+        qubits: 1,
+        title: "U gate",
+        desc: <GateInfoWrapper info={<InfoU />} />,
+        parameters: [
+          {
+            name: "θ",
+            title: "Angle θ",
+          },
+          {
+            name: "φ",
+            title: "Angle φ",
+          },
+          {
+            name: "λ",
+            title: "Angle λ",
+          },
+        ],
+      },
+      {
+        name: "Y",
+        qubits: 1,
+        title: "Y gate",
+        desc: <GateInfoWrapper info={<InfoY />} />,
+      },
+      {
+        name: "RX",
+        qubits: 1,
+        title: "RX gate",
+        desc: "Lorem ipsum",
+        parameters: [
+          {
+            name: "φ",
+            title: "Angle φ",
+          },
+        ],
+      },
+      {
+        name: "RY",
+        qubits: 1,
+        title: "RY gate",
+        desc: "Lorem ipsum",
+        parameters: [
+          {
+            name: "φ",
+            title: "Angle φ",
+          },
+        ],
+      },
+      {
         name: "SX",
         qubits: 1,
         title: "Lorem ipsum",
@@ -148,30 +205,6 @@ const gates = [
       },
       {
         name: "SX+",
-        qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
-      },
-      {
-        name: "Y",
-        qubits: 1,
-        title: "Lorem ipsum",
-        desc: <GateInfoWrapper info={<InfoY />} />,
-      },
-      {
-        name: "RX",
-        qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
-      },
-      {
-        name: "RY",
-        qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
-      },
-      {
-        name: "U",
         qubits: 1,
         title: "Lorem ipsum",
         desc: "Lorem ipsum",

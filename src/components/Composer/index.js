@@ -29,7 +29,7 @@ const Wrapper = (props) => {
     instructions: file.content,
   });
 
-  const [status, setStatus] = React.useState("Loading...");
+  const [status, setStatus] = React.useState("All changes saved");
 
   const [updateCount, setUpdateCount] = React.useState(0);
 
@@ -40,7 +40,12 @@ const Wrapper = (props) => {
   };
 
   React.useEffect(() => {
-    if (updateCount > 0) setStatus("Saving changes...");
+    if (updateCount == 0) {
+      // It is no longer necessary to call it when a file is opened because all the data is already in the project object
+      setUpdateCount(updateCount + 1);
+      return;
+    }
+    setStatus("Saving changes...");
     axios
       .put(`/project/${project.token}/${file.file_index}`, {
         meta: circuit.meta ? circuit.meta : [],
@@ -124,8 +129,6 @@ const Wrapper = (props) => {
 export default function Composer(props) {
   const { projectToken, fileIndex } = props;
 
-  const { projectMemo, setProjectMemo } = useAppContext();
-
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [files, setFiles] = React.useState(null);
@@ -136,14 +139,6 @@ export default function Composer(props) {
 
   React.useEffect(() => {
     if (projectToken && fileIndex) {
-      if (projectMemo && projectMemo.token == projectToken) {
-        setProject(projectMemo);
-        setFiles(projectMemo.files_obj);
-        setActiveFile(fileIndex);
-        setLoading(false);
-        setUniqueKey(uniqueKey + 1);
-        return;
-      }
       axios
         .get(`/project/${projectToken}`, {
           fileIndex: parseInt(fileIndex),
@@ -163,7 +158,6 @@ export default function Composer(props) {
             setActiveFile(fileIndex);
             setLoading(false);
             setUniqueKey(uniqueKey + 1);
-            setProjectMemo({ files_obj: newFiles, ...project });
           } else {
             throw new Exception("Something went wrong.");
           }

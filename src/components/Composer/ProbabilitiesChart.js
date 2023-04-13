@@ -19,7 +19,7 @@ export default function ProbabilitiesChart({ probabilities }) {
       type: "value",
       name: "Probability",
       min: 0,
-      max: 1,
+      max: 100,
     },
     tooltip: {
       trigger: "item",

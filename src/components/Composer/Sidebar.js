@@ -309,6 +309,17 @@ const ExportContent = (props) => {
           p: 1,
         }}
       >
+        <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+          <Box
+            component="span"
+            sx={{
+              color: theme.palette.darkGrey.main,
+              fontWeight: 600,
+            }}
+          >
+            Q({circuit.meta.qubits}, {circuit.meta.bits})
+          </Box>
+        </Typography>
         {circuit.instructions.map((ins, index) => {
           return (
             <Typography
@@ -325,8 +336,8 @@ const ExportContent = (props) => {
               >
                 {ins.gate}
               </Box>
-              [{ins.qubits.join(",")}]
-              {ins.params.length > 0 && `(${ins.params.join(",")})`}
+              [{ins.qubits.join(", ")}]
+              {ins.params.length > 0 && `(${ins.params.join(", ")})`}
             </Typography>
           );
         })}
@@ -506,7 +517,7 @@ const ProjectContent = (props) => {
     return (
       <ListItemButton
         onClick={() => {
-          setLoading(true);
+          setLoading(activeFile.file_index != index);
         }}
         selected={activeFile.file_index == index}
         key={index}
@@ -529,6 +540,7 @@ const ProjectContent = (props) => {
           ? {
               component: Link,
               href: `/composer/${project.token}/${index}`,
+              shallow: true,
             }
           : {})}
       >

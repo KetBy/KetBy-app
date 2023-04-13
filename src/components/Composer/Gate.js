@@ -53,6 +53,13 @@ const formattedName = (name) => {
       </>
     );
   }
+  if (name == "RX" || name == "RY" || name == "RZ") {
+    text = (
+      <>
+        R<sub>{name[1]}</sub>
+      </>
+    );
+  }
   return text;
 };
 
@@ -292,8 +299,10 @@ const AddNewInstruction = (props) => {
   };
 
   return (
-    <Box>
-      Add <GateTitle gate={gate} /> to
+    <>
+      <Typography variant="body2">
+        Add <GateTitle gate={gate} /> to
+      </Typography>
       {[...Array(gate.qubits)].map((_, i) => {
         return (
           <Select
@@ -304,7 +313,7 @@ const AddNewInstruction = (props) => {
             sx={{
               ml: 0.5,
               fontSize: "0.95rem",
-              mb: -0.6,
+              mb: 0,
               display: "inline-block",
               "& select": {
                 width: "auto",
@@ -329,7 +338,7 @@ const AddNewInstruction = (props) => {
           </Select>
         );
       })}
-    </Box>
+    </>
   );
 };
 
@@ -522,7 +531,7 @@ const OptionsMenu = (props) => {
       // Validate the parameters
       if (parameters.length) {
         for (let i = 0; i < parameters.length; i++) {
-          if (parameters[i] == "") {
+          if (parameters[i] === "") {
             setSaveError(
               <>
                 Please enter a value for parameter {gate.parameters[i]["name"]}.{" "}

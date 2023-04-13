@@ -713,7 +713,7 @@ const Graph1 = ({
         }}
       >
         <Grid item xs={8} md={8}>
-          <Typography variant="subtitle1">Outcome probabilities</Typography>
+          <Typography variant="subtitle1">Probabilities</Typography>
         </Grid>
         <Grid
           item
