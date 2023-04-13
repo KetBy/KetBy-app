@@ -1,9 +1,7 @@
 import { Box } from "@mui/material";
 import theme from "../../themes/default";
 
-const PhaseDisk = (props) => {
-  const { probability, phase, purity } = props;
-
+const PhaseDisk = ({ probability, phase, phaseExpression, purity }) => {
   return (
     <Box
       sx={{
@@ -20,11 +18,12 @@ const PhaseDisk = (props) => {
       <Box
         sx={{
           width: theme.spacing(4),
-          height: `${parseInt(theme.spacing(4)) * probability}px`,
+          height: `${parseInt(theme.spacing(4)) * (probability / 100)}px`,
           background: theme.palette.primary.light,
           position: "absolute",
           bottom: 0,
           left: 0,
+          transitionDuration: "0.2s",
         }}
       />
       {/* Display the purity */}
@@ -39,6 +38,7 @@ const PhaseDisk = (props) => {
           left: "50%",
           borderRadius: "50%",
           transform: "translate(-50%, -50%)",
+          transitionDuration: "0.2s",
         }}
       />
       {/* Display the phase */}
@@ -50,9 +50,10 @@ const PhaseDisk = (props) => {
           width: "50%",
           height: "2px",
           background: theme.palette.darkGrey.dark,
-          transform: `rotate(-${phase}deg)`,
+          transform: `rotate(${-phase}deg)`,
           transformOrigin: "0px 1px",
           borderRadius: "2px 0 0 2px",
+          transitionDuration: "0.2s",
         }}
       />
     </Box>

@@ -604,33 +604,38 @@ const Circuit = ({ circuit, setCircuit }) => {
 {
   /** The phase disks on the right side of the circuit */
 }
-const Right = ({ circuit }) => {
+const Right = ({ circuit, statistics, statisticsLoading }) => {
   return (
     <Box
       sx={{
         width: theme.spacing(6),
         px: 1,
+        opacity: statisticsLoading ? 0.5 : 1,
+        transitionDuration: "0.2s",
       }}
     >
-      {[...Array(circuit.meta.qubits)].map((_, i) => {
-        return (
-          <Box
-            key={`left--row-${i}`}
-            sx={{
-              height: theme.spacing(rowHeight),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <PhaseDisk
-              probability={(i * 0.25) % 1}
-              phase={(i * 60) % 360}
-              purity={0.5 + ((i * 0.25) % 0.75)}
-            />
-          </Box>
-        );
-      })}
+      {statistics &&
+        statistics.qubits &&
+        [...Array(circuit.meta.qubits)].map((_, i) => {
+          return (
+            <Box
+              key={`right--row-${i}`}
+              sx={{
+                height: theme.spacing(rowHeight),
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <PhaseDisk
+                probability={statistics.qubits[i].probability_1}
+                phase={statistics.qubits[i].phase}
+                purity={0}
+                key={`phase-disk--${i}`}
+              />
+            </Box>
+          );
+        })}
     </Box>
   );
 };
@@ -641,38 +646,12 @@ const Graph1 = ({
   activeFile,
   files,
   updateCount,
+  statistics,
+  probabilitiesError,
+  probabilitiesDownloadUrl,
+  loading,
 }) => {
-  const [probabilities, setProbabilities] = React.useState(null);
-  const [probabilitiesError, setProbabilitiesError] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
   const [downloadUrl, setDownloadUrl] = React.useState(null);
-
-  React.useEffect(() => {
-    if (updateCount < 1) return;
-    setLoading(true);
-    axios
-      .get(`/project/${project.token}/${activeFile.file_index}/stats`)
-      .then((res) => {
-        if (res.data.download_url) {
-          setDownloadUrl(res.data.download_url);
-        } else {
-          setDownloadUrl(null);
-        }
-        if (res.data.success) {
-          setProbabilities(res.data.results.probabilities);
-          setProbabilitiesError(null);
-        } else {
-          setProbabilitiesError(res.data.message);
-          setProbabilities(null);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setProbabilitiesError("Something went wrong. Please try again later.");
-        setProbabilities(null);
-        setLoading(false);
-      });
-  }, [updateCount]);
 
   return (
     <Grid
@@ -776,7 +755,9 @@ const Graph1 = ({
           overflowY: "auto",
         }}
       >
-        {probabilities && <ProbabilitiesChart probabilities={probabilities} />}
+        {statistics && statistics.probabilities && (
+          <ProbabilitiesChart probabilities={statistics.probabilities} />
+        )}
         {probabilitiesError && (
           <Box
             sx={{
@@ -1009,6 +990,43 @@ const Canvas = (props) => {
   const toggleGraphsMobileOpen = () => {
     setGraphsMobileOpen(!graphsMobileOpen);
   };
+
+  const [statistics, setStatistics] = React.useState(null);
+  const [statisticsLoading, setStatisticsLoading] = React.useState(false);
+  const [probabilitiesDownloadUrl, setProbabilitiesDownloadUrl] =
+    React.useState(null);
+  const [probabilitiesError, setProbabilitiesError] = React.useState(null);
+
+  // Get the statistics (probabilities, phase disks etc)
+  React.useEffect(() => {
+    if (updateCount < 1) return;
+    setStatisticsLoading(true);
+    axios
+      .get(`/project/${project.token}/${activeFile.file_index}/stats`)
+      .then((res) => {
+        if (res.data.download_url) {
+          setProbabilitiesDownloadUrl(res.data.download_url);
+        } else {
+          setProbabilitiesDownloadUrl(null);
+        }
+        if (res.data.success) {
+          setStatistics({
+            probabilities: res.data.results.probabilities,
+            qubits: res.data.results.qubits,
+          });
+          setProbabilitiesError(null);
+        } else {
+          setProbabilitiesError(res.data.message);
+          setStatistics(null);
+        }
+        setStatisticsLoading(false);
+      })
+      .catch((err) => {
+        setProbabilitiesError("Something went wrong. Please try again later.");
+        setStatistics(null);
+        setStatisticsLoading(false);
+      });
+  }, [updateCount]);
 
   return (
     <>
@@ -1275,7 +1293,11 @@ const Canvas = (props) => {
             <Circuit circuit={circuit} setCircuit={setCircuit} />
           </Grid>
           <Grid item width="auto">
-            <Right circuit={circuit} />
+            <Right
+              circuit={circuit}
+              statistics={statistics}
+              statisticsLoading={statisticsLoading}
+            />
           </Grid>
         </Grid>
         {/* Container of the graphical representations */}
@@ -1315,6 +1337,10 @@ const Canvas = (props) => {
             activeFile={activeFile}
             updateCount={updateCount}
             files={files}
+            statistics={statistics}
+            probabilitiesDownloadUrl={probabilitiesDownloadUrl}
+            probabilitiesError={probabilitiesError}
+            loading={statisticsLoading}
           />
           <Graph2 status={status} />
         </Grid>
