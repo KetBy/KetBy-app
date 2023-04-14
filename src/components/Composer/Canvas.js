@@ -628,8 +628,10 @@ const Right = ({ circuit, statistics, statisticsLoading }) => {
               }}
             >
               <PhaseDisk
-                probability={statistics.qubits[i].probability_1}
-                phase={statistics.qubits[i].phase}
+                probability={
+                  statistics.qubits[i] ? statistics.qubits[i].probability_1 : 0
+                }
+                phase={statistics.qubits[i] ? statistics.qubits[i].phase : 0}
                 purity={0}
                 key={`phase-disk--${i}`}
               />
