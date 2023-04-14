@@ -18,6 +18,11 @@ import {
   Button,
   Alert,
   Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -29,9 +34,9 @@ import { styled } from "@mui/material/styles";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import PostAddOutlinedIcon from "@mui/icons-material/PostAddOutlined";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "../../utils/axios";
 import CustomCircularProgress from "./../custom/CircularProgress";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 import { gatesMap as getGatesMap } from "../../utils/gates";
 import CustomLinearProgress from "../custom/LinearProgress";
@@ -226,7 +231,7 @@ const ProjectHeader = (props) => {
 };
 
 const FileOptionsMenu = (props) => {
-  const { file, isActive } = props;
+  const { file, isActive, setDeleteFileModal, setDeleteFileOpen } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -261,7 +266,13 @@ const FileOptionsMenu = (props) => {
           <Typography variant="body2">Rename</Typography>
         </MenuItem>
         {!isActive && (
-          <MenuItem onClick={handleClose}>
+          <MenuItem
+            onClick={() => {
+              setDeleteFileModal(file.file_index);
+              setDeleteFileOpen(true);
+              handleClose();
+            }}
+          >
             <ListItemIcon>
               <DeleteOutlineRoundedIcon
                 sx={{
@@ -490,26 +501,19 @@ const NewFileDrawer = ({
 };
 
 const ProjectContent = (props) => {
-  const { projectTab, files, activeFile, setActiveFile, circuit, project } =
-    props;
+  const {
+    projectTab,
+    setFiles,
+    files,
+    activeFile,
+    setActiveFile,
+    circuit,
+    project,
+  } = props;
 
   const router = useRouter();
 
-  const scrollRef = React.useRef(null);
-
-  React.useEffect(() => {
-    if (router.asPath !== router.route) {
-      // Save the current scroll position
-      const { scrollTop } = scrollRef.current;
-      sessionStorage.setItem(router.asPath, scrollTop);
-    }
-  }, [router]);
-
-  React.useEffect(() => {
-    // Restore the previous scroll position
-    const scrollTop = sessionStorage.getItem(router.asPath) || 0;
-    scrollRef.current.scrollTo({ top: scrollTop });
-  }, []);
+  const [deleteFileModal, setDeleteFileModal] = React.useState(-1);
 
   const Circuit = ({ file, activeFile, index }) => {
     const [loading, setLoading] = React.useState(false);
@@ -564,8 +568,10 @@ const ProjectContent = (props) => {
           }
         />
         <FileOptionsMenu
-          file={{ id: index }}
+          file={{ ...file, id: index }}
           isActive={activeFile.file_index == index}
+          setDeleteFileModal={setDeleteFileModal}
+          setDeleteFileOpen={setDeleteFileOpen}
         />
       </ListItemButton>
     );
@@ -573,7 +579,7 @@ const ProjectContent = (props) => {
 
   const Circuits = () => {
     return (
-      <Box ref={scrollRef}>
+      <Box>
         <CustomList component="nav" aria-label="circuits">
           {Object.entries(files).map(([index, file]) => {
             return (
@@ -600,24 +606,101 @@ const ProjectContent = (props) => {
     return !circuit ? null : <ExportContent circuit={circuit} />;
   };
 
+  const [deletingFile, setDeletingFile] = React.useState(false);
+  const [deleteFileError, setDeleteFileError] = React.useState(null);
+  const [deleteFileOpen, setDeleteFileOpen] = React.useState(false);
+
+  const handleDeleteFile = () => {
+    setDeletingFile(true);
+    setDeleteFileError(null);
+    axios
+      .delete(`/project/${project.token}/${deleteFileModal}`)
+      .then((res) => {
+        if (res.data.success) {
+          setDeleteFileOpen(false);
+          const newFiles = JSON.parse(JSON.stringify(files));
+          delete newFiles[deleteFileModal];
+          setTimeout(() => {
+            setDeleteFileModal(-1);
+            setFiles(newFiles);
+          }, 200);
+        } else {
+          setDeleteFileError(res.data.message);
+        }
+        setDeletingFile(false);
+      })
+      .catch((err) => {
+        setDeleteFileError(err.response.data.message);
+        setDeletingFile(false);
+      });
+  };
+
   return (
-    <Box
-      sx={{
-        height: {
-          xs: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
-            6
-          )} ))`,
-          md: `calc((100vh - ${theme.constants.menuHeight}px - ${theme.spacing(
-            6 * 2
-          )} ) / 2)`,
-        },
-        overflow: "auto",
-      }}
-    >
-      {projectTab === "circuits" && <Circuits />}
-      {projectTab === "settings" && <Settings />}
-      {projectTab === "export" && <Export circuit={circuit} />}
-    </Box>
+    <>
+      <Dialog
+        open={deleteFileOpen}
+        onClose={() => {
+          setDeleteFileOpen(false);
+          setTimeout(() => {
+            setDeleteFileModal(-1);
+            setDeletingFile(false);
+          }, 200);
+        }}
+        aria-labelledby="delete-file-title"
+        aria-describedby="delete-file-description"
+        maxWidth="xs"
+      >
+        <DialogTitle id="delete-file-title">
+          Are you sure you want to delete{" "}
+          <i>{files[deleteFileModal] ? files[deleteFileModal].title : ""}</i>?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-file-description">
+            Once deleted, the file cannot be retrieved back.
+          </DialogContentText>
+          {deleteFileError && (
+            <Alert sx={{ mt: 1 }} severity="error">
+              {deleteFileError}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setDeleteFileOpen(false);
+            }}
+            color="darkGrey"
+          >
+            Cancel
+          </Button>
+          <LoadingButton
+            onClick={handleDeleteFile}
+            loading={deletingFile}
+            autoFocus
+            color="red"
+          >
+            Yes, delete the file
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+      <Box
+        sx={{
+          height: {
+            xs: `calc((100vh - ${
+              theme.constants.menuHeight
+            }px - ${theme.spacing(6)} ))`,
+            md: `calc((100vh - ${
+              theme.constants.menuHeight
+            }px - ${theme.spacing(6 * 2)} ) / 2)`,
+          },
+          overflow: "auto",
+        }}
+      >
+        {projectTab === "circuits" && <Circuits />}
+        {projectTab === "settings" && <Settings />}
+        {projectTab === "export" && <Export circuit={circuit} />}
+      </Box>
+    </>
   );
 };
 
@@ -686,6 +769,7 @@ const Sidebar = (props) => {
           <ProjectContent
             projectTab={projectTab}
             files={files}
+            setFiles={setFiles}
             activeFile={activeFile}
             setActiveFile={setActiveFile}
             project={project}
@@ -728,6 +812,7 @@ const Sidebar = (props) => {
             <ProjectContent
               projectTab={projectTab}
               files={files}
+              setFiles={setFiles}
               activeFile={activeFile}
               circuit={circuit}
               project={project}

@@ -23,7 +23,7 @@ const PhaseDisk = ({ probability, phase, phaseExpression, purity }) => {
           position: "absolute",
           bottom: 0,
           left: 0,
-          transitionDuration: "0.2s",
+          transitionDuration: "0.35s",
         }}
       />
       {/* Display the purity */}
@@ -38,7 +38,7 @@ const PhaseDisk = ({ probability, phase, phaseExpression, purity }) => {
           left: "50%",
           borderRadius: "50%",
           transform: "translate(-50%, -50%)",
-          transitionDuration: "0.2s",
+          transitionDuration: "0.35s",
         }}
       />
       {/* Display the phase */}
@@ -50,10 +50,10 @@ const PhaseDisk = ({ probability, phase, phaseExpression, purity }) => {
           width: "50%",
           height: "2px",
           background: theme.palette.darkGrey.dark,
-          transform: `rotate(${-phase}deg)`,
+          transform: `rotate(${phase}deg)`,
           transformOrigin: "0px 1px",
           borderRadius: "2px 0 0 2px",
-          transitionDuration: "0.2s",
+          transitionDuration: "0.35s",
         }}
       />
     </Box>
