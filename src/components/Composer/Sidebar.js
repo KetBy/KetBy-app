@@ -143,13 +143,15 @@ const ProjectHeader = (props) => {
                 px: 1,
               }}
             />
-            <Tab
-              label={<Typography variant="subtitle1">Settings</Typography>}
-              value="settings"
-              sx={{
-                px: 1,
-              }}
-            />
+            {project.permissions == 2 && (
+              <Tab
+                label={<Typography variant="subtitle1">Settings</Typography>}
+                value="settings"
+                sx={{
+                  px: 1,
+                }}
+              />
+            )}
             <Tab
               label={<Typography variant="subtitle1">Export</Typography>}
               value="export"
@@ -178,20 +180,22 @@ const ProjectHeader = (props) => {
                     justifyContent: "right",
                   }}
                 >
-                  <Tooltip title="Create new file">
-                    <IconButton
-                      onClick={() => {
-                        toggleFileDrawer();
-                      }}
-                      size="small"
-                      sx={{
-                        borderRadius: 0,
-                      }}
-                      disableTouchRipple
-                    >
-                      <PostAddOutlinedIcon />
-                    </IconButton>
-                  </Tooltip>
+                  {project.permissions == 2 && (
+                    <Tooltip title="Create new file">
+                      <IconButton
+                        onClick={() => {
+                          toggleFileDrawer();
+                        }}
+                        size="small"
+                        sx={{
+                          borderRadius: 0,
+                        }}
+                        disableTouchRipple
+                      >
+                        <PostAddOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Grid>
               </Grid>
             )}
@@ -567,12 +571,14 @@ const ProjectContent = (props) => {
             </Typography>
           }
         />
-        <FileOptionsMenu
-          file={{ ...file, id: index }}
-          isActive={activeFile.file_index == index}
-          setDeleteFileModal={setDeleteFileModal}
-          setDeleteFileOpen={setDeleteFileOpen}
-        />
+        {project.permissions == 2 && (
+          <FileOptionsMenu
+            file={{ ...file, id: index }}
+            isActive={activeFile.file_index == index}
+            setDeleteFileModal={setDeleteFileModal}
+            setDeleteFileOpen={setDeleteFileOpen}
+          />
+        )}
       </ListItemButton>
     );
   };

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import "katex/dist/katex.min.css";
 import Canvas from "./Canvas";
 import GatesDirectory from "./GatesDirectory";
@@ -29,7 +29,7 @@ const Wrapper = (props) => {
     instructions: file.content,
   });
 
-  const [status, setStatus] = React.useState("All changes saved");
+  const [status, setStatus] = React.useState("Loading...");
 
   const [updateCount, setUpdateCount] = React.useState(0);
 
@@ -40,9 +40,32 @@ const Wrapper = (props) => {
   };
 
   React.useEffect(() => {
+    if (!project) return;
+
     if (updateCount == 0) {
       // It is no longer necessary to call it when a file is opened because all the data is already in the project object
       setUpdateCount(updateCount + 1);
+      setStatus(
+        project.permissions == 2 ? (
+          "All changes saved"
+        ) : (
+          <>
+            <Typography
+              variant="link"
+              target="_blank"
+              component="a"
+              href={`/u/${project.author.username}`}
+              sx={{
+                color: (theme) => theme.palette.primary.main,
+                textDecoration: "none",
+                fontStyle: "normal",
+              }}
+            >
+              @{project.author.username}
+            </Typography>
+          </>
+        )
+      );
       return;
     }
     setStatus("Saving changes...");
@@ -63,7 +86,7 @@ const Wrapper = (props) => {
           setStatus("Could not save changes");
         }
       });
-  }, [circuit]);
+  }, [circuit, project]);
 
   const [gatesDirectoryOpenMobile, setGatesDirectoryOpenMobile] =
     React.useState(false);
@@ -81,14 +104,17 @@ const Wrapper = (props) => {
         alignItems: "stretch",
       }}
     >
-      <Grid item width="auto">
-        <GatesDirectory
-          circuit={circuit}
-          setCircuit={setCircuit}
-          openMobile={gatesDirectoryOpenMobile}
-          setOpenMobile={setGatesDirectoryOpenMobile}
-        />
-      </Grid>
+      {project.permissions == 2 && (
+        <Grid item width="auto">
+          <GatesDirectory
+            circuit={circuit}
+            setCircuit={setCircuit}
+            openMobile={gatesDirectoryOpenMobile}
+            setOpenMobile={setGatesDirectoryOpenMobile}
+            project={project}
+          />
+        </Grid>
+      )}
       <Grid item xs>
         <Canvas
           circuit={circuit}
@@ -109,6 +135,7 @@ const Wrapper = (props) => {
       </Grid>
       <Grid item width="auto">
         <Sidebar
+          project={project}
           collapsed={sidebarCollapsed}
           circuit={circuit}
           files={files}
@@ -117,7 +144,6 @@ const Wrapper = (props) => {
           setActiveFile={setActiveFile}
           openMobile={sidebarOpenMobile}
           setOpenMobile={setSidebarOpenMobile}
-          project={project}
           toggleFileDrawer={toggleFileDrawer}
           newFileDrawerOpen={newFileDrawerOpen}
         />
@@ -146,7 +172,11 @@ export default function Composer(props) {
         .then((res) => {
           let data = res.data;
           if (data.success) {
-            setProject(data.project);
+            setProject({
+              ...data.project,
+              permissions: data.permissions ?? 0, // 0 - restricted access, 1 - readonly, 2 - editable
+              author: data.author ?? null,
+            });
             let newFiles = {};
             data.files.map((file, index) => {
               newFiles[file.file_index] = file;

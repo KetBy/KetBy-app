@@ -46,8 +46,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
-import { calculateOverrideValues } from "next/dist/server/font-utils";
-import { SignalWifiStatusbarNullRounded } from "@mui/icons-material";
+import ForkRightRoundedIcon from "@mui/icons-material/ForkRightRounded";
 
 const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
   loading: () => (
@@ -103,11 +102,12 @@ const convertPxToGridDelta = (x, y) => {
   };
 };
 
-const RowButton = ({ index, circuit, setCircuit }) => {
+const RowButton = ({ index, circuit, setCircuit, project }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
+    if (project.permissions < 2) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -272,7 +272,7 @@ const RowButton = ({ index, circuit, setCircuit }) => {
 {
   /** The qubits buttons on the left side of the circuit */
 }
-const Left = ({ circuit, setCircuit }) => {
+const Left = ({ circuit, setCircuit, project }) => {
   return (
     <Box
       sx={{
@@ -297,6 +297,7 @@ const Left = ({ circuit, setCircuit }) => {
                   index={i}
                   circuit={circuit}
                   setCircuit={setCircuit}
+                  project={project}
                 />
               </Grid>
             </Grid>
@@ -304,36 +305,38 @@ const Left = ({ circuit, setCircuit }) => {
         );
       })}
 
-      <Grid container>
-        <Grid item xs={6}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => {
-              setCircuit({
-                ...circuit,
-                meta: {
-                  ...circuit.meta,
-                  qubits: circuit.meta.qubits + 1,
-                },
-              });
-            }}
-            sx={{
-              width: theme.spacing(4.25),
-              height: theme.spacing(4.25),
-              minWidth: 0,
-              minHeight: 0,
-              borderRadius: 0,
-              borderWidth: "2px !important",
-              borderColor: `${theme.palette.primary.main} !important`,
-              color: theme.palette.darkGrey.main,
-              marginTop: theme.spacing(0.5),
-            }}
-          >
-            +
-          </Button>
+      {project.permissions == 2 && (
+        <Grid container>
+          <Grid item xs={6}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setCircuit({
+                  ...circuit,
+                  meta: {
+                    ...circuit.meta,
+                    qubits: circuit.meta.qubits + 1,
+                  },
+                });
+              }}
+              sx={{
+                width: theme.spacing(4.25),
+                height: theme.spacing(4.25),
+                minWidth: 0,
+                minHeight: 0,
+                borderRadius: 0,
+                borderWidth: "2px !important",
+                borderColor: `${theme.palette.primary.main} !important`,
+                color: theme.palette.darkGrey.main,
+                marginTop: theme.spacing(0.5),
+              }}
+            >
+              +
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Box>
   );
 };
@@ -341,7 +344,7 @@ const Left = ({ circuit, setCircuit }) => {
 {
   /** The circuit canvas */
 }
-const Circuit = ({ circuit, setCircuit }) => {
+const Circuit = ({ circuit, setCircuit, project }) => {
   let { matrix, colMap } = generateCanvasMatrix(
     circuit.instructions,
     circuit.meta.qubits
@@ -352,7 +355,9 @@ const Circuit = ({ circuit, setCircuit }) => {
   const defaultInsTransf = [];
   const [insTransf, setInsTransf] = React.useState(defaultInsTransf);
   const [dragging, setDragging] = React.useState(false);
-  const [disableDragging, setDisableDragging] = React.useState(false);
+  const [disableDragging, setDisableDragging] = React.useState(
+    project.permissions < 2 ? true : false
+  );
 
   const handleDrag = (e, ui) => {
     let delta = convertPxToGridDelta(ui.x, ui.y);
@@ -547,7 +552,7 @@ const Circuit = ({ circuit, setCircuit }) => {
                     onStop={handleStop}
                     defaultClassNameDragging="dragging"
                     axis="both"
-                    disabled={disableDragging}
+                    disabled={project.permissions < 2 || disableDragging}
                     bounds={{
                       top:
                         -parseInt(theme.spacing(5)) *
@@ -588,6 +593,7 @@ const Circuit = ({ circuit, setCircuit }) => {
                         setCircuit={setCircuit}
                         instructionIndex={instructionIndex}
                         setDisableDragging={setDisableDragging}
+                        project={project}
                       />
                     </Box>
                   </Draggable>
@@ -614,30 +620,34 @@ const Right = ({ circuit, statistics, statisticsLoading }) => {
         transitionDuration: "0.2s",
       }}
     >
-      {statistics &&
-        statistics.qubits &&
-        [...Array(circuit.meta.qubits)].map((_, i) => {
-          return (
-            <Box
-              key={`right--row-${i}`}
-              sx={{
-                height: theme.spacing(rowHeight),
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <PhaseDisk
-                probability={
-                  statistics.qubits[i] ? statistics.qubits[i].probability_1 : 0
-                }
-                phase={statistics.qubits[i] ? statistics.qubits[i].phase : 0}
-                purity={0}
-                key={`phase-disk--${i}`}
-              />
-            </Box>
-          );
-        })}
+      {[...Array(circuit.meta.qubits)].map((_, i) => {
+        return (
+          <Box
+            key={`right--row-${i}`}
+            sx={{
+              height: theme.spacing(rowHeight),
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <PhaseDisk
+              probability={
+                statistics && statistics.qubits[i]
+                  ? statistics.qubits[i].probability_1
+                  : 0
+              }
+              phase={
+                statistics && statistics.qubits[i]
+                  ? statistics.qubits[i].phase
+                  : 0
+              }
+              purity={0}
+              key={`phase-disk--${i}`}
+            />
+          </Box>
+        );
+      })}
     </Box>
   );
 };
@@ -1047,32 +1057,34 @@ const Canvas = (props) => {
             <Grid container>
               <Grid item xs={12}>
                 <Grid container>
-                  <Grid
-                    item
-                    sx={{
-                      display: {
-                        md: "none",
-                      },
-                    }}
-                  >
-                    <IconButton
-                      onClick={() => {
-                        setGatesDirectoryOpenMobile(true);
-                      }}
-                      size="small"
+                  {project.permissions == 2 && (
+                    <Grid
+                      item
                       sx={{
-                        borderRadius: 0,
+                        display: {
+                          md: "none",
+                        },
                       }}
-                      disableTouchRipple
                     >
-                      <ViewModuleOutlinedIcon />
-                    </IconButton>
-                  </Grid>
+                      <IconButton
+                        onClick={() => {
+                          setGatesDirectoryOpenMobile(true);
+                        }}
+                        size="small"
+                        sx={{
+                          borderRadius: 0,
+                        }}
+                        disableTouchRipple
+                      >
+                        <ViewModuleOutlinedIcon />
+                      </IconButton>
+                    </Grid>
+                  )}
                   <Grid
                     item
                     sx={{
                       ml: {
-                        xs: 1,
+                        xs: project.permissions == 2 ? 1 : 0,
                         md: 0,
                       },
                       mt: -0.5,
@@ -1094,8 +1106,8 @@ const Canvas = (props) => {
                           whiteSpace: "nowrap",
                           textOverflow: "ellipsis",
                           maxWidth: {
-                            xs: theme.spacing(8),
-                            sm: theme.spacing(12),
+                            xs: theme.spacing(10),
+                            sm: theme.spacing(13),
                             md: theme.spacing(16),
                           },
                         }}
@@ -1158,30 +1170,34 @@ const Canvas = (props) => {
               >
                 <BarChartRoundedIcon />
               </IconButton>
-              <Tooltip title="Undo">
-                <IconButton
-                  onClick={() => {}}
-                  size="small"
-                  sx={{
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  <UndoRoundedIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Redo">
-                <IconButton
-                  onClick={() => {}}
-                  size="small"
-                  sx={{
-                    borderRadius: 0,
-                  }}
-                  disableTouchRipple
-                >
-                  <RedoRoundedIcon />
-                </IconButton>
-              </Tooltip>
+              {project.permissions == 2 && (
+                <Tooltip title="Undo">
+                  <IconButton
+                    onClick={() => {}}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <UndoRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {project.permissions == 2 && (
+                <Tooltip title="Redo">
+                  <IconButton
+                    onClick={() => {}}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <RedoRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Box
                 sx={{
                   display: "flex",
@@ -1189,11 +1205,23 @@ const Canvas = (props) => {
                   mx: 0.5,
                 }}
               >
-                <Tooltip title="Run the circuit">
+                <Tooltip
+                  title={
+                    project.permissions == 2
+                      ? "Run the circuit"
+                      : "Fork the project"
+                  }
+                >
                   <Button
                     size="small"
                     variant="contained"
-                    startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+                    startIcon={
+                      project.permissions == 2 ? (
+                        <PlayArrowRoundedIcon sx={{ mr: -0.5 }} />
+                      ) : (
+                        <ForkRightRoundedIcon sx={{ mr: -0.5 }} />
+                      )
+                    }
                     sx={{
                       display: {
                         xs: "none",
@@ -1201,10 +1229,16 @@ const Canvas = (props) => {
                       },
                     }}
                   >
-                    Run
+                    {project.permissions == 2 ? "Run" : "Fork to Edit & Run"}
                   </Button>
                 </Tooltip>
-                <Tooltip title="Run the circuit">
+                <Tooltip
+                  title={
+                    project.permissions == 2
+                      ? "Run the circuit"
+                      : "Fork the project"
+                  }
+                >
                   <IconButton
                     size="small"
                     variant="contained"
@@ -1217,7 +1251,11 @@ const Canvas = (props) => {
                       },
                     }}
                   >
-                    <PlayArrowRoundedIcon />
+                    {project.permissions == 2 ? (
+                      <PlayArrowRoundedIcon />
+                    ) : (
+                      <ForkRightRoundedIcon />
+                    )}
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -1283,7 +1321,7 @@ const Canvas = (props) => {
           }}
         >
           <Grid item width="auto">
-            <Left circuit={circuit} setCircuit={setCircuit} />
+            <Left circuit={circuit} setCircuit={setCircuit} project={project} />
           </Grid>
           <Grid
             item
@@ -1292,7 +1330,11 @@ const Canvas = (props) => {
               overflowX: "auto",
             }}
           >
-            <Circuit circuit={circuit} setCircuit={setCircuit} />
+            <Circuit
+              circuit={circuit}
+              setCircuit={setCircuit}
+              project={project}
+            />
           </Grid>
           <Grid item width="auto">
             <Right

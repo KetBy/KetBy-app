@@ -21,7 +21,7 @@ const gatesMap = getGatesMap();
 
 const GatesDirectory = (props) => {
   const [display, setDisplay] = React.useState("default"); // default / compact / detailed
-  const { circuit, setCircuit, openMobile, setOpenMobile } = props;
+  const { circuit, setCircuit, openMobile, setOpenMobile, project } = props;
 
   return (
     <>
@@ -290,6 +290,7 @@ const GatesDirectory = (props) => {
                             circuit={circuit}
                             setCircuit={setCircuit}
                             setGatesDirectoryOpenMobile={setOpenMobile}
+                            project={project}
                           />
                         </Grid>
                       ) : (

@@ -353,6 +353,7 @@ const OptionsMenu = (props) => {
     instructionIndex,
     gate,
     setGatesDirectoryOpenMobile,
+    project,
   } = props;
 
   const [view, setView] = React.useState("default"); // current view (default / gate info / gate settings)
@@ -449,7 +450,7 @@ const OptionsMenu = (props) => {
             }}
           />
         </ListItemIcon>
-        <Typography variant="body2">Edit</Typography>
+        <Typography variant="body2">Settings</Typography>
       </MenuItem>,
       <MenuItem onClick={() => setView("info")} key={1}>
         <ListItemIcon>
@@ -461,20 +462,22 @@ const OptionsMenu = (props) => {
         </ListItemIcon>
         <Typography variant="body2">Gate info</Typography>
       </MenuItem>,
-      <Divider sx={{ my: -0 }} key={2} />,
-      <MenuItem key={3} onClick={handleDelete}>
-        <ListItemIcon>
-          <DeleteOutlineRoundedIcon
-            sx={{
-              fontSize: "1.25rem",
-              color: theme.palette.error.main,
-            }}
-          />
-        </ListItemIcon>
-        <Typography variant="body2" color="error">
-          Delete
-        </Typography>
-      </MenuItem>,
+      project.permissions == 2 ? <Divider sx={{ my: -0 }} key={2} /> : null,
+      project.permissions == 2 ? (
+        <MenuItem key={3} onClick={handleDelete}>
+          <ListItemIcon>
+            <DeleteOutlineRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+                color: theme.palette.error.main,
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2" color="error">
+            Delete
+          </Typography>
+        </MenuItem>
+      ) : null,
     ];
   } else if (view === "info") {
     previewItems = [
@@ -528,6 +531,7 @@ const OptionsMenu = (props) => {
     };
 
     const handleSave = () => {
+      if (project.permissions < 2) return;
       // Validate the parameters
       if (parameters.length) {
         for (let i = 0; i < parameters.length; i++) {
@@ -580,7 +584,7 @@ const OptionsMenu = (props) => {
     };
 
     instructionItems = [
-      <ViewHeader title="Edit instruction" key={0} />,
+      <ViewHeader title="Settings" key={0} />,
       <MenuItem
         disableRipple
         divider
@@ -630,6 +634,7 @@ const OptionsMenu = (props) => {
                     mb: -1,
                   }}
                   onChange={(e) => handleSelect(e, i)}
+                  disabled={project.permissions < 2}
                 >
                   {[...Array(circuit.meta.qubits)].map((_, index) => {
                     return (
@@ -695,6 +700,7 @@ const OptionsMenu = (props) => {
                     }}
                     value={parameters[index]}
                     onChange={(e) => handleParamInput(e, index)}
+                    disabled={project.permissions < 2}
                   />
                 </Grid>,
               ];
@@ -712,24 +718,41 @@ const OptionsMenu = (props) => {
         }}
         key={2}
       >
-        <Button
-          disableElevation
-          variant="contained"
-          size="small"
-          onClick={() => handleSave()}
-          fullWidth
-          sx={{ m: theme.spacing(0.5, 0, 0.5, 0) }}
-        >
-          Save
-        </Button>
-        {saveError && (
-          <Typography
-            variant="body2"
-            align="left"
-            sx={{ lineHeight: 1.2, my: 1, color: theme.palette.red.dark }}
-          >
-            {saveError}
-          </Typography>
+        {project.permissions == 2 ? (
+          <>
+            <Button
+              disableElevation
+              variant="contained"
+              size="small"
+              onClick={() => handleSave()}
+              fullWidth
+              sx={{ m: theme.spacing(0.5, 0, 0.5, 0) }}
+            >
+              Save
+            </Button>
+            {saveError && (
+              <Typography
+                variant="body2"
+                align="left"
+                sx={{ lineHeight: 1.2, my: 1, color: theme.palette.red.dark }}
+              >
+                {saveError}
+              </Typography>
+            )}
+          </>
+        ) : (
+          <>
+            <Typography
+              variant="body2"
+              sx={{
+                textAlign: "justify",
+                lineHeight: 1.2,
+                my: 1,
+              }}
+            >
+              In order to change these settings, please fork the project first.
+            </Typography>
+          </>
         )}
       </MenuItem>,
     ];
@@ -787,6 +810,7 @@ const Gate = (props) => {
     instructionIndex,
     setDisableDragging,
     setGatesDirectoryOpenMobile,
+    project,
   } = props;
   const preview = props.preview ? true : false;
 
@@ -939,6 +963,7 @@ const Gate = (props) => {
         instructionIndex={instructionIndex}
         gate={gate}
         setGatesDirectoryOpenMobile={setGatesDirectoryOpenMobile}
+        project={project}
       />
     </>
   );
