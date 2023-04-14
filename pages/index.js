@@ -464,7 +464,7 @@ const Featured = ({ data, loading }) => {
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
             Here are some projects for you to explore.
           </Typography>
-          <Grid container sx={{ mt: 1 }} spacing={3}>
+          <Grid container sx={{ mt: 0 }} spacing={3}>
             {loading &&
               [...Array(4)].map((_, i) => {
                 return (
