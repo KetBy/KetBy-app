@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Box, Typography, Container, Grid, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Button,
+  Skeleton,
+} from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
 import { useAppContext } from "../src/utils/context";
@@ -10,6 +17,8 @@ import {
   MouseParallaxChild,
 } from "react-parallax-mouse";
 import HeroBg from "../public/assets/page/home_hero_bg.svg";
+import axios from "../src/utils/axios";
+import ProjectCard from "../src/components/ProjectCard";
 
 const Hero = (props) => {
   const { appState } = useAppContext();
@@ -444,8 +453,76 @@ const Hero = (props) => {
   );
 };
 
+const Featured = ({ data, loading }) => {
+  return (
+    <>
+      <Box sx={{ py: 3 }}>
+        <Container maxWidth="lg">
+          <Typography variant="h3" sx={{ fontWeight: 700 }}>
+            Get inspired.
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+            Here are some projects for you to explore.
+          </Typography>
+          <Grid container sx={{ mt: 1 }} spacing={3}>
+            {loading &&
+              [...Array(4)].map((_, i) => {
+                return (
+                  <Grid item xs={12} md={6} lg={3} key={i}>
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      height={150}
+                      sx={{
+                        borderRadius: (theme) =>
+                          `${theme.shape.borderRadius}px`,
+                      }}
+                    />
+                  </Grid>
+                );
+              })}
+            {data &&
+              data.highlighted.map((project, index) => {
+                return (
+                  <Grid item xs={12} md={6} lg={3} key={index}>
+                    <ProjectCard project={project} />
+                  </Grid>
+                );
+              })}
+          </Grid>
+          <Button
+            variant="contained"
+            component={Link}
+            href="/discover"
+            sx={{ mt: 3 }}
+          >
+            Discover more projects
+          </Button>
+        </Container>
+      </Box>
+    </>
+  );
+};
+
 export default function HomePage() {
   const { appState } = useAppContext();
+
+  const [data, setData] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    axios
+      .get("/page/index")
+      .then((res) => {
+        if (res.data.success) {
+          setData(res.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <>
@@ -457,6 +534,7 @@ export default function HomePage() {
         />
       </Head>
       <Hero />
+      <Featured data={data} loading={loading} />
     </>
   );
 }

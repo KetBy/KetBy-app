@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Typography,
@@ -9,23 +10,50 @@ import {
   Button,
   Chip,
   Tooltip,
+  ButtonGroup,
+  IconButton,
 } from "@mui/material";
 
 import { CardActionArea } from "@mui/material";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import ForkRightRoundedIcon from "@mui/icons-material/ForkRightRounded";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+
+import theme from "../themes/default";
 
 import Link from "next/link";
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard(props) {
+  const _project = props.project;
+  const [project, setProject] = React.useState(_project);
+  const [starred, setStarred] = React.useState(false);
+
+  const handleClick = (e) => {
+    if (starred) {
+      setProject({
+        ...project,
+        stars_count: project.stars_count - 1,
+      });
+    } else {
+      setProject({
+        ...project,
+        stars_count: project.stars_count + 1,
+      });
+    }
+    setStarred(!starred);
+  };
+
   return (
     <Card
       sx={{
         boxShadow: (theme) => theme.shadowsCustom[2],
       }}
     >
-      <CardActionArea component={Link} href={`/composer/${project.token}/${project.first_file_index}`}>
+      <CardActionArea
+        component={Link}
+        href={`/composer/${project.token}/${project.first_file_index}`}
+      >
         {project.thumbnail_url && (
           <CardMedia
             component="img"
@@ -48,7 +76,12 @@ export default function ProjectCard({ project }) {
           >
             {project.title}
           </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            gutterBottom
+            sx={{ mt: 0.5 }}
+          >
             {project.date} - {project.files_count}{" "}
             {`file${project.files_count > 1 ? "s" : ""}`}
             <Chip
@@ -60,6 +93,30 @@ export default function ProjectCard({ project }) {
               component="span"
             />
           </Typography>
+          {project.author && (
+            <Typography
+              sx={{
+                mt: -0.5,
+                mb: 1,
+                display: "block",
+              }}
+              variant="body2"
+            >
+              by{" "}
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+                component={Link}
+                href={`/u/${project.author.username}`}
+              >
+                @{project.author.username}
+              </Typography>
+            </Typography>
+          )}
           <Typography
             variant="body2"
             sx={{
@@ -105,16 +162,59 @@ export default function ProjectCard({ project }) {
             </Box>
           </Grid>
           <Grid item xs={6} sx={{ display: "grid", justifyContent: "end" }}>
-            <Tooltip title="Manage access permissions">
-              <Button
-                size="small"
-                color="primary"
-                variant="outlined"
-                endIcon={<ShareRoundedIcon />}
+            <ButtonGroup>
+              <Tooltip
+                title={starred ? "Unstar this project" : "Star this project"}
               >
-                Share
-              </Button>
-            </Tooltip>
+                <Button
+                  size="small"
+                  disableElevation
+                  {...{
+                    variant: starred ? "contained" : "outlined",
+                    sx: {
+                      background: starred
+                        ? theme.palette.primary.main
+                        : "white",
+                      color: starred ? "white" : theme.palette.primary.main,
+                    },
+                  }}
+                  onClick={handleClick}
+                >
+                  {starred ? (
+                    <StarRoundedIcon
+                      sx={{
+                        fontSize: "1.2rem",
+                      }}
+                      color="yellow"
+                    />
+                  ) : (
+                    <StarRoundedIcon
+                      sx={{
+                        fontSize: "1.2rem",
+                      }}
+                    />
+                  )}
+                </Button>
+              </Tooltip>
+              <Tooltip title="Fork this project">
+                <Button size="small" color="primary" variant="outlined">
+                  <ForkRightRoundedIcon
+                    sx={{
+                      fontSize: "1.2rem",
+                    }}
+                  />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Share this project">
+                <Button size="small" color="primary" variant="outlined">
+                  <ShareRoundedIcon
+                    sx={{
+                      fontSize: "1.1rem",
+                    }}
+                  />
+                </Button>
+              </Tooltip>
+            </ButtonGroup>
           </Grid>
         </Grid>
       </CardActions>

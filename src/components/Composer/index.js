@@ -163,6 +163,8 @@ export default function Composer(props) {
   const [activeFile, setActiveFile] = React.useState(null);
   const [uniqueKey, setUniqueKey] = React.useState(1);
 
+  const { appState } = useAppContext();
+
   React.useEffect(() => {
     if (projectToken && fileIndex) {
       axios
@@ -196,7 +198,7 @@ export default function Composer(props) {
           setError(err.message);
         });
     }
-  }, [fileIndex]);
+  }, [fileIndex, appState.user]);
 
   return (
     <Box

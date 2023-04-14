@@ -961,17 +961,19 @@ const Canvas = (props) => {
             },
           }}
         >
-          <MenuItem
-            key={"new-file"}
-            onClick={() => {
-              toggleFileDrawer();
-              handleClose();
-            }}
-            sx={{ background: "white !important" }}
-          >
-            <PostAddOutlinedIcon />
-            Create a new file
-          </MenuItem>
+          {project.permissions == 2 && (
+            <MenuItem
+              key={"new-file"}
+              onClick={() => {
+                toggleFileDrawer();
+                handleClose();
+              }}
+              sx={{ background: "white !important" }}
+            >
+              <PostAddOutlinedIcon />
+              Create a new file
+            </MenuItem>
+          )}
           {Object.entries(files).map(([index, file]) => {
             return (
               <MenuItem
@@ -983,7 +985,7 @@ const Canvas = (props) => {
                 sx={{
                   background:
                     file.file_index == activeFile.file_index
-                      ? theme.palette.primary[50]
+                      ? `${theme.palette.primary[50]} !important`
                       : "white !important",
                 }}
               >
