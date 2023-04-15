@@ -179,6 +179,7 @@ export default function ShareProjectModal(props) {
                     defaultChecked={project.public}
                     onChange={handleSwitch}
                     disabled={loading}
+                    key={`${project.token}`}
                   />
                   <Typography variant="body2">Public</Typography>
                 </Stack>
