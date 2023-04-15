@@ -24,8 +24,10 @@ import theme from "../themes/default";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAppContext } from "../utils/context";
 
 export default function ProjectCard(props) {
+  const { setShareProjectModal, setShareProjectModalOpen } = useAppContext();
   const _project = props.project;
   const [project, setProject] = React.useState(_project);
   const [starred, setStarred] = React.useState(false);
@@ -207,7 +209,15 @@ export default function ProjectCard(props) {
                 </Button>
               </Tooltip>
               <Tooltip title="Share this project">
-                <Button size="small" color="primary" variant="outlined">
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={() => {
+                    setShareProjectModal(project);
+                    setShareProjectModalOpen(true);
+                  }}
+                >
                   <ShareRoundedIcon
                     sx={{
                       fontSize: "1.1rem",

@@ -165,7 +165,7 @@ export default function Composer(props) {
   const [activeFile, setActiveFile] = React.useState(null);
   const [uniqueKey, setUniqueKey] = React.useState(1);
 
-  const { appState } = useAppContext();
+  const { appState, shouldUpdateProject } = useAppContext();
 
   React.useEffect(() => {
     if (projectToken && fileIndex) {
@@ -202,7 +202,7 @@ export default function Composer(props) {
           setError(err.message);
         });
     }
-  }, [fileIndex, appState.user]);
+  }, [fileIndex, appState.user, shouldUpdateProject]);
 
   return (
     <Box
@@ -215,7 +215,10 @@ export default function Composer(props) {
         {loading ? (
           <Box
             sx={{
-              minHeight: `calc(100vh - ${theme.constants.menuHeight}px)`,
+              minHeight: {
+                xs: "-webkit-fill-available",
+                md: (theme) => `calc(100vh - ${theme.constants.menuHeight}px)`,
+              },
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

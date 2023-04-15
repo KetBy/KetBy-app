@@ -18,7 +18,10 @@ export default function RouteGuard(props) {
     return (
       <Box
         sx={{
-          minHeight: (theme) => `calc(100vh - ${theme.constants.menuHeight}px)`,
+          minHeight: {
+            xs: "-webkit-fill-available",
+            md: (theme) => `calc(100vh - ${theme.constants.menuHeight}px)`,
+          },
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

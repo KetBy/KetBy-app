@@ -7,7 +7,9 @@
     vertical-align: middle;
     display: inline-block;
 }
-
+textarea {
+    line-height: 1.25 !important;
+}
 @supports (font: -apple-system-body) and (-webkit-appearance: none) {
     img[loading="lazy"] {
         clip-path: inset(0.6px)

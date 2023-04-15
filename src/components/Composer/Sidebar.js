@@ -41,6 +41,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 
 import { gatesMap as getGatesMap } from "../../utils/gates";
 import CustomLinearProgress from "../custom/LinearProgress";
+import { useAppContext } from "../../utils/context";
 
 const CustomTabs = styled(Tabs)({
   "& .ketby-Tab-root": {
@@ -747,6 +748,7 @@ const ProjectContent = (props) => {
   };
 
   const Settings = () => {
+    const { setShareProjectModal, setShareProjectModalOpen } = useAppContext();
     return (
       <Box sx={{ p: 1 }}>
         <Typography
@@ -767,15 +769,15 @@ const ProjectContent = (props) => {
             component="span"
           />
         </Typography>
-        {project.public && (
+        {project.public == 1 && (
           <Typography variant="body2" sx={{ lineHeight: 1.1, mt: 1 }}>
             Anyone can access its files and fork it (make a copy of it).
           </Typography>
         )}
-        {!project.public && (
+        {project.public == 0 && (
           <Typography variant="body2" sx={{ lineHeight: 1.1, mt: 1 }}>
-            Only you are able to access it through this link. If you want to
-            share it with others, switch the privacy setting to public.
+            Only you are able to access it. If you want to share it with others,
+            switch the privacy setting to public.
           </Typography>
         )}
         <Button
@@ -784,6 +786,10 @@ const ProjectContent = (props) => {
           }}
           variant="outlined"
           fullWidth
+          onClick={() => {
+            setShareProjectModal(project);
+            setShareProjectModalOpen(true);
+          }}
         >
           Manage access settings
         </Button>
@@ -912,7 +918,11 @@ const ProjectContent = (props) => {
             </Alert>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            px: 3,
+          }}
+        >
           <Button
             onClick={() => {
               setDeleteFileOpen(false);
@@ -955,7 +965,13 @@ const ProjectContent = (props) => {
             label="Title"
             fullwidth
             placeholder="New file title..."
-            sx={{ mt: 1, width: 396 }}
+            sx={{
+              mt: 1,
+              width: {
+                xs: "auto",
+                md: 396,
+              },
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleRenameFile();
@@ -971,7 +987,11 @@ const ProjectContent = (props) => {
             </Alert>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{
+            px: 3,
+          }}
+        >
           <Button
             onClick={() => {
               setRenameFileOpen(false);
@@ -986,7 +1006,7 @@ const ProjectContent = (props) => {
             autoFocus
             color="primary"
           >
-            Rename
+            Rename the file
           </LoadingButton>
         </DialogActions>
       </Dialog>

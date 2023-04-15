@@ -131,33 +131,7 @@ const theme = createTheme({
       },
     },
     MuiSwitch: {
-      styleOverrides: {
-        root: {
-          width: 32,
-          height: 20,
-          padding: 0,
-          "& .ketby-Switch-switchBase": {
-            "&.ketby--checked": {
-              transform: "translateX(11px)",
-              color: "#fff",
-            },
-          },
-        },
-        switchBase: {
-          height: 20,
-          width: 20,
-          padding: 0,
-          color: "#fff",
-          "&.ketby--checked + .ketby-Switch-track": {
-            opacity: 1,
-          },
-        },
-        thumb: {
-          flexShrink: 0,
-          width: "14px",
-          height: "14px",
-        },
-      },
+      styleOverrides: {},
     },
     MuiPaginationItem: {
       styleOverrides: {},

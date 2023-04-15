@@ -12,6 +12,7 @@ import theme from "../src/themes/default";
 import createEmotionCache from "../src/utils/createEmotionCache";
 import "../src/themes/overrides.scss";
 import Menu from "../src/components/Menu";
+import ShareProjectModal from "../src/components/ShareProjectModal";
 import { AppWrapper } from "../src/utils/context";
 
 const NextProgressbar = dynamic(
@@ -63,6 +64,7 @@ export default function MyApp(props) {
               }}
             >
               <Component {...pageProps} />
+              <ShareProjectModal />
             </Box>
           </Box>
         </AppWrapper>

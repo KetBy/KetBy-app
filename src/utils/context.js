@@ -13,7 +13,10 @@ export function AppWrapper({ children }) {
   });
 
   const [projectMemo, setProjectMemo] = React.useState(null);
-  const [shouldUpdateProject, setShouldUpdateProject] = React.useState(true);
+  const [shouldUpdateProject, setShouldUpdateProject] = React.useState(1);
+  const [shareProjectModal, setShareProjectModal] = React.useState(null);
+  const [shareProjectModalOpen, setShareProjectModalOpen] =
+    React.useState(false);
 
   const checkStatus = async () => {
     axios
@@ -74,6 +77,10 @@ export function AppWrapper({ children }) {
         shouldUpdateProject,
         setShouldUpdateProject,
         getNext,
+        shareProjectModal,
+        setShareProjectModal,
+        shareProjectModalOpen,
+        setShareProjectModalOpen,
       }}
     >
       {children}
