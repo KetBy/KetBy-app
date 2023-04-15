@@ -112,7 +112,7 @@ export default function ProjectCard(props) {
             {`file${project.files_count > 1 ? "s" : ""}`}
             <Chip
               size="small"
-              label={project.public ? "Public" : "Private"}
+              label={project.public ? "public" : "private"}
               sx={{ ml: 1, display: "inline-flex", alignItself: "center" }}
               color={project.public ? "success" : "default"}
               variant="outlined"
