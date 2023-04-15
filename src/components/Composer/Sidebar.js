@@ -683,7 +683,7 @@ const ProjectContent = (props) => {
 
     return (
       <>
-        <Grid container rowSpacing={1} component="form" onSubmit={handleSubmit}>
+        <Grid container rowSpacing={2} component="form" onSubmit={handleSubmit}>
           <Grid item xs={12}>
             <TextField
               id="project-title"
@@ -719,7 +719,7 @@ const ProjectContent = (props) => {
               rows={3}
             />
           </Grid>
-          {Boolean(message) && (
+          {Boolean(message) && !success && (
             <Grid item xs={12}>
               <Alert
                 severity={success ? "success" : "error"}
@@ -794,7 +794,7 @@ const ProjectContent = (props) => {
         >
           General
         </Typography>
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2, mb: 1 }}>
           <GeneralSettings />
         </Box>
       </Box>
