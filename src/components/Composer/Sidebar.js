@@ -235,7 +235,15 @@ const ProjectHeader = (props) => {
 };
 
 const FileOptionsMenu = (props) => {
-  const { file, isActive, setDeleteFileModal, setDeleteFileOpen } = props;
+  const {
+    file,
+    isActive,
+    setDeleteFileModal,
+    setDeleteFileOpen,
+    setRenameFileOpen,
+    setRenameFileModal,
+    setNewFileTitle,
+  } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -259,7 +267,14 @@ const FileOptionsMenu = (props) => {
         onClose={handleClose}
         disableAutoFocusItem
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            setRenameFileModal(file.file_index);
+            setRenameFileOpen(true);
+            setNewFileTitle(file.title);
+            handleClose();
+          }}
+        >
           <ListItemIcon>
             <DriveFileRenameOutlineOutlinedIcon
               sx={{
@@ -518,6 +533,7 @@ const ProjectContent = (props) => {
   const router = useRouter();
 
   const [deleteFileModal, setDeleteFileModal] = React.useState(-1);
+  const [renameFileModal, setRenameFileModal] = React.useState(-1);
 
   const Circuit = ({ file, activeFile, index }) => {
     const [loading, setLoading] = React.useState(false);
@@ -577,6 +593,9 @@ const ProjectContent = (props) => {
             isActive={activeFile.file_index == index}
             setDeleteFileModal={setDeleteFileModal}
             setDeleteFileOpen={setDeleteFileOpen}
+            setRenameFileModal={setRenameFileModal}
+            setRenameFileOpen={setRenameFileOpen}
+            setNewFileTitle={setNewFileTitle}
           />
         )}
       </ListItemButton>
@@ -616,6 +635,20 @@ const ProjectContent = (props) => {
   const [deleteFileError, setDeleteFileError] = React.useState(null);
   const [deleteFileOpen, setDeleteFileOpen] = React.useState(false);
 
+  const [renamingFile, setRenamingFile] = React.useState(false);
+  const [renameFileError, setRenameFileError] = React.useState(null);
+  const [renameFileFieldErrors, setRenameFileFieldErrors] = React.useState({
+    title: null,
+  });
+  const [renameFileOpen, setRenameFileOpen] = React.useState(false);
+  const [newFileTitle, setNewFileTitle] = React.useState(null);
+
+  const handleFileTitleChange = (e) => {
+    setNewFileTitle(e.target.value);
+    setRenameFileError(null);
+    setRenameFileFieldErrors({ title: null });
+  };
+
   const handleDeleteFile = () => {
     setDeletingFile(true);
     setDeleteFileError(null);
@@ -638,6 +671,39 @@ const ProjectContent = (props) => {
       .catch((err) => {
         setDeleteFileError(err.response.data.message);
         setDeletingFile(false);
+      });
+  };
+
+  const handleRenameFile = () => {
+    setRenamingFile(true);
+    setRenameFileError(null);
+    axios
+      .post(`/project/${project.token}/${renameFileModal}`, {
+        title: newFileTitle,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setRenameFileOpen(false);
+          const newFiles = JSON.parse(JSON.stringify(files));
+          newFiles[renameFileModal].title = newFileTitle;
+          setTimeout(() => {
+            setRenameFileModal(-1);
+            setFiles(newFiles);
+          }, 200);
+        } else {
+          setRenameFileError(res.data.message);
+          if (res.data.field_errors) {
+            setRenameFileFieldErrors(res.data.field_errors);
+          }
+        }
+        setRenamingFile(false);
+      })
+      .catch((err) => {
+        setRenameFileError(err.response.data.message);
+        if (err.response.data.field_errors) {
+          setRenameFileFieldErrors(err.response.data.field_errors);
+        }
+        setRenamingFile(false);
       });
   };
 
@@ -686,6 +752,65 @@ const ProjectContent = (props) => {
             color="red"
           >
             Yes, delete the file
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={renameFileOpen}
+        onClose={() => {
+          setRenameFileOpen(false);
+          setTimeout(() => {
+            setRenameFileModal(-1);
+            setRenamingFile(false);
+          }, 200);
+        }}
+        aria-labelledby="rename-file-title"
+        maxWidth="xs"
+      >
+        <DialogTitle id="rename-file-title">
+          Rename{" "}
+          <i>{files[renameFileModal] ? files[renameFileModal].title : ""}</i>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            variant="outlined"
+            onChange={handleFileTitleChange}
+            value={newFileTitle}
+            label="Title"
+            fullwidth
+            placeholder="New file title..."
+            sx={{ mt: 1, width: 396 }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleRenameFile();
+              }
+            }}
+            size="small"
+            error={Boolean(renameFileFieldErrors.title)}
+            helperText={renameFileFieldErrors.title}
+          />
+          {renameFileError && (
+            <Alert sx={{ mt: 1 }} severity="error">
+              {renameFileError}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setRenameFileOpen(false);
+            }}
+            color="darkGrey"
+          >
+            Cancel
+          </Button>
+          <LoadingButton
+            onClick={handleRenameFile}
+            loading={renamingFile}
+            autoFocus
+            color="primary"
+          >
+            Rename
           </LoadingButton>
         </DialogActions>
       </Dialog>
