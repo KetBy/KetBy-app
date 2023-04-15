@@ -453,7 +453,7 @@ const Hero = (props) => {
   );
 };
 
-const Featured = ({ data, loading }) => {
+const Featured = ({ highlightedProjects }) => {
   return (
     <>
       <Box sx={{ py: 3 }}>
@@ -465,30 +465,13 @@ const Featured = ({ data, loading }) => {
             Here are some projects for you to explore.
           </Typography>
           <Grid container sx={{ mt: 0 }} spacing={3}>
-            {loading &&
-              [...Array(4)].map((_, i) => {
-                return (
-                  <Grid item xs={12} md={6} lg={3} key={i}>
-                    <Skeleton
-                      variant="rectangular"
-                      animation="wave"
-                      height={150}
-                      sx={{
-                        borderRadius: (theme) =>
-                          `${theme.shape.borderRadius}px`,
-                      }}
-                    />
-                  </Grid>
-                );
-              })}
-            {data &&
-              data.highlighted.map((project, index) => {
-                return (
-                  <Grid item xs={12} md={6} lg={3} key={index}>
-                    <ProjectCard project={project} />
-                  </Grid>
-                );
-              })}
+            {highlightedProjects.map((project, index) => {
+              return (
+                <Grid item xs={12} md={6} lg={3} key={index}>
+                  <ProjectCard project={project} />
+                </Grid>
+              );
+            })}
           </Grid>
           <Button
             variant="contained"
@@ -504,26 +487,7 @@ const Featured = ({ data, loading }) => {
   );
 };
 
-export default function HomePage() {
-  const { appState } = useAppContext();
-
-  const [data, setData] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    axios
-      .get("/page/index")
-      .then((res) => {
-        if (res.data.success) {
-          setData(res.data);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-      });
-  }, []);
-
+export default function HomePage({ data }) {
   return (
     <>
       <Head>
@@ -534,7 +498,19 @@ export default function HomePage() {
         />
       </Head>
       <Hero />
-      <Featured data={data} loading={loading} />
+      <Featured highlightedProjects={data.highlighted} />
     </>
   );
+}
+
+export async function getStaticProps({ req, res }) {
+  const result = await axios.get("/page/index");
+  const data = result.data;
+
+  return {
+    props: {
+      data,
+    },
+    revalidate: 10, // In seconds
+  };
 }

@@ -23,11 +23,13 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import theme from "../themes/default";
 
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function ProjectCard(props) {
   const _project = props.project;
   const [project, setProject] = React.useState(_project);
   const [starred, setStarred] = React.useState(false);
+  const router = useRouter();
 
   const handleClick = (e) => {
     if (starred) {
@@ -76,11 +78,33 @@ export default function ProjectCard(props) {
           >
             {project.title}
           </Typography>
+          {project.author && (
+            <Typography
+              sx={{
+                mt: 0,
+                mb: -0.5,
+                display: "block",
+              }}
+              variant="body2"
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+                component="span"
+              >
+                @{project.author.username}
+              </Typography>
+            </Typography>
+          )}
           <Typography
             variant="body2"
             color="text.secondary"
             gutterBottom
             sx={{ mt: 0.5 }}
+            component="div"
           >
             {project.date} - {project.files_count}{" "}
             {`file${project.files_count > 1 ? "s" : ""}`}
@@ -93,30 +117,7 @@ export default function ProjectCard(props) {
               component="span"
             />
           </Typography>
-          {project.author && (
-            <Typography
-              sx={{
-                mt: -0.5,
-                mb: 1,
-                display: "block",
-              }}
-              variant="body2"
-            >
-              by{" "}
-              <Typography
-                variant="body2"
-                color="primary"
-                sx={{
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-                component={Link}
-                href={`/u/${project.author.username}`}
-              >
-                @{project.author.username}
-              </Typography>
-            </Typography>
-          )}
+
           <Typography
             variant="body2"
             sx={{
@@ -185,7 +186,7 @@ export default function ProjectCard(props) {
                       sx={{
                         fontSize: "1.2rem",
                       }}
-                      color="yellow"
+                      color={theme.palette.warning[500]}
                     />
                   ) : (
                     <StarRoundedIcon
