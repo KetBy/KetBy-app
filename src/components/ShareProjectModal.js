@@ -79,7 +79,7 @@ export default function ShareProjectModal(props) {
 
   return (
     <Dialog
-      open={Boolean(shareProjectModalOpen)}
+      open={Boolean(shareProjectModalOpen) && Boolean(project)}
       aria-labelledby="share-project-title"
       maxWidth="xs"
       onClose={() => {
