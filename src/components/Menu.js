@@ -39,7 +39,7 @@ const UserAvatar = (props) => {
 };
 
 function ResponsiveAppBar(props) {
-  const { appState, logOut } = useAppContext();
+  const { appState, logOut, getNext } = useAppContext();
   const router = useRouter();
 
   const fullWidth = router.pathname.startsWith("/composer");
@@ -88,7 +88,7 @@ function ResponsiveAppBar(props) {
         },
       ]
     : [
-        { title: "Log in", url: "/auth/login" },
+        { title: "Log in", url: `/auth/login?next=${getNext()}` },
         { title: "Sign up", url: "/auth/register" },
       ];
 
@@ -290,7 +290,7 @@ function ResponsiveAppBar(props) {
                             pl: 1.5,
                           }}
                           component={Link}
-                          href="/auth/login"
+                          href={`/auth/login?next=${getNext()}`}
                         >
                           Log in
                         </Button>

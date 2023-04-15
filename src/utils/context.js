@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
 import axios from "./axios";
+import { useRouter } from "next/router";
 
 const AppContext = createContext();
 
@@ -47,6 +48,11 @@ export function AppWrapper({ children }) {
     checkStatus();
   };
 
+  const getNext = () => {
+    const router = useRouter();
+    return router.asPath.startsWith("/auth") ? "/" : router.asPath;
+  };
+
   React.useEffect(() => {
     if (localStorage.getItem("jwt")) {
       axios.defaults.headers["Authorization"] = `Bearer ${localStorage.getItem(
@@ -67,6 +73,7 @@ export function AppWrapper({ children }) {
         setProjectMemo,
         shouldUpdateProject,
         setShouldUpdateProject,
+        getNext,
       }}
     >
       {children}
