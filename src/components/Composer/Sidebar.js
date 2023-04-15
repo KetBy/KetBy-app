@@ -23,6 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Chip,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -528,6 +529,7 @@ const ProjectContent = (props) => {
     setActiveFile,
     circuit,
     project,
+    setProject,
   } = props;
 
   const router = useRouter();
@@ -621,8 +623,182 @@ const ProjectContent = (props) => {
     );
   };
 
+  const GeneralSettings = (props) => {
+    const [loading, setLoading] = React.useState(false);
+    const [message, setMessage] = React.useState(null);
+    const [success, setSuccess] = React.useState(null);
+
+    const defaultInput = {
+      title: project.title,
+      description: project.description,
+    };
+
+    const defaultError = {
+      title: null,
+      description: null,
+    };
+
+    const [input, setInput] = React.useState(defaultInput);
+    const [error, setError] = React.useState(defaultError);
+
+    const handleInput = (e) => {
+      setInput({ ...input, [e.target.name]: e.target.value });
+      setError({ ...error, [e.target.name]: null });
+      setMessage(null);
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage(null);
+      setSuccess(null);
+      axios
+        .post(`/project/${project.token}/settings`, input)
+        .then((res) => {
+          setMessage(res.data.message);
+          setSuccess(true);
+          setLoading(false);
+          setProject({
+            ...project,
+            title: input.title,
+            description: input.description,
+          });
+        })
+        .catch((err) => {
+          setSuccess(false);
+          let res = err.response;
+          try {
+            if (res.data.message) {
+              setMessage(res.data.message);
+            }
+            if (res.data.field_errors) {
+              setError(res.data.field_errors);
+            }
+          } catch (err) {
+            setMessage(`Something went wrong. Please try again later.`);
+          }
+          setLoading(false);
+        });
+    };
+
+    return (
+      <>
+        <Grid container rowSpacing={1} component="form" onSubmit={handleSubmit}>
+          <Grid item xs={12}>
+            <TextField
+              id="project-title"
+              name="title"
+              label="Title"
+              variant="outlined"
+              size="small"
+              type="text"
+              placeholder="Project's title"
+              fullWidth
+              required
+              value={input.title}
+              onChange={handleInput}
+              error={Boolean(error.title)}
+              helperText={error.title}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="project-description"
+              name="description"
+              label="Description"
+              variant="outlined"
+              size="small"
+              type="text"
+              placeholder="Project's description"
+              fullWidth
+              value={input.description}
+              onChange={handleInput}
+              error={Boolean(error.description)}
+              helperText={error.description}
+              multiline
+              rows={3}
+            />
+          </Grid>
+          {Boolean(message) && (
+            <Grid item xs={12}>
+              <Alert
+                severity={success ? "success" : "error"}
+                sx={{
+                  border: (theme) => `1px solid ${theme.palette.grey.main}`,
+                }}
+              >
+                {message}
+              </Alert>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <LoadingButton
+              variant="contained"
+              type="submit"
+              fullWidth
+              loading={loading}
+            >
+              Save
+            </LoadingButton>
+          </Grid>
+        </Grid>
+      </>
+    );
+  };
+
   const Settings = () => {
-    return <Box sx={{ p: 1 }}>Settings coming soon...</Box>;
+    return (
+      <Box sx={{ p: 1 }}>
+        <Typography
+          sx={{
+            fontWeight: 600,
+          }}
+        >
+          Access
+        </Typography>
+        <Typography variant="body2">
+          This project is{" "}
+          <Chip
+            size="small"
+            label={project.public ? "public" : "private"}
+            sx={{ display: "inline-flex", alignItself: "center" }}
+            color={project.public ? "success" : "default"}
+            variant="outlined"
+            component="span"
+          />
+        </Typography>
+        {project.public && (
+          <Typography variant="body2" sx={{ lineHeight: 1.1, mt: 1 }}>
+            Anyone can access its files and fork it (make a copy of it).
+          </Typography>
+        )}
+        {!project.public && (
+          <Typography variant="body2" sx={{ lineHeight: 1.1, mt: 1 }}>
+            Only you are able to access it through this link. If you want to
+            share it with others, switch the privacy setting to public.
+          </Typography>
+        )}
+        <Button
+          sx={{
+            my: 2,
+          }}
+          variant="outlined"
+          fullWidth
+        >
+          Manage access settings
+        </Button>
+        <Typography
+          sx={{
+            fontWeight: 600,
+          }}
+        >
+          General
+        </Typography>
+        <Box sx={{ mt: 2 }}>
+          <GeneralSettings />
+        </Box>
+      </Box>
+    );
   };
 
   const Export = (props) => {
@@ -678,7 +854,7 @@ const ProjectContent = (props) => {
     setRenamingFile(true);
     setRenameFileError(null);
     axios
-      .post(`/project/${project.token}/${renameFileModal}`, {
+      .put(`/project/${project.token}/${renameFileModal}/settings`, {
         title: newFileTitle,
       })
       .then((res) => {
@@ -828,7 +1004,7 @@ const ProjectContent = (props) => {
         }}
       >
         {projectTab === "circuits" && <Circuits />}
-        {projectTab === "settings" && <Settings />}
+        {projectTab === "settings" && <Settings project={project} />}
         {projectTab === "export" && <Export circuit={circuit} />}
       </Box>
     </>
@@ -868,6 +1044,7 @@ const Sidebar = (props) => {
     openMobile,
     setOpenMobile,
     project,
+    setProject,
     toggleFileDrawer,
     newFileDrawerOpen,
   } = props;
@@ -904,6 +1081,7 @@ const Sidebar = (props) => {
             activeFile={activeFile}
             setActiveFile={setActiveFile}
             project={project}
+            setProject={setProject}
             toggleFileDrawer={toggleFileDrawer}
             newFileDrawerOpen={newFileDrawerOpen}
           />

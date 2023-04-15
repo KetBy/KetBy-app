@@ -308,6 +308,7 @@ const GatesDirectory = (props) => {
                                 circuit={circuit}
                                 setCircuit={setCircuit}
                                 setGatesDirectoryOpenMobile={setOpenMobile}
+                                project={project}
                               />
                             </Grid>
                             <Grid
@@ -344,6 +345,7 @@ const GatesDirectory = (props) => {
                         circuit={circuit}
                         setCircuit={setCircuit}
                         setGatesDirectoryOpenMobile={setOpenMobile}
+                        project={project}
                       />
                     </Grid>
                   );

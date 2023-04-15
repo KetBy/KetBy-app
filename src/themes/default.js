@@ -162,6 +162,11 @@ const theme = createTheme({
     MuiPaginationItem: {
       styleOverrides: {},
     },
+    MuiAlert: {
+      styleOverrides: {
+        lineHeight: 1.1,
+      },
+    },
   },
   palette: {
     mode: "light",

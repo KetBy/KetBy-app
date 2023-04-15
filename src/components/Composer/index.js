@@ -19,6 +19,7 @@ const Wrapper = (props) => {
     sidebarCollapsed,
     setSidebarCollapsed,
     project,
+    setProject,
     setFiles,
   } = props;
 
@@ -136,6 +137,7 @@ const Wrapper = (props) => {
       <Grid item width="auto">
         <Sidebar
           project={project}
+          setProject={setProject}
           collapsed={sidebarCollapsed}
           circuit={circuit}
           files={files}
@@ -174,22 +176,24 @@ export default function Composer(props) {
         .then((res) => {
           let data = res.data;
           if (data.success) {
-            setProject({
-              ...data.project,
-              permissions: data.permissions ?? 0, // 0 - restricted access, 1 - readonly, 2 - editable
-              author: data.author ?? null,
-            });
-            let newFiles = {};
-            data.files.map((file, index) => {
-              newFiles[file.file_index] = file;
-            });
-            setFiles(newFiles);
-            if (typeof newFiles[fileIndex] == "undefined") {
-              throw new Exception("This file does not exist");
-            }
-            setActiveFile(fileIndex);
-            setLoading(false);
-            setUniqueKey(uniqueKey + 1);
+            setTimeout(() => {
+              setProject({
+                ...data.project,
+                permissions: data.permissions ?? 0, // 0 - restricted access, 1 - readonly, 2 - editable
+                author: data.author ?? null,
+              });
+              let newFiles = {};
+              data.files.map((file, index) => {
+                newFiles[file.file_index] = file;
+              });
+              setFiles(newFiles);
+              if (typeof newFiles[fileIndex] == "undefined") {
+                throw new Exception("This file does not exist");
+              }
+              setActiveFile(fileIndex);
+              setLoading(false);
+              setUniqueKey(uniqueKey + 1);
+            }, 150);
           } else {
             throw new Exception("Something went wrong.");
           }
@@ -222,6 +226,7 @@ export default function Composer(props) {
         ) : (
           <Wrapper
             project={project}
+            setProject={setProject}
             files={files}
             setFiles={setFiles}
             activeFile={activeFile}
