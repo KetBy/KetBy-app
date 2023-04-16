@@ -10,6 +10,7 @@ import theme from "../../themes/default";
 import axios from "../../utils/axios";
 import CustomCircularProgress from "../custom/CircularProgress";
 import { useAppContext } from "../../utils/context";
+import ErrorPage from "../ErrorPage";
 
 const Wrapper = (props) => {
   const {
@@ -199,47 +200,65 @@ export default function Composer(props) {
           }
         })
         .catch((err) => {
-          setError(err.message);
+          if (err.response) {
+            console.log(err.response.data);
+            console.log(err.response.status);
+            console.log(err.response.headers);
+            setError({
+              code: err.response.status, // 404 - not found, 403 - unauthorized
+            });
+          } else {
+            setError({
+              code: 500, // server error
+            });
+          }
         });
     }
   }, [fileIndex, appState.user, shouldUpdateProject]);
 
   return (
-    <Box
-      sx={{
-        userSelect: "none",
-        bgcolor: "white",
-      }}
-    >
-      <>
-        {loading ? (
-          <Box
-            sx={{
-              minHeight: {
-                xs: "-webkit-fill-available",
-                md: (theme) => `calc(100vh - ${theme.constants.menuHeight}px)`,
-              },
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CustomCircularProgress />
-          </Box>
-        ) : (
-          <Wrapper
-            project={project}
-            setProject={setProject}
-            files={files}
-            setFiles={setFiles}
-            activeFile={activeFile}
-            setActiveFile={setActiveFile}
-            sidebarCollapsed={sidebarCollapsed}
-            setSidebarCollapsed={setSidebarCollapsed}
-            key={uniqueKey}
-          />
-        )}
-      </>
-    </Box>
+    <>
+      {error ? (
+        <ErrorPage code={error.code} />
+      ) : (
+        <Box
+          sx={{
+            userSelect: "none",
+            bgcolor: "white",
+          }}
+        >
+          <>
+            {loading ? (
+              <Box
+                sx={{
+                  minHeight: {
+                    xs: "-webkit-fill-available",
+                    md: (theme) =>
+                      `calc(100vh - ${theme.constants.menuHeight}px)`,
+                  },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CustomCircularProgress />
+              </Box>
+            ) : (
+              <Wrapper
+                project={project}
+                setProject={setProject}
+                files={files}
+                setFiles={setFiles}
+                activeFile={activeFile}
+                setActiveFile={setActiveFile}
+                sidebarCollapsed={sidebarCollapsed}
+                setSidebarCollapsed={setSidebarCollapsed}
+                key={uniqueKey}
+              />
+            )}
+          </>
+        </Box>
+      )}
+    </>
   );
 }

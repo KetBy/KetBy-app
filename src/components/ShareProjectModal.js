@@ -81,7 +81,7 @@ export default function ShareProjectModal(props) {
     <Dialog
       open={Boolean(shareProjectModalOpen) && Boolean(project)}
       aria-labelledby="share-project-title"
-      maxWidth="xs"
+      maxWidth="sm"
       onClose={() => {
         setShareProjectModalOpen(false);
       }}
@@ -103,21 +103,21 @@ export default function ShareProjectModal(props) {
         sx={{ opacity: loading ? 1 : 0, transitionDuration: "0.2s" }}
       />
       {project && (
-        <DialogContent>
+        <DialogContent
+          sx={{
+            width: 700,
+            maxWidth: "100%",
+          }}
+        >
           <TextField
             variant="outlined"
             value={`${process.env.NEXT_PUBLIC_APP_URL}/composer/${
               project ? project.token : null
             }`}
             label="Share URL"
-            fullwidth
             sx={{
-              width: {
-                xs: "60vw",
-                sm: "50vw",
-                md: 396,
-              },
               position: "relative",
+              width: "100%",
               "&:after": {
                 background:
                   "linear-gradient(to right, transparent 0, white 50px, white 100%)",
