@@ -26,6 +26,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ProjectCard from "../../../src/components/ProjectCard";
 import NewProjectDrawer from "../../../src/components/NewProjectDrawer";
 import { styled } from "@mui/system";
+import ErrorPage from "../../../src/components/ErrorPage";
 
 const CustomTabs = styled(Tabs)(({ theme }) => ({
   "&.ketby-Tabs-vertical": {
@@ -352,16 +353,34 @@ export default function UserPage(props) {
   const [user, setUser] = React.useState(null);
 
   const [tab, setTab] = React.useState("index");
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (typeof username == "undefined") return;
-    axios.get(`/user/${username}`).then((res) => {
-      if (res.data.success) {
-        setUser(res.data.user);
-      } else {
-        alert("User not found");
-      }
-    });
+    axios
+      .get(`/user/${username}`)
+      .then((res) => {
+        if (res.data.success) {
+          setLoading(false);
+          setUser(res.data.user);
+        } else {
+          setLoading(false);
+          throw new Exception("Something went wrong.");
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          setError({
+            code: err.response.status, // 404 - not found, 403 - unauthorized
+          });
+        } else {
+          setError({
+            code: 500, // server error
+          });
+        }
+        setLoading(false);
+      });
   }, [username]);
 
   React.useEffect(() => {
@@ -377,29 +396,7 @@ export default function UserPage(props) {
 
   return (
     <>
-      {user != null ? (
-        <>
-          <Head>
-            <title>@{user.username} | KetBy</title>
-          </Head>
-          <Box sx={{ py: 2 }}>
-            <Container maxWidth="lg">
-              <Grid container spacing={4} rowSpacing={2}>
-                <Grid item xs={12} md={4} lg={3}>
-                  <ProfileCard {...{ user, tab, setTab }} />
-                </Grid>
-                <Grid item xs={12} md={8} lg={9}>
-                  {tab == "index" && <IndexTab user={user} />}
-                  {tab == "projects" && <ProjectsTab user={user} />}
-                  {appState.isLoggedIn &&
-                    appState.user.username == user.username &&
-                    tab == "settings" && <SettingsTab user={user} />}
-                </Grid>
-              </Grid>
-            </Container>
-          </Box>
-        </>
-      ) : (
+      {loading ? (
         <Box
           sx={{
             minHeight: {
@@ -413,6 +410,34 @@ export default function UserPage(props) {
         >
           <CustomCircularProgress />
         </Box>
+      ) : (
+        <>
+          {error ? (
+            <ErrorPage code={error.code} />
+          ) : (
+            <>
+              <Head>
+                <title>@{user.username} | KetBy</title>
+              </Head>
+              <Box sx={{ py: 2 }}>
+                <Container maxWidth="lg">
+                  <Grid container spacing={4} rowSpacing={2}>
+                    <Grid item xs={12} md={4} lg={3}>
+                      <ProfileCard {...{ user, tab, setTab }} />
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={9}>
+                      {tab == "index" && <IndexTab user={user} />}
+                      {tab == "projects" && <ProjectsTab user={user} />}
+                      {appState.isLoggedIn &&
+                        appState.user.username == user.username &&
+                        tab == "settings" && <SettingsTab user={user} />}
+                    </Grid>
+                  </Grid>
+                </Container>
+              </Box>
+            </>
+          )}
+        </>
       )}
     </>
   );
