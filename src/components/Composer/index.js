@@ -201,9 +201,6 @@ export default function Composer(props) {
         })
         .catch((err) => {
           if (err.response) {
-            console.log(err.response.data);
-            console.log(err.response.status);
-            console.log(err.response.headers);
             setError({
               code: err.response.status, // 404 - not found, 403 - unauthorized
             });
