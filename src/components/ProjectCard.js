@@ -80,7 +80,7 @@ export default function ProjectCard(props) {
           >
             {project.title}
           </Typography>
-          {project.author && (
+          {project.author && !props.hideAuthor && (
             <Typography
               sx={{
                 mt: 0,

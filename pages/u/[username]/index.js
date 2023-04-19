@@ -14,6 +14,8 @@ import {
   Button,
   Alert,
   Divider,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import Masonry from "@mui/lab/Masonry";
 import { useAppContext } from "../../../src/utils/context";
@@ -27,6 +29,8 @@ import ProjectCard from "../../../src/components/ProjectCard";
 import NewProjectDrawer from "../../../src/components/NewProjectDrawer";
 import { styled } from "@mui/system";
 import ErrorPage from "../../../src/components/ErrorPage";
+import theme from "../../../src/themes/default";
+import { LoadingButton } from "@mui/lab";
 
 const CustomTabs = styled(Tabs)(({ theme }) => ({
   "&.ketby-Tabs-vertical": {
@@ -280,7 +284,7 @@ const ProjectsList = ({ user }) => {
               sx={{ mt: 1, width: "auto" }}
             >
               {projects.map((item, index) => {
-                return <ProjectCard key={index} project={item} />;
+                return <ProjectCard key={index} project={item} hideAuthor />;
               })}
             </Masonry>
           ) : (
@@ -312,7 +316,7 @@ const ProjectsTab = ({ user }) => {
   return (
     <>
       <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
-      <Grid container alignItems="center">
+      <Grid container>
         <Grid item xs={6}>
           <Typography variant="h4" sx={{ lineHeight: 1 }}>
             {appState.isLoggedIn && appState.user.username == user.username
@@ -342,8 +346,207 @@ const ProjectsTab = ({ user }) => {
   );
 };
 
-const SettingsTab = ({ user }) => {
-  return <>Settings coming soon</>;
+const SettingsTab = ({ user, setUser }) => {
+  const { appState, setAppState } = useAppContext();
+  const router = useRouter();
+
+  const IdentitySettings = (props) => {
+    const [input, setInput] = React.useState({
+      first_name: appState.user.first_name,
+      last_name: appState.user.last_name,
+      username: appState.user.username,
+    });
+
+    const [error, setError] = React.useState({
+      first_name: null,
+      last_name: null,
+      username: null,
+    });
+
+    const [loading, setLoading] = React.useState(false);
+    const [message, setMessage] = React.useState(null);
+    const [success, setSuccess] = React.useState(null);
+
+    const handleInput = (e) => {
+      setInput({ ...input, [e.target.name]: e.target.value });
+      setError({ ...error, [e.target.name]: null });
+      setMessage(null);
+      setSuccess(null);
+    };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setMessage(null);
+      setSuccess(null);
+      axios
+        .post(`/user/${appState.user.username}`, {
+          first_name: input.first_name,
+          last_name: input.last_name,
+          new_username: input.username,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            setAppState({
+              ...appState,
+              user: res.data.user,
+            });
+            setUser(user);
+            setTimeout(() => {
+              router.replace(
+                `/u/${res.data.user.username}?tab=settings`,
+                null,
+                {
+                  shallow: true,
+                }
+              );
+            }, 250);
+          } else {
+            setLoading(false);
+            setMessage(res.data.message);
+            setSuccess(false);
+          }
+        })
+        .catch((e) => {
+          setSuccess(false);
+          let res = e.response;
+          try {
+            if (res.data.message) {
+              setMessage(res.data.message);
+            }
+            if (res.data.field_errors) {
+              setError({
+                ...res.data.field_errors,
+                username: res.data.field_errors.new_username,
+              });
+            }
+          } catch (err) {
+            setMessage(`Something went wrong. Please try again later.`);
+          }
+          setLoading(false);
+        });
+    };
+
+    return (
+      <Box component="form" onSubmit={handleSubmit}>
+        <Grid container spacing={2} rowSpacing={2}>
+          <Grid item xs={6} md={4}>
+            <TextField
+              id="first_name"
+              name="first_name"
+              label="First name"
+              placeholder="John"
+              variant="outlined"
+              size="small"
+              type="text"
+              value={input.first_name}
+              onChange={handleInput}
+              fullWidth
+              required
+              error={Boolean(error.first_name)}
+              helperText={error.first_name}
+            />
+          </Grid>
+          <Grid item xs={6} md={4}>
+            <TextField
+              id="last_name"
+              name="last_name"
+              label="Last name"
+              placeholder="Smith"
+              variant="outlined"
+              size="small"
+              type="text"
+              value={input.last_name}
+              onChange={handleInput}
+              fullWidth
+              required
+              error={Boolean(error.last_name)}
+              helperText={error.last_name}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              id="username"
+              name="username"
+              label="Username"
+              placeholder="username..."
+              variant="outlined"
+              size="small"
+              type="text"
+              value={input.username}
+              onChange={handleInput}
+              fullWidth
+              required
+              error={Boolean(error.username)}
+              helperText={error.username}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" sx={{ opacity: 0.75 }}>
+                    ketby.com/u/
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <LoadingButton
+              variant="contained"
+              disableElevation
+              loading={loading}
+              component="button"
+              type="submit"
+            >
+              Save
+            </LoadingButton>
+          </Grid>
+          <Grid item xs={12}>
+            {Boolean(message) && (
+              <Grid item xs={12}>
+                <Alert
+                  severity={success ? "success" : "error"}
+                  sx={{ border: `1px solid ${theme.palette.grey.main}` }}
+                >
+                  {message}
+                </Alert>
+              </Grid>
+            )}
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
+  return (
+    <Grid container alignItems="center" rowSpacing={3}>
+      <Grid item xs={12}>
+        <Typography variant="h4" sx={{ lineHeight: 1 }}>
+          Settings
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
+          sx={{
+            boxShadow: (theme) => theme.shadowsCustom[2],
+            background: "white",
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            p: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Identity
+          </Typography>
+          <IdentitySettings />
+        </Box>
+      </Grid>
+    </Grid>
+  );
 };
 
 export default function UserPage(props) {
@@ -381,7 +584,7 @@ export default function UserPage(props) {
         }
         setLoading(false);
       });
-  }, [username]);
+  }, [username, router.query]);
 
   React.useEffect(() => {
     if (typeof router.query.tab == "undefined") return;
@@ -430,7 +633,9 @@ export default function UserPage(props) {
                       {tab == "projects" && <ProjectsTab user={user} />}
                       {appState.isLoggedIn &&
                         appState.user.username == user.username &&
-                        tab == "settings" && <SettingsTab user={user} />}
+                        tab == "settings" && (
+                          <SettingsTab user={user} setUser={setUser} />
+                        )}
                     </Grid>
                   </Grid>
                 </Container>
