@@ -170,6 +170,7 @@ export default function ProjectCard(props) {
                   <ShareRoundedIcon
                     sx={{
                       fontSize: "1.1rem",
+                      ml: -0.5,
                     }}
                   />
                 </Button>
