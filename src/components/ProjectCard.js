@@ -12,6 +12,8 @@ import {
   Tooltip,
   ButtonGroup,
   IconButton,
+  Avatar,
+  Stack,
 } from "@mui/material";
 
 import { CardActionArea } from "@mui/material";
@@ -30,23 +32,7 @@ export default function ProjectCard(props) {
   const { setShareProjectModal, setShareProjectModalOpen } = useAppContext();
   const _project = props.project;
   const [project, setProject] = React.useState(_project);
-  const [starred, setStarred] = React.useState(false);
   const router = useRouter();
-
-  const handleClick = (e) => {
-    if (starred) {
-      setProject({
-        ...project,
-        stars_count: project.stars_count - 1,
-      });
-    } else {
-      setProject({
-        ...project,
-        stars_count: project.stars_count + 1,
-      });
-    }
-    setStarred(!starred);
-  };
 
   return (
     <Card
@@ -80,27 +66,7 @@ export default function ProjectCard(props) {
           >
             {project.title}
           </Typography>
-          {project.author && !props.hideAuthor && (
-            <Typography
-              sx={{
-                mt: 0,
-                mb: -0.5,
-                display: "block",
-              }}
-              variant="body2"
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-                component="span"
-              >
-                @{project.author.username}
-              </Typography>
-            </Typography>
-          )}
+
           <Typography
             variant="body2"
             color="text.secondary"
@@ -140,72 +106,55 @@ export default function ProjectCard(props) {
       >
         <Grid container alignItems="center">
           <Grid item xs={6}>
-            <Box sx={{ display: "inline" }}>
-              <Tooltip title="Stars">
-                <Chip
-                  icon={<StarRoundedIcon color="warning" />}
-                  label={project.stars_count}
-                  variant="outlined"
-                  size="small"
-                  sx={{ borderColor: (theme) => theme.palette.grey[300] }}
-                />
-              </Tooltip>
-              <Tooltip title="Forks">
-                <Chip
-                  icon={<ForkRightRoundedIcon color="primary" />}
-                  label={project.forks_count}
-                  variant="outlined"
-                  size="small"
+            {project.author && !props.hideAuthor && (
+              <Stack
+                direction="horizontal"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Avatar
+                  alt={project.author.username}
+                  src={project.author.avatar_url}
                   sx={{
-                    borderColor: (theme) => theme.palette.grey[300],
+                    width: 32,
+                    height: 32,
+                    mr: 1,
                     ml: 1,
+                    boxShadow: theme.shadowsCustom[2],
                   }}
                 />
-              </Tooltip>
-            </Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    textDecoration: "none",
+                  }}
+                  component={Link}
+                  href={`/u/${project.author.username}`}
+                >
+                  @{project.author.username}
+                </Typography>
+              </Stack>
+            )}
           </Grid>
           <Grid item xs={6} sx={{ display: "grid", justifyContent: "end" }}>
             <ButtonGroup>
-              <Tooltip
-                title={starred ? "Unstar this project" : "Star this project"}
-              >
+              <Tooltip title="Fork this project">
                 <Button
                   size="small"
-                  disableElevation
-                  {...{
-                    variant: starred ? "contained" : "outlined",
-                    sx: {
-                      background: starred
-                        ? theme.palette.primary.main
-                        : "white",
-                      color: starred ? "white" : theme.palette.primary.main,
-                    },
-                  }}
-                  onClick={handleClick}
+                  color="primary"
+                  variant="outlined"
+                  endIcon={
+                    <ForkRightRoundedIcon
+                      sx={{
+                        fontSize: "1.2rem",
+                      }}
+                    />
+                  }
                 >
-                  {starred ? (
-                    <StarRoundedIcon
-                      sx={{
-                        fontSize: "1.2rem",
-                      }}
-                      color={theme.palette.warning[500]}
-                    />
-                  ) : (
-                    <StarRoundedIcon
-                      sx={{
-                        fontSize: "1.2rem",
-                      }}
-                    />
-                  )}
-                </Button>
-              </Tooltip>
-              <Tooltip title="Fork this project">
-                <Button size="small" color="primary" variant="outlined">
-                  <ForkRightRoundedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                    }}
-                  />
+                  {project.forks_count}
                 </Button>
               </Tooltip>
               <Tooltip title="Share this project">

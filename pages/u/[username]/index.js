@@ -16,6 +16,11 @@ import {
   Divider,
   TextField,
   InputAdornment,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import Masonry from "@mui/lab/Masonry";
 import { useAppContext } from "../../../src/utils/context";
@@ -31,6 +36,9 @@ import { styled } from "@mui/system";
 import ErrorPage from "../../../src/components/ErrorPage";
 import theme from "../../../src/themes/default";
 import { LoadingButton } from "@mui/lab";
+import { randStr, randArrElem } from "../../../src/utils/auxiliary";
+import CachedRoundedIcon from "@mui/icons-material/CachedRounded";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 
 const CustomTabs = styled(Tabs)(({ theme }) => ({
   "&.ketby-Tabs-vertical": {
@@ -523,8 +531,183 @@ const SettingsTab = ({ user, setUser }) => {
     );
   };
 
+  const LogInSettings = (props) => {
+    return (
+      <Box>
+        <Grid container spacing={2} rowSpacing={2}>
+          <Grid item xs={12}>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              Password
+            </Typography>
+            <Typography variant="body2">
+              If you'd like to change your password, please use the{" "}
+              <Typography
+                variant="body2"
+                sx={{ textDecoration: "none", color: "primary" }}
+                component={Link}
+                href="/auth/password"
+              >
+                password reset tool
+              </Typography>
+              .
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              Email address
+            </Typography>
+            <Typography variant="body2">
+              If you'd like to change the email address associated to your
+              account, please{" "}
+              <Typography
+                variant="body2"
+                sx={{ textDecoration: "none", color: "primary" }}
+                component={Link}
+                href="/contact"
+              >
+                contact us
+              </Typography>
+              .
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
+  const AppearenceSettings = (props) => {
+    const [avatarToken, setAvatarToken] = React.useState(null);
+    const [colors, setColors] = React.useState([null, null]);
+    const [saving, setSaving] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    const getRandomAvatar = () => {
+      setError(null);
+      setAvatarToken(randStr(16));
+      setColors(
+        randArrElem(
+          [
+            theme.palette.success[100].replace("#", ""),
+            theme.palette.error[100].replace("#", ""),
+            theme.palette.success[100].replace("#", ""),
+            theme.palette.warning[100].replace("#", ""),
+          ],
+          2
+        )
+      );
+    };
+
+    const saveRandomAvatar = () => {
+      setSaving(true);
+      axios
+        .post(`/user/${user.username}/avatar`, {
+          token: avatarToken,
+          color_1: colors[0],
+          color_2: colors[1],
+        })
+        .then((res) => {
+          setSaving(false);
+          setError(null);
+          setUser({ ...user, avatar_url: res.data.user.avatar_url });
+          setAppState({
+            ...appState,
+            user: { ...appState.user, avatar_url: res.data.user.avatar_url },
+          });
+        })
+        .catch((err) => {
+          if (err.response && err.response.data && err.response.data.message) {
+            setError(err.response.data.message);
+          } else {
+            setError("Something went wrong. Please try again later.");
+          }
+        });
+    };
+
+    return (
+      <Box>
+        <Grid container spacing={2} rowSpacing={2}>
+          <Grid item xs={12}>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              Profile picture{" "}
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => {
+                  getRandomAvatar();
+                }}
+                startIcon={<CachedRoundedIcon />}
+              >
+                Regenerate
+              </Button>
+              {avatarToken && (
+                <LoadingButton
+                  size="small"
+                  variant="contained"
+                  onClick={() => {
+                    saveRandomAvatar();
+                  }}
+                  sx={{ ml: 1 }}
+                  startIcon={<SaveRoundedIcon />}
+                  loading={saving}
+                >
+                  Save
+                </LoadingButton>
+              )}
+            </Typography>
+            {Boolean(error) && (
+              <Alert
+                severity="error"
+                sx={{
+                  mt: 1,
+                  border: (theme) => `1px solid ${theme.palette.grey[200]}`,
+                }}
+              >
+                {error}
+              </Alert>
+            )}
+            <Box sx={{ width: "100px !important", height: "100px !important" }}>
+              <Box
+                component="img"
+                src={
+                  avatarToken
+                    ? `https://api.dicebear.com/6.x/avataaars/svg?seed=${avatarToken}&backgroundColor=${colors[0]},${colors[1]}&backgroundType=gradientLinear`
+                    : user.avatar_url
+                }
+                alt={`${user.username} profile pricture`}
+                sx={{
+                  width: "100px",
+                  height: "100px",
+                  margin: "0 auto",
+                  borderRadius: "50px",
+                  mt: 2,
+                }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" sx={{ fontWeight: 500, mt: 2 }}>
+              Cover picture{" "}
+            </Typography>
+            <Box
+              component="img"
+              src={user.cover_url}
+              alt={`${user.username} cover picture`}
+              sx={{
+                width: "100%",
+                maxWidth: "400px",
+                height: "auto",
+                margin: "0 auto",
+                mt: 2,
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
   return (
-    <Grid container alignItems="center" rowSpacing={3}>
+    <Grid container rowSpacing={3} spacing={3}>
       <Grid item xs={12}>
         <Typography variant="h4" sx={{ lineHeight: 1 }}>
           Settings
@@ -543,6 +726,36 @@ const SettingsTab = ({ user, setUser }) => {
             Identity
           </Typography>
           <IdentitySettings />
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Box
+          sx={{
+            boxShadow: (theme) => theme.shadowsCustom[2],
+            background: "white",
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            p: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Appearence
+          </Typography>
+          <AppearenceSettings />
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Box
+          sx={{
+            boxShadow: (theme) => theme.shadowsCustom[2],
+            background: "white",
+            borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+            p: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Log in details
+          </Typography>
+          <LogInSettings />
         </Box>
       </Grid>
     </Grid>
@@ -622,7 +835,7 @@ export default function UserPage(props) {
               <Head>
                 <title>@{user.username} | KetBy</title>
               </Head>
-              <Box sx={{ py: 2 }}>
+              <Box sx={{ py: 2, pt: 3 }}>
                 <Container maxWidth="lg">
                   <Grid container spacing={4} rowSpacing={2}>
                     <Grid item xs={12} md={4} lg={3}>
@@ -634,7 +847,9 @@ export default function UserPage(props) {
                       {appState.isLoggedIn &&
                         appState.user.username == user.username &&
                         tab == "settings" && (
-                          <SettingsTab user={user} setUser={setUser} />
+                          <>
+                            <SettingsTab user={user} setUser={setUser} />
+                          </>
                         )}
                     </Grid>
                   </Grid>
