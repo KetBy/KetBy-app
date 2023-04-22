@@ -587,10 +587,10 @@ const SettingsTab = ({ user, setUser }) => {
       setColors(
         randArrElem(
           [
-            theme.palette.success[100].replace("#", ""),
-            theme.palette.error[100].replace("#", ""),
-            theme.palette.success[100].replace("#", ""),
-            theme.palette.warning[100].replace("#", ""),
+            theme.palette.success[50].replace("#", ""),
+            theme.palette.error[50].replace("#", ""),
+            theme.palette.success[50].replace("#", ""),
+            theme.palette.warning[50].replace("#", ""),
           ],
           2
         )
