@@ -349,7 +349,7 @@ const ExportContent = (props) => {
               fontWeight: 600,
             }}
           >
-            Q({circuit.meta.qubits}, {circuit.meta.bits})
+            Q({circuit.meta.qubits},{circuit.meta.bits})
           </Box>
         </Typography>
         {circuit.instructions.map((ins, index) => {
@@ -368,8 +368,9 @@ const ExportContent = (props) => {
               >
                 {ins.gate}
               </Box>
-              [{ins.qubits.join(", ")}]
-              {ins.params.length > 0 && `(${ins.params.join(", ")})`}
+              [{ins.qubits.join(",")}]
+              {ins.params.length > 0 && `(${ins.params.join(",")})`}
+              {ins.bits && ins.bits.length > 0 && `{${ins.bits.join(",")}}`}
             </Typography>
           );
         })}

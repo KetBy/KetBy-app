@@ -211,6 +211,20 @@ const gates = [
       },
     ],
   },
+  {
+    name: "Utils (preview only)",
+    color: theme.palette.darkGrey,
+    contrastColor: theme.palette.common.grey,
+    gates: [
+      {
+        name: "M",
+        qubits: 1,
+        bits: 1,
+        title: "Measurement",
+        desc: <>Lorem ipsum</>,
+      },
+    ],
+  },
 ];
 
 export const gatesMap = () => {
@@ -224,6 +238,7 @@ export const gatesMap = () => {
           ? gate.contrastColor
           : category.contrastColor,
         qubits: gate.qubits,
+        bits: gate.bits ? gate.bits : 0,
         title: gate.title,
         desc: gate.desc,
         qubitsNames: gate.qubitsNames,

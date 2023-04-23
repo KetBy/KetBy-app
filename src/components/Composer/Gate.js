@@ -24,6 +24,7 @@ import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftR
 import CX_gate_svg from "../../../public/assets/composer/CX_gate.svg";
 import Tfl_gate_svg from "../../../public/assets/composer/Tfl_gate.svg";
 import SWAP_gate_svg from "../../../public/assets/composer/SWAP_gate.svg";
+import M_gate_svg from "../../../public/assets/composer/M_gate.svg";
 import LatexFigure from "../LatexFigure";
 
 const gatesMap = getGatesMap();
@@ -34,6 +35,9 @@ const formattedName = (name) => {
   let text = <>{name}</>;
   if (name == "Tfl") {
     text = "Toffoli";
+  }
+  if (name == "M") {
+    text = "Measurement";
   }
   if (name == "T+" || name == "S+") {
     text = (
@@ -163,6 +167,25 @@ const SWAPGate = (props) => {
 export const Representation = (props) => {
   const { gate, preview } = props;
 
+  if (gate.name === "M") {
+    return (
+      <Box
+        sx={{
+          width: theme.spacing(4),
+          height: theme.spacing(4),
+          background: theme.palette.grey[100],
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "2px solid white",
+        }}
+      >
+        <img src={M_gate_svg.src} height="26" />
+      </Box>
+    );
+  }
+
   if (preview) {
     if (gate.name === "CX") {
       return (
@@ -272,13 +295,17 @@ const AddNewInstruction = (props) => {
   const [selectedQubits, setSelectedQubits] = React.useState([
     ...Array(gate.qubits),
   ]);
+  const [selectedBits, setSelectedBits] = React.useState([...Array(gate.bits)]);
 
   const handleSelect = (e, qubitIndex) => {
     let value = parseInt(e.target.value);
     let newSelectedQubits = selectedQubits.slice(); // copy by value
     newSelectedQubits[qubitIndex] = value;
-    // If all qubits set, add new instruction
-    if (!newSelectedQubits.includes(undefined)) {
+    // If all qubits and bits are set, add new instruction
+    if (
+      !newSelectedQubits.includes(undefined) &&
+      !selectedBits.includes(undefined)
+    ) {
       setCircuit({
         ...circuit,
         instructions: circuit.instructions.concat({
@@ -288,13 +315,44 @@ const AddNewInstruction = (props) => {
           uid: isFinite(Math.max(...circuit.instructions.map((o) => o.uid)))
             ? Math.max(...circuit.instructions.map((o) => o.uid)) + 1
             : 0,
+          ...{ ...(gate.name == "M" && { bits: selectedBits }) },
         }),
       });
       setSelectedQubits([...Array(gate.qubits)]);
+      setSelectedBits([...Array(gate.bits)]);
       handleClose();
       setGatesDirectoryOpenMobile(false); // Close gates directory on mobile
     } else {
       setSelectedQubits(newSelectedQubits);
+    }
+  };
+
+  const handleSelectBit = (e, bitIndex) => {
+    let value = parseInt(e.target.value);
+    let newSelectedBits = selectedBits.slice(); // copy by value
+    newSelectedBits[bitIndex] = value;
+    if (
+      !newSelectedBits.includes(undefined) &&
+      !selectedQubits.includes(undefined)
+    ) {
+      setCircuit({
+        ...circuit,
+        instructions: circuit.instructions.concat({
+          gate: gate.name,
+          qubits: selectedQubits,
+          params: gate.parameters ? Array(gate.parameters.length).fill(0) : [],
+          uid: isFinite(Math.max(...circuit.instructions.map((o) => o.uid)))
+            ? Math.max(...circuit.instructions.map((o) => o.uid)) + 1
+            : 0,
+          ...{ ...(gate.name == "M" && { bits: newSelectedBits }) },
+        }),
+      });
+      setSelectedQubits([...Array(gate.qubits)]);
+      setSelectedBits([...Array(gate.bits)]);
+      handleClose();
+      setGatesDirectoryOpenMobile(false); // Close gates directory on mobile
+    } else {
+      setSelectedBits(newSelectedBits);
     }
   };
 
@@ -338,6 +396,41 @@ const AddNewInstruction = (props) => {
           </Select>
         );
       })}
+      {[...Array(gate.bits)].map((_, i) => {
+        return (
+          <Select
+            key={i}
+            size="small"
+            defaultValue={-1}
+            value={selectedBits[i] !== "undefined" ? selectedBits[i] : -1}
+            sx={{
+              ml: 0.5,
+              fontSize: "0.95rem",
+              mb: 0,
+              display: "inline-block",
+              "& select": {
+                width: "auto",
+              },
+            }}
+            onChange={(e) => handleSelectBit(e, i)}
+          >
+            <MenuItem disabled value={-1}>
+              {gate.bits > 1 ? gate.bitsNames[i] : "bit"}
+            </MenuItem>
+            {[...Array(circuit.meta.bits)].map((_, index) => {
+              return (
+                <MenuItem
+                  value={index}
+                  key={index}
+                  disabled={selectedBits.includes(index)}
+                >
+                  B{index}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        );
+      })}
     </>
   );
 };
@@ -363,6 +456,12 @@ const OptionsMenu = (props) => {
       ? circuit.instructions[instructionIndex].qubits.slice()
       : [...Array(gate.qubits)];
 
+  const initialSelectedBits =
+    typeof instructionIndex !== "undefined" &&
+    circuit.instructions[instructionIndex].bits
+      ? circuit.instructions[instructionIndex].bits.slice()
+      : [...Array(gate.bits)];
+
   const initialParameters =
     typeof instructionIndex !== "undefined"
       ? circuit.instructions[instructionIndex].params.slice()
@@ -371,6 +470,8 @@ const OptionsMenu = (props) => {
   const [selectedQubits, setSelectedQubits] = React.useState(
     initialSelectedQubits
   );
+
+  const [selectedBits, setSelectedBits] = React.useState(initialSelectedBits);
 
   const [parameters, setParameters] = React.useState(initialParameters);
 
@@ -523,6 +624,13 @@ const OptionsMenu = (props) => {
       setSelectedQubits(newSelectedQubits);
     };
 
+    const handleSelectBit = (e, bitIndex) => {
+      let value = parseInt(e.target.value);
+      let newSelectedBits = selectedBits.slice(); // copy by value
+      newSelectedBits[bitIndex] = value;
+      setSelectedBits(newSelectedBits);
+    };
+
     const handleParamInput = (e, paramIndex) => {
       let value = e.target.value;
       let newParameters = parameters.slice(); // copy by value
@@ -578,6 +686,9 @@ const OptionsMenu = (props) => {
       }
       let newInstructions = circuit.instructions.slice();
       newInstructions[instructionIndex].qubits = selectedQubits;
+      if (circuit.instructions[instructionIndex].bits) {
+        newInstructions[instructionIndex].bits = selectedBits;
+      }
       newInstructions[instructionIndex].params = parameters;
       setCircuit({ ...circuit, instructions: newInstructions });
       handleClose();
@@ -651,6 +762,56 @@ const OptionsMenu = (props) => {
               </Grid>,
             ];
           })}
+          {gate.bits
+            ? [...Array(gate.bits)].map((_, i) => {
+                return [
+                  <Grid item xs={6} key={`option-title--${i}-bit`}>
+                    {gate.bits == 1 ? (
+                      <Typography variant="body2" sx={{ mt: 1 }}>
+                        Bit
+                      </Typography>
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          mt: 1,
+                          "&::first-letter": { textTransform: "capitalize" },
+                        }}
+                      >
+                        {gate.bitsNames[i]}
+                      </Typography>
+                    )}
+                  </Grid>,
+                  <Grid item xs={6} key={`option-value--${i}-bit`} sx={{}}>
+                    <Select
+                      fullWidth
+                      key={i}
+                      size="small"
+                      value={selectedBits[i]}
+                      sx={{
+                        mr: 0.5,
+                        fontSize: "0.9rem",
+                        mb: -1,
+                      }}
+                      onChange={(e) => handleSelectBit(e, i)}
+                      disabled={project.permissions < 2}
+                    >
+                      {[...Array(circuit.meta.bits)].map((_, index) => {
+                        return (
+                          <MenuItem
+                            value={index}
+                            key={index}
+                            disabled={selectedBits.includes(index)}
+                          >
+                            B{index}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </Grid>,
+                ];
+              })
+            : null}
           {gate.parameters && (
             <Grid item xs={12}>
               <Divider mb={0} />
@@ -804,6 +965,7 @@ const Gate = (props) => {
   const {
     gate,
     qubits,
+    bits,
     currentQubit,
     circuit,
     setCircuit,
@@ -879,6 +1041,51 @@ const Gate = (props) => {
           }}
         />
         <Representation gate={gate} preview={preview} />
+        {/* Measurement gate */}
+        {bits instanceof Array && gate.name == "M" && (
+          <>
+            <Box
+              sx={{
+                width: "2px",
+                height: `calc(${
+                  (circuit.meta.qubits - currentQubit + 1.2) *
+                  parseInt(theme.spacing(5))
+                }px + 2px)`,
+                borderRight: `2px dashed ${theme.palette.grey[300]}`,
+                position: "absolute",
+                left: "calc(50% - 1px)",
+                zIndex: -1,
+                top: 0,
+                outline: "2px solid white",
+                background: "white",
+              }}
+              className="_hdd"
+            />
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                position: "absolute",
+                left: "50%",
+                background: theme.palette.grey[100],
+                borderRadius: `10px`,
+                display: "flex",
+                width: theme.spacing(2.5),
+                height: theme.spacing(2.5),
+                transform: "translateX(-50%)",
+                justifyContent: "center",
+                alignItems: "center",
+                top: `calc(${
+                  (circuit.meta.qubits - currentQubit + 1) *
+                  parseInt(theme.spacing(5))
+                }px - 1.25rem)`,
+                fontWeight: 500,
+              }}
+              className="_hdd"
+            >
+              {bits[0]}
+            </Typography>
+          </>
+        )}
         {/*props.uid ? props.uid : null*/}
         {qubits instanceof Array &&
           qubits.map((qubit, index) => {

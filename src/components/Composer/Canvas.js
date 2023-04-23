@@ -301,9 +301,15 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
   };
 
   const decreaseBits = () => {
-    if (circuit.meta.bits == 0) return;
+    if (circuit.meta.bits <= 1) return;
+    // Remove all measurements involving the last bit
+    let newInstructions = circuit.instructions.slice();
+    newInstructions = newInstructions.filter(function (obj) {
+      return !obj.bits || !obj.bits.includes(circuit.meta.bits - 1);
+    });
     setCircuit({
       ...circuit,
+      instructions: newInstructions,
       meta: {
         ...circuit.meta,
         bits: circuit.meta.bits - 1,
@@ -367,7 +373,7 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
                 onClick={() => {
                   decreaseBits();
                 }}
-                disabled={circuit.meta.bits == 0}
+                disabled={circuit.meta.bits <= 1}
               >
                 <RemoveRounded />
               </IconButton>
@@ -689,7 +695,7 @@ const Circuit = ({ circuit, setCircuit, project }) => {
                   } * ${theme.spacing(rowHeight)} + 1px)`,
                   zIndex: 0,
                 }}
-                key={`bit-stripe-0`}
+                key={`bit-stripe-1`}
               />
             </>
             {/* Display the gates */}
@@ -718,7 +724,7 @@ const Circuit = ({ circuit, setCircuit, project }) => {
                     onDrag={handleDrag}
                     onStop={handleStop}
                     defaultClassNameDragging="dragging"
-                    axis="both"
+                    axis={"both"}
                     disabled={project.permissions < 2 || disableDragging}
                     bounds={{
                       top:
@@ -754,6 +760,7 @@ const Circuit = ({ circuit, setCircuit, project }) => {
                       <Gate
                         gate={gatesMap[instruction.gate]}
                         qubits={instruction.qubits}
+                        bits={instruction.bits}
                         currentQubit={rowIndex}
                         uid={instruction.uid}
                         circuit={circuit}

@@ -1,4 +1,5 @@
 import { gatesMap } from "./gates";
+const _gatesMap = gatesMap();
 
 /*
 Example:
@@ -33,9 +34,12 @@ export default function generateCanvasMatrix(input, def_no_rows = false) {
   }
   // Parse instructions
   input.map((_instruction, instructionIndex) => {
-    let gate = gatesMap()[_instruction["gate"]];
+    let gate = _gatesMap[_instruction["gate"]];
     let start_row = Math.min.apply(Math, _instruction["qubits"]);
     let end_row = Math.max.apply(Math, _instruction["qubits"]);
+    if (gate.name == "M") {
+      end_row = no_rows - 1;
+    }
     // Find column that is empty from row start_row to row end_row
     let column = -1;
     // Find first column that can fit the instruction (i.e., contains only null values from start_row to end_row)
