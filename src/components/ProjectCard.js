@@ -130,6 +130,7 @@ export default function ProjectCard(props) {
                   sx={{
                     fontWeight: 600,
                     textDecoration: "none",
+                    color: theme.palette.primary.main,
                   }}
                   component={Link}
                   href={`/u/${project.author.username}`}
@@ -146,13 +147,7 @@ export default function ProjectCard(props) {
                   size="small"
                   color="primary"
                   variant="outlined"
-                  endIcon={
-                    <ForkRightRoundedIcon
-                      sx={{
-                        fontSize: "1.2rem",
-                      }}
-                    />
-                  }
+                  endIcon={<ForkRightRoundedIcon />}
                 >
                   {project.forks_count}
                 </Button>
@@ -169,7 +164,7 @@ export default function ProjectCard(props) {
                 >
                   <ShareRoundedIcon
                     sx={{
-                      fontSize: "1.1rem",
+                      fontSize: "1rem",
                       ml: -0.5,
                     }}
                   />

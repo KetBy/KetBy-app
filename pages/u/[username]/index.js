@@ -325,7 +325,14 @@ const ProjectsTab = ({ user }) => {
     <>
       <NewProjectDrawer {...{ toggleDrawer, open: newProjectDrawerOpen }} />
       <Grid container>
-        <Grid item xs={6}>
+        <Grid
+          item
+          xs={
+            appState.isLoggedIn && appState.user.username == user.username
+              ? 6
+              : 12
+          }
+        >
           <Typography variant="h4" sx={{ lineHeight: 1 }}>
             {appState.isLoggedIn && appState.user.username == user.username
               ? "Your"

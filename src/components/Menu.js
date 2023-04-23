@@ -131,7 +131,8 @@ function ResponsiveAppBar(props) {
         height: `${theme.constants.menuHeight}px`,
         display: "flex",
         justifyContent: "center",
-        background: theme.palette.primary.main,
+        background: "rgba(0, 127, 255, 0.95)",
+        backdropFilter: "saturate(25) blur(4px)",
         boxShadow: theme.shadowsCustom[0],
         "&:after": {
           position: "absolute",
