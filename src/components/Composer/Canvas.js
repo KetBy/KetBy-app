@@ -47,6 +47,9 @@ import BarChartRoundedIcon from "@mui/icons-material/BarChartRounded";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import ForkRightRoundedIcon from "@mui/icons-material/ForkRightRounded";
+import TagRoundedIcon from "@mui/icons-material/TagRounded";
+import AddRounded from "@mui/icons-material/AddRounded";
+import RemoveRounded from "@mui/icons-material/RemoveRounded";
 
 const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
   loading: () => (
@@ -182,25 +185,34 @@ const RowButton = ({ index, circuit, setCircuit, project }) => {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        size="small"
-        sx={{
-          width: theme.spacing(4.25),
-          height: theme.spacing(4.25),
-          minWidth: 0,
-          minHeight: 0,
-          borderRadius: 0,
-          borderWidth: "2px !important",
-          borderColor: `${theme.palette.primary.main} !important`,
-          color: theme.palette.darkGrey.main,
-        }}
-        onClick={handleClick}
+      <Tooltip
+        title={
+          <>
+            Manage qubit Q<sub>{index}</sub>
+          </>
+        }
+        placement="left"
       >
-        <span>
-          Q<sub>{index}</sub>
-        </span>
-      </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{
+            width: theme.spacing(4.25),
+            height: theme.spacing(4.25),
+            minWidth: 0,
+            minHeight: 0,
+            borderRadius: 0,
+            borderWidth: "2px !important",
+            borderColor: `${theme.palette.primary.main} !important`,
+            color: theme.palette.darkGrey.main,
+          }}
+          onClick={handleClick}
+        >
+          <span>
+            Q<sub>{index}</sub>
+          </span>
+        </Button>
+      </Tooltip>
       <Menu
         anchorEl={anchorEl}
         open={open}
@@ -269,6 +281,116 @@ const RowButton = ({ index, circuit, setCircuit, project }) => {
   );
 };
 
+const BitsButton = ({ circuit, setCircuit, project }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const increaseBits = () => {
+    setCircuit({
+      ...circuit,
+      meta: { ...circuit.meta, bits: circuit.meta.bits + 1 },
+    });
+  };
+
+  const decreaseBits = () => {
+    if (circuit.meta.bits == 0) return;
+    setCircuit({
+      ...circuit,
+      meta: {
+        ...circuit.meta,
+        bits: circuit.meta.bits - 1,
+      },
+    });
+  };
+
+  return (
+    <>
+      <Tooltip title="Manage bits" placement="left">
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{
+            width: theme.spacing(4.25),
+            height: theme.spacing(4.25),
+            minWidth: 0,
+            minHeight: 0,
+            borderRadius: 0,
+            borderWidth: "2px !important",
+            borderColor: `${theme.palette.primary.main} !important`,
+            color: theme.palette.darkGrey.main,
+            marginTop: `calc(${theme.spacing(1)} - 2px)`,
+          }}
+          onClick={handleClick}
+        >
+          <span>{circuit.meta.bits}</span>
+        </Button>
+      </Tooltip>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        disableAutoFocusItem
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        sx={{
+          ml: 1,
+        }}
+      >
+        <MenuItem
+          onClick={() => {}}
+          sx={{ background: "white !important" }}
+          disableTouchRipple
+        >
+          <ListItemIcon>
+            <TagRoundedIcon
+              sx={{
+                fontSize: "1.25rem",
+              }}
+            />
+          </ListItemIcon>
+          <Typography variant="body2">
+            Number of bits{" "}
+            {project.permissions == 2 && (
+              <IconButton
+                size="small"
+                sx={{ mr: 1 }}
+                onClick={() => {
+                  decreaseBits();
+                }}
+                disabled={circuit.meta.bits == 0}
+              >
+                <RemoveRounded />
+              </IconButton>
+            )}
+            <b>{circuit.meta.bits}</b>
+            {project.permissions == 2 && (
+              <IconButton
+                size="small"
+                sx={{ ml: 1 }}
+                onClick={() => {
+                  increaseBits();
+                }}
+              >
+                <AddRounded />
+              </IconButton>
+            )}
+          </Typography>
+        </MenuItem>
+      </Menu>
+    </>
+  );
+};
+
 {
   /** The qubits buttons on the left side of the circuit */
 }
@@ -304,13 +426,13 @@ const Left = ({ circuit, setCircuit, project }) => {
           </Box>
         );
       })}
-
-      {project.permissions == 2 && (
-        <Grid container>
-          <Grid item xs={6}>
+      <Grid container>
+        <Grid item xs={6}>
+          <Tooltip title="Add a new qubit" placement="left">
             <Button
               size="small"
               variant="outlined"
+              disabled={project.permissions < 2}
               onClick={() => {
                 setCircuit({
                   ...circuit,
@@ -329,14 +451,24 @@ const Left = ({ circuit, setCircuit, project }) => {
                 borderWidth: "2px !important",
                 borderColor: `${theme.palette.primary.main} !important`,
                 color: theme.palette.darkGrey.main,
-                marginTop: theme.spacing(0.5),
+                marginTop: `calc(${theme.spacing(1)} - 5px)`,
               }}
             >
               +
             </Button>
-          </Grid>
+          </Tooltip>
         </Grid>
-      )}
+      </Grid>
+      {/* Bits button */}
+      <Grid container>
+        <Grid item xs={6}>
+          <BitsButton
+            circuit={circuit}
+            setCircuit={setCircuit}
+            project={project}
+          />
+        </Grid>
+      </Grid>
     </Box>
   );
 };
@@ -485,7 +617,7 @@ const Circuit = ({ circuit, setCircuit, project }) => {
               width: `calc(100% - ${theme.spacing(4)} - ${theme.spacing(2)})`,
             }}
           >
-            {/* Display the vertical striples */}
+            {/* Display the vertical stripes */}
             {[...Array(Math.max(matrix[0].length - 1, 0))].map((_, i) => {
               return (
                 <Box
@@ -525,6 +657,41 @@ const Circuit = ({ circuit, setCircuit, project }) => {
                 />
               );
             })}
+            {/* Display the bits stripes */}
+            <>
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
+                  minWidth: "100%",
+                  height: "2px",
+                  display: "block",
+                  background: theme.palette.darkGrey.main,
+                  left: 0,
+                  top: `calc(${theme.spacing(rowHeight / 2)} + ${
+                    circuit.meta.qubits + 1
+                  } * ${theme.spacing(rowHeight)} - 3px)`,
+                  zIndex: 0,
+                }}
+                key={`bit-stripe-0`}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: `calc(${matrix[0].length} * ${theme.spacing(6)})`,
+                  minWidth: "100%",
+                  height: "2px",
+                  display: "block",
+                  background: theme.palette.darkGrey.main,
+                  left: 0,
+                  top: `calc(${theme.spacing(rowHeight / 2)} + ${
+                    circuit.meta.qubits + 1
+                  } * ${theme.spacing(rowHeight)} + 1px)`,
+                  zIndex: 0,
+                }}
+                key={`bit-stripe-0`}
+              />
+            </>
             {/* Display the gates */}
             {matrix.map((row, rowIndex) => {
               return row.map((instructionIndex, colIndex) => {
