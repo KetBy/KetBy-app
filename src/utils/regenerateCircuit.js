@@ -143,6 +143,8 @@ export default function regenerateCircuit(
   }
 
   // console.log(oldCircuit.instructions, newCircuit.instructions);
+  // delete newCircuit.meta.newInstructionIndex;
+  // delete newCircuit.meta.oldInstructionIndex;
 
   return newCircuit;
 }

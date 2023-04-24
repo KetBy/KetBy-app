@@ -294,6 +294,7 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
   };
 
   const increaseBits = () => {
+    if (circuit.meta.bits >= 32) return;
     setCircuit({
       ...circuit,
       meta: { ...circuit.meta, bits: circuit.meta.bits + 1 },
@@ -301,7 +302,7 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
   };
 
   const decreaseBits = () => {
-    if (circuit.meta.bits <= 1) return;
+    if (circuit.meta.bits <= 0) return;
     // Remove all measurements involving the last bit
     let newInstructions = circuit.instructions.slice();
     newInstructions = newInstructions.filter(function (obj) {
@@ -373,7 +374,7 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
                 onClick={() => {
                   decreaseBits();
                 }}
-                disabled={circuit.meta.bits <= 1}
+                disabled={circuit.meta.bits === 0}
               >
                 <RemoveRounded />
               </IconButton>
@@ -383,6 +384,7 @@ const BitsButton = ({ circuit, setCircuit, project }) => {
               <IconButton
                 size="small"
                 sx={{ ml: 1 }}
+                disabled={circuit.meta.bits >= 32}
                 onClick={() => {
                   increaseBits();
                 }}
@@ -438,8 +440,9 @@ const Left = ({ circuit, setCircuit, project }) => {
             <Button
               size="small"
               variant="outlined"
-              disabled={project.permissions < 2}
+              disabled={project.permissions < 2 || circuit.meta.qubits >= 32}
               onClick={() => {
+                if (circuit.meta.qubits >= 32) return;
                 setCircuit({
                   ...circuit,
                   meta: {
@@ -487,6 +490,8 @@ const Circuit = ({ circuit, setCircuit, project }) => {
     circuit.instructions,
     circuit.meta.qubits
   );
+
+  console.log(matrix);
 
   const [renderCount, setRenderCount] = React.useState(1);
   const [previewRenderCount, setPreviewRenderCount] = React.useState(0);
@@ -1180,7 +1185,7 @@ const Canvas = (props) => {
   };
 
   const [statistics, setStatistics] = React.useState(null);
-  const [statisticsLoading, setStatisticsLoading] = React.useState(false);
+  const [statisticsLoading, setStatisticsLoading] = React.useState(true);
   const [probabilitiesDownloadUrl, setProbabilitiesDownloadUrl] =
     React.useState(null);
   const [probabilitiesError, setProbabilitiesError] = React.useState(null);

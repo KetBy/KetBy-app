@@ -1,9 +1,14 @@
+._hdd {
+    transition-duration: 0.1s;
+    transition-delay: 0.1s;
+    opacity: 1;
+}
 .dragging {
     .gate {
         z-index: 99999;
     }
     ._hdd {
-        display: none;
+        opacity: 0;
     }
 }
 .inline-latex-container, .inline-latex {

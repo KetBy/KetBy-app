@@ -315,7 +315,7 @@ const AddNewInstruction = (props) => {
           uid: isFinite(Math.max(...circuit.instructions.map((o) => o.uid)))
             ? Math.max(...circuit.instructions.map((o) => o.uid)) + 1
             : 0,
-          ...{ ...(gate.name == "M" && { bits: selectedBits }) },
+          bits: selectedBits,
         }),
       });
       setSelectedQubits([...Array(gate.qubits)]);
@@ -1051,34 +1051,49 @@ const Gate = (props) => {
                   (circuit.meta.qubits - currentQubit + 1.2) *
                   parseInt(theme.spacing(5))
                 }px + 2px)`,
-                borderRight: `2px dashed ${theme.palette.grey[300]}`,
+                //borderRight: `2px dashed ${theme.palette.grey[200]}`,
                 position: "absolute",
                 left: "calc(50% - 1px)",
                 zIndex: -1,
                 top: 0,
                 outline: "2px solid white",
                 background: "white",
+                backgroundImage: `linear-gradient(to bottom, ${theme.palette.grey[200]} 50%, rgba(255,255,255,0) 0%)`,
+                backgroundPosition: "top center",
+                backgroundSize: "2px 10px",
+                backgroundRepeat: "repeat-y",
+                borderRightWidth: "2px",
               }}
               className="_hdd"
             />
             <Typography
               sx={{
-                fontSize: "0.75rem",
+                fontSize: "0.65rem",
+                letterSpacing: "-1px",
                 position: "absolute",
                 left: "50%",
-                background: theme.palette.grey[100],
-                borderRadius: `10px`,
                 display: "flex",
                 width: theme.spacing(2.5),
                 height: theme.spacing(2.5),
                 transform: "translateX(-50%)",
                 justifyContent: "center",
-                alignItems: "center",
                 top: `calc(${
                   (circuit.meta.qubits - currentQubit + 1) *
                   parseInt(theme.spacing(5))
-                }px - 1.25rem)`,
+                }px - 0.8rem)`,
                 fontWeight: 500,
+                absolute: "relative",
+                "&:after": {
+                  position: "absolute",
+                  content: "''",
+                  width: 0,
+                  height: 0,
+                  borderLeft: `10px solid transparent`,
+                  borderRight: `10px solid transparent`,
+                  borderTop: `25px solid ${theme.palette.grey[200]}`,
+                  zIndex: -1,
+                  top: "0.5px",
+                },
               }}
               className="_hdd"
             >

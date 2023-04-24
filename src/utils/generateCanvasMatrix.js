@@ -9,7 +9,7 @@ S[0]; H[1]; T+[2];  I[2]; CX[1,2];  X[1]; Tfl[0,1,3]; X[2]; I[0]; I[1]; I[1]; X[
 
 0   | 0               6   8   11  12
 1   | 1       4   5   6   9   10
-2   | 2   3   4   7   -1
+2   | 2   3   4   7  -6
 3   |                 6
 */
 export default function generateCanvasMatrix(input, def_no_rows = false) {
@@ -39,6 +39,7 @@ export default function generateCanvasMatrix(input, def_no_rows = false) {
     let end_row = Math.max.apply(Math, _instruction["qubits"]);
     if (gate.name == "M") {
       end_row = no_rows - 1;
+      start_row = 0;
     }
     // Find column that is empty from row start_row to row end_row
     let column = -1;
@@ -79,6 +80,8 @@ export default function generateCanvasMatrix(input, def_no_rows = false) {
     for (let i = start_row; i <= end_row; i++) {
       matrix[i][column] = _instruction["qubits"].includes(i)
         ? instructionIndex
+        : instructionIndex == 0
+        ? -0.5
         : -instructionIndex;
     }
     colMap[input[instructionIndex].uid] = column;
