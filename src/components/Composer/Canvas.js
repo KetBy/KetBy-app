@@ -1006,7 +1006,7 @@ const Graph2 = (props) => {
       >
         <Grid item xs={8}>
           <Grid container>
-            <Typography variant="subtitle1">Bloch sphere</Typography>
+            <Typography variant="subtitle1">Statevector</Typography>
           </Grid>
         </Grid>
         <Grid
@@ -1024,9 +1024,7 @@ const Graph2 = (props) => {
               alignItems: "stretch",
               justifyContent: "right",
             }}
-          >
-            buttons
-          </Grid>
+          ></Grid>
         </Grid>
       </Grid>
     </Grid>

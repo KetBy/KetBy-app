@@ -342,7 +342,7 @@ export function PasswordForm2({ token }) {
                       <TextField
                         id="password"
                         name="password"
-                        label="Parolă"
+                        label="Password"
                         variant="outlined"
                         size="small"
                         type="password"
