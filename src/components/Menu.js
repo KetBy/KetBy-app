@@ -33,6 +33,7 @@ const UserAvatar = (props) => {
           ? appState.user.avatar_url
           : `${process.env.NEXT_PUBLIC_CDN_URL}/users/default_avatar.svg`
       }
+      alt={appState.user ? appState.user.username : "Log in or register"}
       {...otherProps}
     ></Avatar>
   );
