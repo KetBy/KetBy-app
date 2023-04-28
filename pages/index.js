@@ -379,7 +379,7 @@ const Hero = (props) => {
                 }}
               >
                 <b>Wanna know for sure?</b> <br />
-                <b>KetBy</b> helps you build quantum circuits visually and
+                <b>KetBy</b> allows you to build quantum circuits visually and
                 provides various tools to analyze, simulate and share them with
                 others.
                 <br /> <br />

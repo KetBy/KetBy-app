@@ -42,6 +42,7 @@ export default function ProjectCard(props) {
     >
       <CardActionArea
         component={Link}
+        sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
         href={`/composer/${project.token}/${project.first_file_index}`}
       >
         {project.thumbnail_url && (
@@ -55,6 +56,7 @@ export default function ProjectCard(props) {
         <CardContent>
           <Typography
             variant="h5"
+            component="div"
             sx={{
               lineHeight: 1.1,
               overflow: "hidden",
@@ -130,7 +132,7 @@ export default function ProjectCard(props) {
                   sx={{
                     fontWeight: 600,
                     textDecoration: "none",
-                    color: theme.palette.primary.main,
+                    color: theme.palette.primary.dark,
                   }}
                   component={Link}
                   href={`/u/${project.author.username}`}

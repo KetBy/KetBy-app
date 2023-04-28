@@ -34,6 +34,10 @@ export default function MyApp(props) {
       <Head>
         <title>KetBy</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <meta
+          name="description"
+          content="KetBy allows you to build quantum circuits visually and provides various tools to analyze, simulate and share them with others."
+        />
       </Head>
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}

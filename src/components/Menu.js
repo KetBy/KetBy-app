@@ -172,6 +172,7 @@ function ResponsiveAppBar(props) {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
+              aria-label="Open mobile menu"
             >
               <MenuIcon />
             </IconButton>
@@ -339,6 +340,7 @@ function ResponsiveAppBar(props) {
                 ml: 1,
                 mr: 1,
               }}
+              aria-label="Open account menu"
             >
               <UserAvatar />
             </IconButton>
