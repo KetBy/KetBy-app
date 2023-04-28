@@ -207,6 +207,7 @@ const RowButton = ({ index, circuit, setCircuit, project }) => {
             color: theme.palette.darkGrey.main,
           }}
           onClick={handleClick}
+          disabled={project.permissions < 2}
         >
           <span>
             Q<sub>{index}</sub>
@@ -490,8 +491,6 @@ const Circuit = ({ circuit, setCircuit, project }) => {
     circuit.instructions,
     circuit.meta.qubits
   );
-
-  console.log(matrix);
 
   const [renderCount, setRenderCount] = React.useState(1);
   const [previewRenderCount, setPreviewRenderCount] = React.useState(0);
@@ -795,7 +794,8 @@ const Right = ({ circuit, statistics, statisticsLoading }) => {
       sx={{
         width: theme.spacing(6),
         px: 1,
-        opacity: statisticsLoading ? 0.5 : 1,
+        opacity:
+          statisticsLoading || !statistics || !statistics.qubits ? 0.5 : 1,
         transitionDuration: "0.2s",
       }}
     >
@@ -812,12 +812,12 @@ const Right = ({ circuit, statistics, statisticsLoading }) => {
           >
             <PhaseDisk
               probability={
-                statistics && statistics.qubits[i]
+                statistics && statistics.qubits && statistics.qubits[i]
                   ? statistics.qubits[i].probability_1
                   : 0
               }
               phase={
-                statistics && statistics.qubits[i]
+                statistics && statistics.qubits && statistics.qubits[i]
                   ? statistics.qubits[i].phase
                   : 0
               }
@@ -839,11 +839,8 @@ const Graph1 = ({
   updateCount,
   statistics,
   probabilitiesError,
-  probabilitiesDownloadUrl,
   loading,
 }) => {
-  const [downloadUrl, setDownloadUrl] = React.useState(null);
-
   return (
     <Grid
       item
@@ -894,21 +891,6 @@ const Graph1 = ({
           }}
         >
           <Typography variant="subtitle1">
-            <Tooltip title="Download as CSV" placement="top-end">
-              <IconButton
-                size="small"
-                sx={{
-                  borderRadius: 0,
-                  opacity: downloadUrl ? 1 : 0,
-                }}
-                disableTouchRipple
-                component="a"
-                target="_blank"
-                href={downloadUrl ? downloadUrl : "#!"}
-              >
-                <DownloadRoundedIcon />
-              </IconButton>
-            </Tooltip>
             <IconButton
               size="small"
               sx={{
@@ -946,32 +928,40 @@ const Graph1 = ({
           overflowY: "auto",
         }}
       >
-        {statistics && statistics.probabilities && (
+        {statistics &&
+        statistics.probabilities &&
+        statistics.probabilities.length > 0 &&
+        !probabilitiesError ? (
           <ProbabilitiesChart probabilities={statistics.probabilities} />
-        )}
-        {probabilitiesError && (
-          <Box
-            sx={{
-              textAlign: "center",
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <Typography
-              align="center"
-              variant="body2"
-              sx={{
-                color: theme.palette.red.dark,
-                margin: "0 auto",
-                lineHeight: 1,
-                p: 3,
-              }}
-            >
-              {probabilitiesError}
-            </Typography>
-          </Box>
+        ) : (
+          <>
+            {!loading && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  display: "flex",
+                  width: "100%",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <Typography
+                  align="center"
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.red.dark,
+                    margin: "0 auto",
+                    lineHeight: 1,
+                    p: 3,
+                  }}
+                >
+                  {probabilitiesError
+                    ? probabilitiesError
+                    : "Outcome probabilities are computed for circuits that have at least one classical qubit, and up to 5 qubits and 5 classical bits."}
+                </Typography>
+              </Box>
+            )}
+          </>
         )}
       </Box>
     </Grid>
@@ -1184,8 +1174,6 @@ const Canvas = (props) => {
 
   const [statistics, setStatistics] = React.useState(null);
   const [statisticsLoading, setStatisticsLoading] = React.useState(true);
-  const [probabilitiesDownloadUrl, setProbabilitiesDownloadUrl] =
-    React.useState(null);
   const [probabilitiesError, setProbabilitiesError] = React.useState(null);
 
   // Get the statistics (probabilities, phase disks etc)
@@ -1195,11 +1183,6 @@ const Canvas = (props) => {
     axios
       .get(`/project/${project.token}/${activeFile.file_index}/stats`)
       .then((res) => {
-        if (res.data.download_url) {
-          setProbabilitiesDownloadUrl(res.data.download_url);
-        } else {
-          setProbabilitiesDownloadUrl(null);
-        }
         if (res.data.success) {
           setStatistics({
             probabilities: res.data.results.probabilities,
@@ -1561,7 +1544,6 @@ const Canvas = (props) => {
             updateCount={updateCount}
             files={files}
             statistics={statistics}
-            probabilitiesDownloadUrl={probabilitiesDownloadUrl}
             probabilitiesError={probabilitiesError}
             loading={statisticsLoading}
           />
