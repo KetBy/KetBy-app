@@ -36,6 +36,10 @@ export default function ProbabilitiesChart({ probabilities }) {
         tooltipText += `Probability <b>${params[0].data}%</b>`;
         return tooltipText;
       },
+      extraCssText: `
+        box-shadow: ${theme.shadowsCustom[2]};
+        border-radius: ${theme.shape.borderRadius};
+      `,
     },
     series: [
       {

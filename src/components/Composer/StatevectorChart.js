@@ -47,7 +47,7 @@ export default function StatevectorChart({ statevector }) {
       extraCssText: `
         box-shadow: ${theme.shadowsCustom[2]};
         border-radius: ${theme.shape.borderRadius};
-        `,
+      `,
     },
     series: [
       {

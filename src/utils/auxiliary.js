@@ -51,7 +51,7 @@ const rgbToHex = (r, g, b) => {
 };
 
 export const getPhaseColor = (value) => {
-  var colors = ["#BA2BDE", "#0288d1", "#FFDC48", "#EB0014", "#BA2BDE"];
+  var colors = ["#BA2BDE", "#007FFF", "#FFDC48", "#EB0014", "#BA2BDE"];
   var intervalPosition = value / (2 * Math.PI);
   var segmentIndex = Math.floor(intervalPosition * (colors.length - 1)) + 1;
   var segmentPosition = (intervalPosition * (colors.length - 1)) % 1;

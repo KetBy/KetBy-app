@@ -1011,7 +1011,7 @@ const Graph2 = ({
             width: "48px",
             height: "48px",
             borderRadius: "24px",
-            backgroundImage: `conic-gradient(${theme.palette.purple.main}, ${theme.palette.info.main}, ${theme.palette.warning.light}, ${theme.palette.error.main}, ${theme.palette.purple.main})`,
+            backgroundImage: `conic-gradient(${theme.palette.purple.main}, ${theme.palette.primary.main}, ${theme.palette.warning.light}, ${theme.palette.error.main}, ${theme.palette.purple.main})`,
             position: "relative",
           }}
         >
