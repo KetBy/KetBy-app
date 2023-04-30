@@ -60,8 +60,6 @@ export const getPhaseColor = (value) => {
   if (value >= Math.PI * 2) {
     value %= Math.PI * 2;
   }
-
-  console.log(value);
   var colors = [
     theme.palette.primary.main,
     theme.palette.purple.main,
@@ -72,12 +70,6 @@ export const getPhaseColor = (value) => {
   var intervalPosition = value / (2 * Math.PI);
   var segmentIndex = Math.floor(intervalPosition * (colors.length - 1));
   var segmentPosition = (intervalPosition * (colors.length - 1)) % 1;
-  console.log(
-    segmentIndex,
-    colors[segmentIndex],
-    colors[segmentIndex + 1],
-    segmentPosition
-  );
   return lerpColor(
     colors[segmentIndex],
     colors[segmentIndex + 1],
