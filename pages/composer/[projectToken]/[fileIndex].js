@@ -13,9 +13,7 @@ export default function ComposerPage() {
       <Head>
         <title>Quantum composer | KetBy</title>
       </Head>
-      {isReady && (
-        <Composer projectToken={projectToken} fileIndex={fileIndex} />
-      )}
+      <Composer projectToken={projectToken} fileIndex={fileIndex} />
     </>
   );
 }

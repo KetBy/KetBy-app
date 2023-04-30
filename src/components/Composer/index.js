@@ -11,6 +11,7 @@ import axios from "../../utils/axios";
 import CustomCircularProgress from "../custom/CircularProgress";
 import { useAppContext } from "../../utils/context";
 import ErrorPage from "../ErrorPage";
+import { useRouter } from "next/router";
 
 const Wrapper = (props) => {
   const {
@@ -156,6 +157,7 @@ const Wrapper = (props) => {
 };
 
 export default function Composer(props) {
+  const { isReady } = useRouter();
   const { projectToken, fileIndex } = props;
 
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
@@ -224,7 +226,7 @@ export default function Composer(props) {
           }}
         >
           <>
-            {loading ? (
+            {loading || !appState.statusChecked || !isReady ? (
               <Box
                 sx={{
                   minHeight: {
