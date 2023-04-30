@@ -338,7 +338,10 @@ const ExportContent = (props) => {
         sx={{
           background: theme.palette.grey[50],
           color: theme.palette.grey[700],
-          p: 1,
+          p: 2,
+          mt: 2,
+          borderRadius: `${theme.shape.borderRadius}px`,
+          boxShadow: theme.shadowsCustom[2],
         }}
       >
         <Typography variant="body2" sx={{ fontFamily: "monospace" }}>

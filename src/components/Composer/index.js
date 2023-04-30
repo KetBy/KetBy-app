@@ -220,7 +220,6 @@ export default function Composer(props) {
       ) : (
         <Box
           sx={{
-            userSelect: "none",
             bgcolor: "white",
           }}
         >

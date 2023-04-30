@@ -212,7 +212,7 @@ const gates = [
     ],
   },
   {
-    name: "Utils (preview only)",
+    name: "Utils",
     color: theme.palette.darkGrey,
     contrastColor: theme.palette.common.grey,
     gates: [

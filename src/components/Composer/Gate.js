@@ -181,7 +181,7 @@ export const Representation = (props) => {
           border: "2px solid white",
         }}
       >
-        <img src={M_gate_svg.src} height="26" />
+        <img src={M_gate_svg.src} height="26" width="26" />
       </Box>
     );
   }

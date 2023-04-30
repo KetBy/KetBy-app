@@ -75,6 +75,30 @@ const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
     </Box>
   ),
 });
+const StatevectorChart = dynamic(() => import("./StatevectorChart.js"), {
+  loading: () => (
+    <Box
+      sx={{
+        textAlign: "center",
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{
+          display: "block",
+          textAlign: "center",
+          flex: 1,
+        }}
+      >
+        Rendering...
+      </Typography>
+    </Box>
+  ),
+});
 
 const gatesMap = getGatesMap();
 const rowHeight = 5;
@@ -586,6 +610,7 @@ const Circuit = ({ circuit, setCircuit, project }) => {
       <Box
         sx={{
           position: "relative",
+          userSelect: "none",
         }}
         key={`render--${renderCount}`}
       >
@@ -968,22 +993,148 @@ const Graph1 = ({
   );
 };
 
-const Graph2 = (props) => {
+const Graph2 = ({
+  toggleGraphsMobileOpen,
+  project,
+  activeFile,
+  files,
+  updateCount,
+  statistics,
+  statevectorError,
+  loading,
+}) => {
+  const PhasesCircle = (props) => {
+    return (
+      <Box sx={{ px: 1.5, py: 2 }}>
+        <Box
+          sx={{
+            width: "48px",
+            height: "48px",
+            borderRadius: "24px",
+            backgroundImage: `conic-gradient(${theme.palette.purple.main}, ${theme.palette.info.main}, ${theme.palette.warning.light}, ${theme.palette.error.main}, ${theme.palette.purple.main})`,
+            position: "relative",
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              zIndex: 1,
+              width: "36px",
+              height: "36px",
+              background: "white",
+              top: "6px",
+              left: "6px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: "0.7rem",
+              letterSpacing: 0,
+              right: 0,
+              fontWeight: 600,
+              top: "50%",
+              position: "absolute",
+              transform: `translate(10px, -50%)`,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            0
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.5rem",
+              letterSpacing: 0,
+              left: "50%",
+              fontWeight: 600,
+              top: "-20px",
+              position: "absolute",
+              color: theme.palette.text.secondary,
+              zIndex: 2,
+              transform: `translate(-50%, 0)`,
+            }}
+          >
+            <sup>π</sup>/<sub>2</sub>
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.7rem",
+              letterSpacing: 0,
+              left: 0,
+              fontWeight: 600,
+              top: "50%",
+              position: "absolute",
+              transform: `translate(-10px, -50%)`,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            π
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.5rem",
+              letterSpacing: 0,
+              left: "50%",
+              fontWeight: 600,
+              bottom: "-20px",
+              position: "absolute",
+              color: theme.palette.text.secondary,
+              zIndex: 2,
+              transform: `translate(-50%, 0)`,
+            }}
+          >
+            <sup>3π</sup>/<sub>2</sub>
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.5rem",
+              letterSpacing: 0,
+              left: "50%",
+              fontWeight: 600,
+              top: "50%",
+              position: "absolute",
+              color: theme.palette.text.secondary,
+              zIndex: 2,
+              transform: `translate(-50%, -50%)`,
+            }}
+          >
+            phase
+          </Typography>
+        </Box>
+      </Box>
+    );
+  };
+
   return (
     <Grid
       item
       xs={6}
       sx={{
+        position: "relative",
         maxWidth: {
           xs: "100%",
           md: "50%",
         },
       }}
     >
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          top: `calc(${theme.spacing(6)} - 1px)`,
+          left: 0,
+          transitionDuration: "0.2s",
+        }}
+      >
+        {loading && <CustomLinearProgress small={1} />}
+      </Box>
       <Grid
         container
         sx={{
-          p: 1,
+          px: 1,
           borderBottom: `1px solid ${theme.palette.grey[200]}`,
           borderTop: {
             xs: `1px solid ${theme.palette.grey[200]}`,
@@ -1017,6 +1168,106 @@ const Graph2 = (props) => {
           ></Grid>
         </Grid>
       </Grid>
+      <Box
+        sx={{
+          p: 1,
+          height: {
+            xs: `calc(2.5/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
+              6
+            )} + ${theme.spacing(6)})))`,
+            md: `calc(2/5 * (100vh - (${
+              theme.constants.menuHeight
+            }px + ${theme.spacing(6)} + ${theme.spacing(1.5)} + ${theme.spacing(
+              6
+            )} + ${theme.spacing(6)})))`,
+          },
+          overflowY: "auto",
+        }}
+      >
+        {statistics && statistics.statevector && !statevectorError ? (
+          <>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                height: `calc(100% + ${theme.spacing(2)})`,
+              }}
+            >
+              <Grid
+                item
+                xs
+                sx={{
+                  width: `calc(100% - 100px)`,
+                  height: `100%`,
+                }}
+              >
+                <StatevectorChart statevector={statistics.statevector} />
+              </Grid>
+              <Grid
+                item
+                xs="auto"
+                sx={{ display: "flex", alignSelf: "center" }}
+              >
+                <PhasesCircle />
+              </Grid>
+            </Grid>
+            <Box
+              sx={{
+                background: theme.palette.grey[50],
+                color: theme.palette.grey[700],
+                p: 2,
+                mt: 2,
+                borderRadius: `${theme.shape.borderRadius}px`,
+                boxShadow: theme.shadowsCustom[2],
+              }}
+            >
+              <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+                <Box
+                  component="span"
+                  sx={{
+                    color: theme.palette.darkGrey.main,
+                  }}
+                >
+                  {statistics.statevector.dump}
+                </Box>
+              </Typography>
+            </Box>
+          </>
+        ) : (
+          <>
+            {!loading && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  display: "flex",
+                  width: "100%",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <Typography
+                  align="center"
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.red.dark,
+                    margin: "0 auto",
+                    lineHeight: 1,
+                    p: 3,
+                  }}
+                >
+                  {statevectorError
+                    ? statevectorError
+                    : "The statevector is computed for circuits with up to 5 qubits and 5 classical bits."}
+                </Typography>
+              </Box>
+            )}
+          </>
+        )}
+      </Box>
     </Grid>
   );
 };
@@ -1175,6 +1426,7 @@ const Canvas = (props) => {
   const [statistics, setStatistics] = React.useState(null);
   const [statisticsLoading, setStatisticsLoading] = React.useState(true);
   const [probabilitiesError, setProbabilitiesError] = React.useState(null);
+  const [statevectorError, setStatevectorError] = React.useState(null);
 
   // Get the statistics (probabilities, phase disks etc)
   React.useEffect(() => {
@@ -1187,16 +1439,20 @@ const Canvas = (props) => {
           setStatistics({
             probabilities: res.data.results.probabilities,
             qubits: res.data.results.qubits,
+            statevector: res.data.results.statevector,
           });
           setProbabilitiesError(null);
+          setStatevectorError(null);
         } else {
           setProbabilitiesError(res.data.message);
+          setStatevectorError(res.data.message);
           setStatistics(null);
         }
         setStatisticsLoading(false);
       })
       .catch((err) => {
         setProbabilitiesError("Something went wrong. Please try again later.");
+        setStatevectorError("Something went wrong. Please try again later.");
         setStatistics(null);
         setStatisticsLoading(false);
       });
@@ -1329,6 +1585,7 @@ const Canvas = (props) => {
                   },
                 }}
                 disableTouchRipple
+                aria-label="Open graphs"
               >
                 <BarChartRoundedIcon />
               </IconButton>
@@ -1547,7 +1804,16 @@ const Canvas = (props) => {
             probabilitiesError={probabilitiesError}
             loading={statisticsLoading}
           />
-          <Graph2 status={status} />
+          <Graph2
+            toggleGraphsMobileOpen={toggleGraphsMobileOpen}
+            project={project}
+            activeFile={activeFile}
+            updateCount={updateCount}
+            files={files}
+            statistics={statistics}
+            statevectorError={statevectorError}
+            loading={statisticsLoading}
+          />
         </Grid>
       </Box>
     </>

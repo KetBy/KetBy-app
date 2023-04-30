@@ -21,6 +21,7 @@ export default function LatexFigure(props) {
           hoverable ? theme.palette.primaryDark[50] : "transparent"
         }`,
       }}
+      alt="LaTeX figure"
       {...other}
     />
   );

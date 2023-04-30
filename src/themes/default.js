@@ -321,6 +321,9 @@ const theme = createTheme({
       activeChannel: "0 0 0",
       selectedChannel: "0 0 0",
     },
+    purle: {
+      main: "#9f40ff",
+    },
   },
   shape: {
     borderRadius: 10,

@@ -1,17 +1,22 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
 import theme from "../../themes/default";
+import { getPhaseColor } from "../../utils/auxiliary";
 
-export default function ProbabilitiesChart({ probabilities }) {
+export default function StatevectorChart({ statevector }) {
   const option = {
     xAxis: {
       type: "category",
-      data: probabilities.map((item) => item.value),
+      data: statevector.amplitudes.map((item) => item.base),
       interval: 0,
       axisLabel: {
         interval: 0,
         rotate:
-          probabilities.length > 8 ? (probabilities.length > 16 ? 90 : 60) : 0,
+          statevector.amplitudes.length > 8
+            ? probabilities.length > 16
+              ? 90
+              : 60
+            : 0,
       },
       name: "Outcome",
       nameLocation: "middle",
@@ -19,9 +24,9 @@ export default function ProbabilitiesChart({ probabilities }) {
     },
     yAxis: {
       type: "value",
-      name: "Probability",
+      name: "Amplitude",
       min: 0,
-      max: 100,
+      max: 1,
       nameLocation: "middle",
       nameRotate: 90,
       nameGap: 35,
@@ -33,14 +38,21 @@ export default function ProbabilitiesChart({ probabilities }) {
       },
       formatter: function (params) {
         let tooltipText = `<b>State ${params[0].name}</b> <br />`;
-        tooltipText += `Probability <b>${params[0].data}%</b>`;
+        tooltipText += `Amplitude <b>${params[0].value}</b> <br />`;
+        tooltipText += `Phase <b>${
+          statevector.phases_str[params[0].dataIndex]
+        }</b>`;
         return tooltipText;
       },
+      extraCssText: `
+        box-shadow: ${theme.shadowsCustom[2]};
+        border-radius: ${theme.shape.borderRadius};
+        `,
     },
     series: [
       {
-        name: "Outcome probability",
-        data: probabilities.map((item) => item.probability),
+        name: "Amplitude",
+        data: statevector.amplitudes.map((item) => item.amplitude),
         type: "bar",
         showBackground: true,
         backgroundStyle: {
@@ -48,6 +60,11 @@ export default function ProbabilitiesChart({ probabilities }) {
         },
         color: theme.palette.primary.main,
         barMaxWidth: 12,
+        itemStyle: {
+          color: function (params) {
+            return getPhaseColor(statevector.phases[params.dataIndex]);
+          },
+        },
       },
     ],
     grid: {
