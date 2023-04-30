@@ -13,14 +13,19 @@ export default function StatevectorChart({ statevector }) {
         interval: 0,
         rotate:
           statevector.amplitudes.length > 8
-            ? probabilities.length > 16
+            ? statevector.amplitudes.length > 16
               ? 90
               : 60
             : 0,
       },
       name: "Outcome",
       nameLocation: "middle",
-      nameGap: 25,
+      nameGap:
+        statevector.amplitudes.length >= 16
+          ? statevector.amplitudes.length >= 32
+            ? 45
+            : 35
+          : 25,
     },
     yAxis: {
       type: "value",
@@ -41,7 +46,11 @@ export default function StatevectorChart({ statevector }) {
         tooltipText += `Amplitude <b>${params[0].value}</b> <br />`;
         tooltipText += `Phase <b>${
           statevector.phases_str[params[0].dataIndex]
-        }</b>`;
+        }</b> (${
+          Math.round(
+            ((statevector.phases[params[0].dataIndex] * 180) / Math.PI) * 100
+          ) / 100
+        }°)`;
         return tooltipText;
       },
       extraCssText: `

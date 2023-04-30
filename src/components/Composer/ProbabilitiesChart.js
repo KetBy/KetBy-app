@@ -15,7 +15,12 @@ export default function ProbabilitiesChart({ probabilities }) {
       },
       name: "Outcome",
       nameLocation: "middle",
-      nameGap: 25,
+      nameGap:
+        probabilities.length >= 16
+          ? probabilities.length >= 32
+            ? 45
+            : 35
+          : 25,
     },
     yAxis: {
       type: "value",

@@ -1,3 +1,5 @@
+import theme from "../themes/default";
+
 export const randStr = (length) => {
   let result = "";
   const characters =
@@ -51,10 +53,31 @@ const rgbToHex = (r, g, b) => {
 };
 
 export const getPhaseColor = (value) => {
-  var colors = ["#BA2BDE", "#007FFF", "#FFDC48", "#EB0014", "#BA2BDE"];
+  value = Math.round(value * 100000) / 100000;
+  if (value < 0) {
+    value = Math.PI * 2 + value;
+  }
+  if (value >= Math.PI * 2) {
+    value %= Math.PI * 2;
+  }
+
+  console.log(value);
+  var colors = [
+    theme.palette.primary.main,
+    theme.palette.purple.main,
+    theme.palette.error.main,
+    theme.palette.warning.light,
+    theme.palette.primary.main,
+  ];
   var intervalPosition = value / (2 * Math.PI);
-  var segmentIndex = Math.floor(intervalPosition * (colors.length - 1)) + 1;
+  var segmentIndex = Math.floor(intervalPosition * (colors.length - 1));
   var segmentPosition = (intervalPosition * (colors.length - 1)) % 1;
+  console.log(
+    segmentIndex,
+    colors[segmentIndex],
+    colors[segmentIndex + 1],
+    segmentPosition
+  );
   return lerpColor(
     colors[segmentIndex],
     colors[segmentIndex + 1],
