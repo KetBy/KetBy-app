@@ -64,6 +64,7 @@ export default function ProjectCard(props) {
               display: "-webkit-box",
               WebkitLineClamp: "2",
               WebkitBoxOrient: "vertical",
+              fontWeight: 500,
             }}
           >
             {project.title}
@@ -132,7 +133,7 @@ export default function ProjectCard(props) {
                   sx={{
                     fontWeight: 600,
                     textDecoration: "none",
-                    color: theme.palette.primary.dark,
+                    color: theme.palette.primary.main,
                   }}
                   component={Link}
                   href={`/u/${project.author.username}`}

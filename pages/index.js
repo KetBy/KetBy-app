@@ -327,8 +327,21 @@ const Hero = (props) => {
           backgroundPosition: "bottom center",
           backgroundRepeat: "repeat-x",
           backgroundSize: "auto 50%",
+          position: "relative",
         }}
       >
+        <Box
+          sx={{
+            position: "absolute",
+            width: {
+              xs: 0,
+              md: "50%",
+            },
+            height: "100%",
+            right: 0,
+            backdropFilter: "blur(12px)",
+          }}
+        />
         <Container maxWidth="lg">
           <Grid
             container
@@ -341,7 +354,7 @@ const Hero = (props) => {
               },
             }}
             spacing={3}
-            alignItems="center"
+            alignItems="stretch"
           >
             <Grid
               item
@@ -442,6 +455,7 @@ const Hero = (props) => {
                   xs: "center",
                   md: "end",
                 },
+                alignItems: "center",
               }}
             >
               <Illustration />
