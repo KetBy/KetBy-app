@@ -18,7 +18,7 @@ export default function StatevectorChart({ statevector }) {
               : 60
             : 0,
       },
-      name: "Outcome",
+      name: "Computational basis state",
       nameLocation: "middle",
       nameGap:
         statevector.amplitudes.length >= 16

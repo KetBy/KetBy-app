@@ -1032,7 +1032,7 @@ const Graph2 = ({
           />
           <Typography
             sx={{
-              fontSize: "0.7rem",
+              fontSize: "0.75rem",
               letterSpacing: 0,
               right: 0,
               fontWeight: 600,
@@ -1046,7 +1046,7 @@ const Graph2 = ({
           </Typography>
           <Typography
             sx={{
-              fontSize: "0.5rem",
+              fontSize: "0.6rem",
               letterSpacing: 0,
               left: "50%",
               fontWeight: 600,
@@ -1061,7 +1061,7 @@ const Graph2 = ({
           </Typography>
           <Typography
             sx={{
-              fontSize: "0.7rem",
+              fontSize: "0.75rem",
               letterSpacing: 0,
               left: 0,
               fontWeight: 600,
@@ -1075,7 +1075,7 @@ const Graph2 = ({
           </Typography>
           <Typography
             sx={{
-              fontSize: "0.5rem",
+              fontSize: "0.6rem",
               letterSpacing: 0,
               left: "50%",
               fontWeight: 600,
@@ -1090,7 +1090,7 @@ const Graph2 = ({
           </Typography>
           <Typography
             sx={{
-              fontSize: "0.5rem",
+              fontSize: "0.6rem",
               letterSpacing: 0,
               left: "50%",
               fontWeight: 600,
@@ -1288,6 +1288,10 @@ const Canvas = (props) => {
     newFileDrawerOpen,
     toggleFileDrawer,
     updateCount,
+    undoList,
+    setUndoList,
+    redoList,
+    setRedoList,
   } = props;
 
   const FileSelector = (props) => {
@@ -1592,12 +1596,18 @@ const Canvas = (props) => {
               {project.permissions == 2 && (
                 <Tooltip title="Undo">
                   <IconButton
-                    onClick={() => {}}
+                    onClick={() => {
+                      setCircuit({
+                        ...undoList[undoList.length - 1],
+                        _undone: true,
+                      });
+                    }}
                     size="small"
                     sx={{
                       borderRadius: 0,
                     }}
                     disableTouchRipple
+                    disabled={undoList.length == 0}
                   >
                     <UndoRoundedIcon />
                   </IconButton>
@@ -1612,6 +1622,7 @@ const Canvas = (props) => {
                       borderRadius: 0,
                     }}
                     disableTouchRipple
+                    disabled={redoList.length == 0}
                   >
                     <RedoRoundedIcon />
                   </IconButton>

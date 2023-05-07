@@ -13,7 +13,7 @@ export default function ProbabilitiesChart({ probabilities }) {
         rotate:
           probabilities.length > 8 ? (probabilities.length > 16 ? 90 : 60) : 0,
       },
-      name: "Outcome",
+      name: "Computational basis state",
       nameLocation: "middle",
       nameGap:
         probabilities.length >= 16

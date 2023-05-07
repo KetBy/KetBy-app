@@ -32,6 +32,11 @@ const Wrapper = (props) => {
     instructions: file.content,
   });
 
+  const [previousCircuit, setPreviousCircuit] = React.useState({
+    meta: file.meta,
+    instructions: file.content,
+  });
+
   const [status, setStatus] = React.useState("Loading...");
 
   const [updateCount, setUpdateCount] = React.useState(0);
@@ -41,6 +46,9 @@ const Wrapper = (props) => {
   const toggleFileDrawer = (event) => {
     setNewFileDrawerOpen(!newFileDrawerOpen);
   };
+
+  const [undoList, setUndoList] = React.useState([]);
+  const [redoList, setRedoList] = React.useState([]);
 
   React.useEffect(() => {
     if (!project) return;
@@ -72,6 +80,17 @@ const Wrapper = (props) => {
       return;
     }
     setStatus("Saving changes...");
+    // Update the undo list
+    if (circuit._undone === true) {
+      setUndoList((prevUndoList) => [...prevUndoList.slice(0, -1)]);
+      delete circuit._undone;
+    } else {
+      setUndoList((prevUndoList) => [
+        ...prevUndoList.slice(-9),
+        { ...previousCircuit, _undone: false },
+      ]);
+      setPreviousCircuit({ ...circuit });
+    }
     axios
       .put(`/project/${project.token}/${file.file_index}`, {
         meta: circuit.meta ? circuit.meta : [],
@@ -82,14 +101,16 @@ const Wrapper = (props) => {
         setStatus(res.data.status);
         setUpdateCount(updateCount + 1);
       })
-      .catch((res) => {
-        if (res.response.data && res.response.data.status) {
-          setStatus(res.response.data.status);
+      .catch((err) => {
+        if (err.response && err.response.data && err.response.data.status) {
+          setStatus(err.response.data.status);
         } else {
           setStatus("Could not save changes");
         }
       });
   }, [circuit, project]);
+
+  console.log([...undoList.map((item) => item.instructions[0].gate)]);
 
   const [gatesDirectoryOpenMobile, setGatesDirectoryOpenMobile] =
     React.useState(false);
@@ -134,6 +155,10 @@ const Wrapper = (props) => {
           toggleFileDrawer={toggleFileDrawer}
           newFileDrawerOpen={newFileDrawerOpen}
           updateCount={updateCount}
+          undoList={undoList}
+          setUndoList={setUndoList}
+          redoList={redoList}
+          setRedoList={setRedoList}
         />
       </Grid>
       <Grid item width="auto">
