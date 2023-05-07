@@ -50,6 +50,13 @@ const Wrapper = (props) => {
   const [undoList, setUndoList] = React.useState([]);
   const [redoList, setRedoList] = React.useState([]);
 
+  const handleUndo = () => {
+    const lastCircuit = undoList[undoList.length - 1];
+    // setRedoList([...redoList, circuit]);
+    setUndoList(undoList.slice(0, -1));
+    setCircuit({ ...lastCircuit, _undone: true });
+  };
+
   React.useEffect(() => {
     if (!project) return;
 
@@ -80,17 +87,21 @@ const Wrapper = (props) => {
       return;
     }
     setStatus("Saving changes...");
-    // Update the undo list
-    if (circuit._undone === true) {
-      setUndoList((prevUndoList) => [...prevUndoList.slice(0, -1)]);
-      delete circuit._undone;
-    } else {
+
+    if (!circuit._undone) { // TODO
+      /*
       setUndoList((prevUndoList) => [
-        ...prevUndoList.slice(-9),
+        ...prevUndoList,
         { ...previousCircuit, _undone: false },
       ]);
       setPreviousCircuit({ ...circuit });
+      */
+    } else {
+      /*
+      delete circuit._undone;
+      */
     }
+
     axios
       .put(`/project/${project.token}/${file.file_index}`, {
         meta: circuit.meta ? circuit.meta : [],
@@ -157,6 +168,7 @@ const Wrapper = (props) => {
           setUndoList={setUndoList}
           redoList={redoList}
           setRedoList={setRedoList}
+          handleUndo={handleUndo}
         />
       </Grid>
       <Grid item width="auto">

@@ -17,6 +17,8 @@ export function AppWrapper({ children }) {
   const [shareProjectModal, setShareProjectModal] = React.useState(null);
   const [shareProjectModalOpen, setShareProjectModalOpen] =
     React.useState(false);
+  const [forkProjectModal, setForkProjectModal] = React.useState(null);
+  const [forkProjectModalOpen, setForkProjectModalOpen] = React.useState(false);
 
   const checkStatus = async () => {
     axios
@@ -81,6 +83,10 @@ export function AppWrapper({ children }) {
         setShareProjectModal,
         shareProjectModalOpen,
         setShareProjectModalOpen,
+        forkProjectModal,
+        setForkProjectModal,
+        forkProjectModalOpen,
+        setForkProjectModalOpen,
       }}
     >
       {children}

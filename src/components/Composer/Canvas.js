@@ -24,6 +24,7 @@ import LatexFigure from "../LatexFigure";
 import CustomCircularProgress from "./../custom/CircularProgress";
 import CustomLinearProgress from "./../custom/LinearProgress";
 import axios from "../../utils/axios";
+import { useAppContext } from "../../utils/context";
 
 import Draggable from "react-draggable";
 
@@ -1292,6 +1293,7 @@ const Canvas = (props) => {
     setUndoList,
     redoList,
     setRedoList,
+    handleUndo,
   } = props;
 
   const FileSelector = (props) => {
@@ -1462,6 +1464,13 @@ const Canvas = (props) => {
       });
   }, [updateCount]);
 
+  const { setForkProjectModal, setForkProjectModalOpen } = useAppContext();
+
+  const handleOpenFork = () => {
+    setForkProjectModal(project);
+    setForkProjectModalOpen(true);
+  };
+
   return (
     <>
       <Box>
@@ -1596,18 +1605,13 @@ const Canvas = (props) => {
               {project.permissions == 2 && (
                 <Tooltip title="Undo">
                   <IconButton
-                    onClick={() => {
-                      setCircuit({
-                        ...undoList[undoList.length - 1],
-                        _undone: true,
-                      });
-                    }}
+                    onClick={handleUndo}
                     size="small"
                     sx={{
                       borderRadius: 0,
                     }}
                     disableTouchRipple
-                    disabled={undoList.length == 0}
+                    disabled={undoList.length == 0 || false}
                   >
                     <UndoRoundedIcon />
                   </IconButton>
@@ -1625,6 +1629,20 @@ const Canvas = (props) => {
                     disabled={redoList.length == 0}
                   >
                     <RedoRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {project.permissions == 2 && (
+                <Tooltip title="Fork">
+                  <IconButton
+                    onClick={handleOpenFork}
+                    size="small"
+                    sx={{
+                      borderRadius: 0,
+                    }}
+                    disableTouchRipple
+                  >
+                    <ForkRightRoundedIcon />
                   </IconButton>
                 </Tooltip>
               )}
@@ -1657,6 +1675,13 @@ const Canvas = (props) => {
                         xs: "none",
                         md: "inline-flex",
                       },
+                    }}
+                    onClick={() => {
+                      if (project.permissions == 2) {
+                        // handleRun();
+                      } else {
+                        handleOpenFork();
+                      }
                     }}
                   >
                     {project.permissions == 2 ? "Run" : "Fork to Edit & Run"}

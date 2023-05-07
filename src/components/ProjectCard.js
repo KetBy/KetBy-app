@@ -29,7 +29,12 @@ import { useRouter } from "next/router";
 import { useAppContext } from "../utils/context";
 
 export default function ProjectCard(props) {
-  const { setShareProjectModal, setShareProjectModalOpen } = useAppContext();
+  const {
+    setShareProjectModal,
+    setShareProjectModalOpen,
+    setForkProjectModal,
+    setForkProjectModalOpen,
+  } = useAppContext();
   const _project = props.project;
   const [project, setProject] = React.useState(_project);
   const router = useRouter();
@@ -151,6 +156,10 @@ export default function ProjectCard(props) {
                   color="primary"
                   variant="outlined"
                   endIcon={<ForkRightRoundedIcon />}
+                  onClick={() => {
+                    setForkProjectModal(project);
+                    setForkProjectModalOpen(true);
+                  }}
                 >
                   {project.forks_count}
                 </Button>
