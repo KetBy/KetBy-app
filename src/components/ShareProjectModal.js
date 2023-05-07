@@ -195,6 +195,7 @@ export default function ShareProjectModal(props) {
       <DialogActions
         sx={{
           px: 3,
+          pb: 2,
         }}
       >
         <LoadingButton
