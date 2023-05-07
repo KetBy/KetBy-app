@@ -110,8 +110,6 @@ const Wrapper = (props) => {
       });
   }, [circuit, project]);
 
-  console.log([...undoList.map((item) => item.instructions[0].gate)]);
-
   const [gatesDirectoryOpenMobile, setGatesDirectoryOpenMobile] =
     React.useState(false);
   const [sidebarOpenMobile, setSidebarOpenMobile] = React.useState(false);
