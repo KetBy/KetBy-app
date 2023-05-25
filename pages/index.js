@@ -20,9 +20,7 @@ import HeroBg from "../public/assets/page/home_hero_bg.svg";
 import axios from "../src/utils/axios";
 import ProjectCard from "../src/components/ProjectCard";
 
-const Hero = (props) => {
-  const { appState } = useAppContext();
-
+export const Illustration = (props) => {
   const flash = keyframes`
       0% {
         width: 0;
@@ -57,6 +55,190 @@ const Hero = (props) => {
         left: 0;
       }
     `;
+
+  return (
+    <Box
+      sx={{
+        height: {
+          xs: 200,
+          md: 400,
+        },
+        width: {
+          xs: 225,
+          md: 450,
+        },
+        position: "relative",
+      }}
+    >
+      <Box
+        sx={{
+          height: 5,
+          position: "absolute",
+          width: "100%",
+          bottom: `${(50 / 400) * 100}%`,
+          background: theme.palette.darkGrey.main,
+          zIndex: 1,
+          "&:after": {
+            content: "''",
+            width: 0,
+            height: 3,
+            background: theme.palette.yellow.dark,
+            opacity: 0.9,
+            left: 0,
+            top: 1,
+            position: "absolute",
+            borderRadius: 2,
+            boxShadow: "rgba(255, 255, 255, 0.5) 4px 4px 12px",
+            animation: `${flash} 5s infinite linear`,
+            animationDelay: "0.25s",
+          },
+        }}
+      />
+      <Box
+        sx={{
+          height: 5,
+          position: "absolute",
+          width: "100%",
+          top: `${(150 / 400) * 100}%`,
+          background: theme.palette.darkGrey.main,
+          zIndex: 0,
+          "&:after": {
+            content: "''",
+            width: 0,
+            height: 3,
+            background: theme.palette.yellow.dark,
+            opacity: 0.9,
+            left: 0,
+            top: 1,
+            position: "absolute",
+            borderRadius: 2,
+            boxShadow: "rgba(255, 255, 255, 0.5) 4px 4px 12px",
+            animation: `${flash} 5s infinite linear`,
+          },
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          width: 5,
+          background: theme.palette.darkGrey.main,
+          height: `${(275 / 400) * 100}%`,
+          top: `${(75 / 400) * 100}%`,
+          left: `calc(${(125 / 450) * 100}% - 2.5px)`,
+          zIndex: 3,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          width: `${(150 / 450) * 100}%`,
+          height: `${(150 / 400) * 100}%`,
+          top: `${(150 / 400) * 100}%`,
+          left: `${(50 / 450) * 100}%`,
+          borderRadius: "50%",
+          transform: "translate(0, -50%)",
+          border: `5px solid ${theme.palette.darkGrey.main}`,
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          width: `${(25 / 450) * 100}%`,
+          height: `${(25 / 400) * 100}%`,
+          bottom: `calc(${(50 / 400) * 100}% + 2.5px)`,
+          left: `${(100 / 450) * 100}%`,
+          borderRadius: "50%",
+          background: theme.palette.darkGrey.main,
+          transform: "translate(50%, 50%)",
+          zIndex: 6,
+        }}
+      />
+      <MouseParallaxChild factorX={0.3} factorY={0.5}>
+        <Box
+          sx={{
+            position: "absolute",
+            width: {
+              xs: 75,
+              md: 150,
+            },
+            height: {
+              xs: 75,
+              md: 150,
+            },
+            background: "rgba(0, 138, 99, 0.9)",
+            top: {
+              xs: 75 / 2,
+              md: 75,
+            },
+            left: {
+              xs: 166 / 2 + 2.5,
+              md: 166 + 2.5,
+            },
+            zIndex: 7,
+            backdropFilter: "saturate(25) blur(4px)",
+            border: `5px solid ${theme.palette.grey[50]}`,
+            color: "white",
+            fontSize: {
+              xs: "3rem",
+              md: "6rem",
+            },
+            fontWeight: 300,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: theme.shadowsCustom[1],
+          }}
+        >
+          Y
+        </Box>
+      </MouseParallaxChild>
+      <MouseParallaxChild factorX={0.6} factorY={1}>
+        <Box
+          sx={{
+            position: "absolute",
+
+            width: {
+              xs: 75,
+              md: 150,
+            },
+            height: {
+              xs: 75,
+              md: 150,
+            },
+            top: {
+              xs: 75 / 2,
+              md: 75,
+            },
+            left: {
+              xs: 275 / 2 + 2.5,
+              md: 275 + 2.5,
+            },
+            background: "rgba(241, 55, 101, 0.9)",
+            zIndex: 8,
+            backdropFilter: "saturate(25) blur(4px)",
+            border: `5px solid ${theme.palette.grey[50]}`,
+            color: "white",
+            fontSize: {
+              xs: "3rem",
+              md: "6rem",
+            },
+            fontWeight: 300,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: theme.shadowsCustom[1],
+          }}
+        >
+          H
+        </Box>
+      </MouseParallaxChild>
+    </Box>
+  );
+};
+
+const Hero = (props) => {
+  const { appState } = useAppContext();
 
   const Superposition = (props) => {
     const swing_before = keyframes`
@@ -133,188 +315,6 @@ const Hero = (props) => {
           },
         }}
       />
-    );
-  };
-
-  const Illustration = (props) => {
-    return (
-      <Box
-        sx={{
-          height: {
-            xs: 200,
-            md: 400,
-          },
-          width: {
-            xs: 225,
-            md: 450,
-          },
-          position: "relative",
-        }}
-      >
-        <Box
-          sx={{
-            height: 5,
-            position: "absolute",
-            width: "100%",
-            bottom: `${(50 / 400) * 100}%`,
-            background: theme.palette.darkGrey.main,
-            zIndex: 1,
-            "&:after": {
-              content: "''",
-              width: 0,
-              height: 3,
-              background: theme.palette.yellow.dark,
-              opacity: 0.9,
-              left: 0,
-              top: 1,
-              position: "absolute",
-              borderRadius: 2,
-              boxShadow: "rgba(255, 255, 255, 0.5) 4px 4px 12px",
-              animation: `${flash} 5s infinite linear`,
-              animationDelay: "0.25s",
-            },
-          }}
-        />
-        <Box
-          sx={{
-            height: 5,
-            position: "absolute",
-            width: "100%",
-            top: `${(150 / 400) * 100}%`,
-            background: theme.palette.darkGrey.main,
-            zIndex: 0,
-            "&:after": {
-              content: "''",
-              width: 0,
-              height: 3,
-              background: theme.palette.yellow.dark,
-              opacity: 0.9,
-              left: 0,
-              top: 1,
-              position: "absolute",
-              borderRadius: 2,
-              boxShadow: "rgba(255, 255, 255, 0.5) 4px 4px 12px",
-              animation: `${flash} 5s infinite linear`,
-            },
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            width: 5,
-            background: theme.palette.darkGrey.main,
-            height: `${(275 / 400) * 100}%`,
-            top: `${(75 / 400) * 100}%`,
-            left: `calc(${(125 / 450) * 100}% - 2.5px)`,
-            zIndex: 3,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            width: `${(150 / 450) * 100}%`,
-            height: `${(150 / 400) * 100}%`,
-            top: `${(150 / 400) * 100}%`,
-            left: `${(50 / 450) * 100}%`,
-            borderRadius: "50%",
-            transform: "translate(0, -50%)",
-            border: `5px solid ${theme.palette.darkGrey.main}`,
-            zIndex: 0,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            width: `${(25 / 450) * 100}%`,
-            height: `${(25 / 400) * 100}%`,
-            bottom: `calc(${(50 / 400) * 100}% + 2.5px)`,
-            left: `${(100 / 450) * 100}%`,
-            borderRadius: "50%",
-            background: theme.palette.darkGrey.main,
-            transform: "translate(50%, 50%)",
-            zIndex: 6,
-          }}
-        />
-        <MouseParallaxChild factorX={0.3} factorY={0.5}>
-          <Box
-            sx={{
-              position: "absolute",
-              width: {
-                xs: 75,
-                md: 150,
-              },
-              height: {
-                xs: 75,
-                md: 150,
-              },
-              background: "rgba(0, 138, 99, 0.9)",
-              top: {
-                xs: 75 / 2,
-                md: 75,
-              },
-              left: {
-                xs: 166 / 2 + 2.5,
-                md: 166 + 2.5,
-              },
-              zIndex: 7,
-              backdropFilter: "saturate(25) blur(4px)",
-              border: `5px solid ${theme.palette.grey[50]}`,
-              color: "white",
-              fontSize: {
-                xs: "3rem",
-                md: "6rem",
-              },
-              fontWeight: 300,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: theme.shadowsCustom[1],
-            }}
-          >
-            Y
-          </Box>
-        </MouseParallaxChild>
-        <MouseParallaxChild factorX={0.6} factorY={1}>
-          <Box
-            sx={{
-              position: "absolute",
-
-              width: {
-                xs: 75,
-                md: 150,
-              },
-              height: {
-                xs: 75,
-                md: 150,
-              },
-              top: {
-                xs: 75 / 2,
-                md: 75,
-              },
-              left: {
-                xs: 275 / 2 + 2.5,
-                md: 275 + 2.5,
-              },
-              background: "rgba(241, 55, 101, 0.9)",
-              zIndex: 8,
-              backdropFilter: "saturate(25) blur(4px)",
-              border: `5px solid ${theme.palette.grey[50]}`,
-              color: "white",
-              fontSize: {
-                xs: "3rem",
-                md: "6rem",
-              },
-              fontWeight: 300,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: theme.shadowsCustom[1],
-            }}
-          >
-            H
-          </Box>
-        </MouseParallaxChild>
-      </Box>
     );
   };
 

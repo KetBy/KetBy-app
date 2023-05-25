@@ -179,10 +179,12 @@ export default function LoginForm(props) {
             </Grid>
           </Grid>
         </Box>
-        <Divider sx={{ mt: 3, mb: 2 }}>
-          <Typography variant="body2">or continue with</Typography>
-        </Divider>
-        <SocialButtons />
+        <Box sx={{ display: "none" }}>
+          <Divider sx={{ mt: 3, mb: 2 }}>
+            <Typography variant="body2">or continue with</Typography>
+          </Divider>
+          <SocialButtons />
+        </Box>
       </Box>
     </>
   );

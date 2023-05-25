@@ -26,6 +26,7 @@ export default function AuthPasswordPage() {
           justifyContent: "center",
           py: 5,
           px: 3,
+          background: "white",
         }}
       >
         <PasswordForm2 token={token} />
