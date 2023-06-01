@@ -132,7 +132,7 @@ const gates = [
         name: "RZ",
         qubits: 1,
         title: "RZ gate",
-        desc: "Lorem ipsum",
+        desc: "Unavailable info.",
         parameters: [
           {
             name: "φ",
@@ -177,7 +177,7 @@ const gates = [
         name: "RX",
         qubits: 1,
         title: "RX gate",
-        desc: "Lorem ipsum",
+        desc: "Unavailable info.",
         parameters: [
           {
             name: "φ",
@@ -189,7 +189,7 @@ const gates = [
         name: "RY",
         qubits: 1,
         title: "RY gate",
-        desc: "Lorem ipsum",
+        desc: "Unavailable info.",
         parameters: [
           {
             name: "φ",
@@ -200,14 +200,14 @@ const gates = [
       {
         name: "SX",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "Unavailable info.",
+        desc: "Unavailable info.",
       },
       {
         name: "SX+",
         qubits: 1,
-        title: "Lorem ipsum",
-        desc: "Lorem ipsum",
+        title: "Unavailable info.",
+        desc: "Unavailable info.",
       },
     ],
   },
@@ -221,7 +221,7 @@ const gates = [
         qubits: 1,
         bits: 1,
         title: "Measurement",
-        desc: <>Lorem ipsum</>,
+        desc: <>Unavailable info.</>,
       },
     ],
   },

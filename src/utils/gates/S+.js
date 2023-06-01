@@ -20,7 +20,7 @@ export default function SDagger(props) {
         gate:{" "}
         <LatexFigure
           inline
-          input="(S^{\dagger})^{2}\ket{\phi}=Z^{\dagger}\ket{\phi}"
+          input="S^{\dagger}(S^{\dagger}\ket{\phi})=Z^{\dagger}\ket{\phi}"
         />
         .
       </Typography>

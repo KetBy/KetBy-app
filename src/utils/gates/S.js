@@ -17,7 +17,7 @@ export default function S(props) {
         The <GateTitle gate={gates["Z"]} title="√Z" /> name is given by the fact
         that two successive <GateTitle gate={gates["S"]} /> gates have the
         effect of a single <GateTitle gate={gates["Z"]} /> gate:{" "}
-        <LatexFigure inline input="S^{2}\ket{\phi}=Z\ket{\phi}" />.
+        <LatexFigure inline input="S(S\ket{\phi})=Z\ket{\phi}" />.
       </Typography>
       <Divider sx={{ mt: 1 }} />
       <Typography variant="subtitle2" align="center" mt={1}>

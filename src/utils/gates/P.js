@@ -10,7 +10,7 @@ export default function P(props) {
   return (
     <>
       <Typography variant="body2" align="justify">
-        The <GateTitle gate={gates["P"]} /> gate is a parametrised gate that
+        The <GateTitle gate={gates["P"]} /> gate is a parameterised gate that
         takes in a value <LatexFigure inline input="\phi" /> and performs a
         rotation of <LatexFigure inline input="\phi" /> around the Z axis.
       </Typography>

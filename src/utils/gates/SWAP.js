@@ -17,7 +17,7 @@ export default function SWAP(props) {
         Matrix representation
       </Typography>
       <LatexFigure
-        input="\begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix}"
+        input="\begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}"
         sx={{ margin: "0.5rem auto", display: "block" }}
       />
     </>

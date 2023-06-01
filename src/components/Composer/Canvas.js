@@ -1609,6 +1609,7 @@ const Canvas = (props) => {
                     size="small"
                     sx={{
                       borderRadius: 0,
+                      display: "none",
                     }}
                     disableTouchRipple
                     disabled={undoList.length == 0 || false}
@@ -1624,6 +1625,7 @@ const Canvas = (props) => {
                     size="small"
                     sx={{
                       borderRadius: 0,
+                      display: "none",
                     }}
                     disableTouchRipple
                     disabled={redoList.length == 0}

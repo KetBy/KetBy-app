@@ -18,6 +18,7 @@ import { LoadingButton } from "@mui/lab";
 import { useAppContext } from "../utils/context";
 import axios from "../utils/axios";
 import { useRouter } from "next/router";
+import { Link } from "next/router";
 
 export default function ForkProjectModal(props) {
   const {
@@ -96,9 +97,31 @@ export default function ForkProjectModal(props) {
         sx={{ opacity: loading ? 1 : 0, transitionDuration: "0.2s" }}
       />
       <DialogContent>
-        <Typography variant="body2">
-          Make an identical copy of this project and all its circuits.
-        </Typography>
+        {!appState.statusChecked ? (
+          <Typography variant="body2" align="center">
+            Loading...
+          </Typography>
+        ) : (
+          <>
+            {appState.user ? (
+              <>
+                <Typography variant="body2">
+                  Make an identical copy of this project and all its circuits.
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Alert
+                  severity="warning"
+                  sx={{ boxShadow: (theme) => theme.shadowsCustom[2] }}
+                >
+                  Please log in first to fork this project.
+                </Alert>
+              </>
+            )}
+          </>
+        )}
+
         {Boolean(error) && (
           <Alert severity="error" sx={{ mt: 2 }}>
             {error}
@@ -115,19 +138,36 @@ export default function ForkProjectModal(props) {
           onClick={() => {
             setForkProjectModalOpen(false);
           }}
+          sx={{ mr: 1 }}
         >
           Cancel
         </Button>
-        <LoadingButton
-          onClick={() => {
-            handleFork();
-          }}
-          color="primary"
-          loading={loading}
-          variant="contained"
-        >
-          Fork
-        </LoadingButton>
+        {appState.statusChecked &&
+          (appState.user ? (
+            <LoadingButton
+              onClick={() => {
+                handleFork();
+              }}
+              color="primary"
+              loading={loading}
+              variant="contained"
+            >
+              Fork
+            </LoadingButton>
+          ) : (
+            <Button
+              component={Link}
+              color="primary"
+              variant="contained"
+              href={
+                project
+                  ? `/auth/login?next=/composer/${project.token}`
+                  : `/auth/login`
+              }
+            >
+              Log in to continue
+            </Button>
+          ))}
       </DialogActions>
     </Dialog>
   );

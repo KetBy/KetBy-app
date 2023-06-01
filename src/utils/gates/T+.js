@@ -41,7 +41,7 @@ export default function TDagger(props) {
         <GateTitle gate={gates["Z"]} title="Z†" /> gate:{" "}
         <LatexFigure
           inline
-          input="(T^{\dagger})^{4}\ket{\phi}=Z^{\dagger}\ket{\phi}"
+          input="T^{\dagger}(T^{\dagger}(T^{\dagger}(T^{\dagger}\ket{\phi})))=Z^{\dagger}\ket{\phi}"
         />
         .
       </Typography>
