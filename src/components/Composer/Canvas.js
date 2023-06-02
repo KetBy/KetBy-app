@@ -1638,6 +1638,7 @@ const Canvas = (props) => {
                     onClick={() => {
                       setSelectedRun(null);
                       setRefetchRuns(refetchRuns + 1);
+                      setFetchingRuns(true);
                     }}
                     size="small"
                     startIcon={<KeyboardArrowLeftRoundedIcon />}

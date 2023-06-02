@@ -14,7 +14,12 @@ export default function ResultsChart({ results, shots }) {
     },
     yAxis: {
       type: "category",
-      data: results.map((item) => item.outcome),
+      data: results
+        .map((item) => ({
+          value: item.outcome,
+          sortIndex: item.sortIndex,
+        }))
+        .reverse(),
       interval: 0,
       axisLabel: {
         interval: 0,
