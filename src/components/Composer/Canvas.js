@@ -10,9 +10,20 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
   ListItemIcon,
   Divider,
   Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Alert,
 } from "@mui/material";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -51,6 +62,8 @@ import ForkRightRoundedIcon from "@mui/icons-material/ForkRightRounded";
 import TagRoundedIcon from "@mui/icons-material/TagRounded";
 import AddRounded from "@mui/icons-material/AddRounded";
 import RemoveRounded from "@mui/icons-material/RemoveRounded";
+import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
+import { LoadingButton } from "@mui/lab";
 
 const ProbabilitiesChart = dynamic(() => import("./ProbabilitiesChart.js"), {
   loading: () => (
@@ -87,6 +100,22 @@ const StatevectorChart = dynamic(() => import("./StatevectorChart.js"), {
         height: "100%",
       }}
     >
+      <Typography
+        variant="body2"
+        sx={{
+          display: "block",
+          textAlign: "center",
+          flex: 1,
+        }}
+      >
+        Rendering...
+      </Typography>
+    </Box>
+  ),
+});
+const ResultsChart = dynamic(() => import("./ResultsChart.js"), {
+  loading: () => (
+    <Box>
       <Typography
         variant="body2"
         sx={{
@@ -1471,8 +1500,306 @@ const Canvas = (props) => {
     setForkProjectModalOpen(true);
   };
 
+  const [runModalOpen, setRunModalOpen] = React.useState(false);
+
+  const handleRun = () => {
+    setRunModalOpen(true);
+  };
+
+  const RunModal = (props) => {
+    const [selectedRun, setSelectedRun] = React.useState(null);
+    const [runsError, setRunsError] = React.useState(null);
+
+    const [shots, setShots] = React.useState(1000);
+    const [running, setRunning] = React.useState(false);
+
+    const [fetchingRuns, setFetchingRuns] = React.useState(true);
+    const [runs, setRuns] = React.useState({});
+
+    const [refetchRuns, setRefetchRuns] = React.useState(0);
+
+    React.useEffect(() => {
+      axios
+        .get(`/project/${project.token}/${activeFile.file_index}/run`)
+        .then((res) => {
+          if (res.data.success) {
+            setRuns(res.data.runs);
+            setRunsError(null);
+          } else {
+            setRunsError(res.data.message ?? "Something went wrong.");
+          }
+          setFetchingRuns(false);
+        })
+        .catch((err) => {
+          setRunsError(
+            (err.response && err.response.data && err.response.data.message) ??
+              "Something went wrong."
+          );
+          setFetchingRuns(false);
+        });
+    }, [refetchRuns]);
+
+    const handleRun = (e) => {
+      setRunning(true);
+      axios
+        .post(`/project/${project.token}/${activeFile.file_index}/run`, {
+          shots: shots,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            setSelectedRun(res.data.run.run_index);
+            setRunsError(null);
+          } else {
+            setRunsError(res.data.message ?? "Something went wrong.");
+          }
+          setRunning(false);
+        })
+        .catch((err) => {
+          setRunsError(
+            (err.response && err.response.data && err.response.data.message) ??
+              "Something went wrong."
+          );
+          setRunning(false);
+        });
+    };
+
+    const RunWrapper = (props) => {
+      const [run, setRun] = React.useState(null);
+      const [fetchingRun, setFetchingRun] = React.useState(true);
+
+      React.useEffect(() => {
+        if (!selectedRun) return;
+        axios
+          .get(
+            `/project/${project.token}/${activeFile.file_index}/run/${selectedRun}`
+          )
+          .then((res) => {
+            if (res.data.success) {
+              setRun(res.data.run);
+              setRunsError(null);
+            } else {
+              setRunsError(res.data.message ?? "Something went wrong.");
+            }
+            setFetchingRun(false);
+          })
+          .catch((err) => {
+            setRunsError(
+              (err.response &&
+                err.response.data &&
+                err.response.data.message) ??
+                "Something went wrong."
+            );
+            setFetchingRun(false);
+          });
+      }, []);
+
+      return (
+        <>
+          {fetchingRun ? (
+            <Box>
+              <CustomCircularProgress />
+            </Box>
+          ) : (
+            <>
+              <ResultsChart results={run.results} shots={run.shots} />
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                Simulated <i>{run.created_at_formatted}</i> with {run.shots}{" "}
+                shots.
+              </Typography>
+            </>
+          )}
+        </>
+      );
+    };
+
+    return (
+      <Dialog
+        open={runModalOpen}
+        onClose={() => {
+          setRunModalOpen(false);
+        }}
+        aria-labelledby="run-modal-title"
+        aria-describedby="run-modal-description"
+        maxWidth="xs"
+      >
+        {selectedRun != null ? (
+          <>
+            <DialogTitle id="run-modal-title">
+              Run #{selectedRun} |{" "}
+              <b>
+                <i>{activeFile.title}</i>
+              </b>
+            </DialogTitle>
+            <DialogContent sx={{ width: { xs: "80vw", md: "400px" } }}>
+              <Grid container spacing={1} rowSpacing={2} alignItems="end">
+                <Grid item xs={12}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setSelectedRun(null);
+                      setRefetchRuns(refetchRuns + 1);
+                    }}
+                    size="small"
+                    startIcon={<KeyboardArrowLeftRoundedIcon />}
+                  >
+                    Back to runs list
+                  </Button>
+                </Grid>
+                {Boolean(runsError) && (
+                  <Grid item xs={12}>
+                    <Alert
+                      severity="error"
+                      sx={{ boxShadow: (theme) => theme.shadowsCustom[2] }}
+                    >
+                      {runsError}
+                    </Alert>
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <RunWrapper />
+                </Grid>
+              </Grid>
+            </DialogContent>
+          </>
+        ) : (
+          <>
+            <DialogTitle id="run-modal-title">
+              Run{" "}
+              <b>
+                <i>{activeFile.title}</i>
+              </b>
+            </DialogTitle>
+            <DialogContent sx={{ width: { xs: "80vw", md: "400px" } }}>
+              <Grid container spacing={1} rowSpacing={2} alignItems="end">
+                <Grid item xs={6}>
+                  <TextField
+                    label="Shots"
+                    onChange={(e) => {
+                      setShots(e.target.value);
+                      setRunsError(null);
+                    }}
+                    value={shots}
+                    placeholder="1 - 10.000"
+                    size="small"
+                    sx={{ mt: 1 }}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <LoadingButton
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    startIcon={<PlayArrowRoundedIcon sx={{ mr: -0.5 }} />}
+                    sx={{ maxHeight: "40px" }}
+                    loading={running}
+                    onClick={handleRun}
+                  >
+                    Run
+                  </LoadingButton>
+                </Grid>
+                {Boolean(runsError) && (
+                  <Grid item xs={12}>
+                    <Alert
+                      severity="error"
+                      sx={{ boxShadow: (theme) => theme.shadowsCustom[2] }}
+                    >
+                      {runsError}
+                    </Alert>
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    Previous runs
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  {fetchingRuns ? (
+                    <Box>
+                      <CustomCircularProgress />
+                    </Box>
+                  ) : (
+                    <>
+                      {runs.length > 0 ? (
+                        <List>
+                          {runs.map((run, index) => {
+                            return (
+                              <ListItem
+                                key={run.run_index}
+                                disablePadding
+                                secondaryAction={
+                                  <Typography variant="body2">
+                                    {run.created_at}
+                                  </Typography>
+                                }
+                                sx={{
+                                  py: 1,
+                                  px: 1,
+                                  mx: -1,
+                                  width: `calc(100% + ${theme.spacing(2)})`,
+                                  borderRadius: (theme) =>
+                                    `${theme.shape.borderRadius}px`,
+                                  transitionDuration: "0.2s",
+                                  "&:hover": {
+                                    background: (theme) =>
+                                      theme.palette.grey[100],
+                                  },
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: (theme) =>
+                                      theme.palette.primary.main,
+                                    cursor: "pointer",
+                                    fontWeight: 600,
+                                  }}
+                                  onClick={() => {
+                                    setSelectedRun(run.run_index);
+                                    setRunsError(null);
+                                  }}
+                                >
+                                  #{run.run_index} - {run.shots} shots
+                                </Typography>
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      ) : (
+                        <>
+                          <Typography variant="body2">
+                            Your runs will appear here.
+                          </Typography>
+                        </>
+                      )}
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+            </DialogContent>
+          </>
+        )}
+
+        <DialogActions
+          sx={{
+            px: 3,
+          }}
+        >
+          <Button
+            onClick={() => {
+              setRunModalOpen(false);
+            }}
+            color="darkGrey"
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
     <>
+      <RunModal />
       <Box>
         <Grid
           container
@@ -1680,7 +2007,7 @@ const Canvas = (props) => {
                     }}
                     onClick={() => {
                       if (project.permissions == 2) {
-                        // handleRun();
+                        handleRun();
                       } else {
                         handleOpenFork();
                       }
@@ -1706,6 +2033,13 @@ const Canvas = (props) => {
                       display: {
                         md: "none",
                       },
+                    }}
+                    onClick={() => {
+                      if (project.permissions == 2) {
+                        handleRun();
+                      } else {
+                        handleOpenFork();
+                      }
                     }}
                   >
                     {project.permissions == 2 ? (
