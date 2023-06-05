@@ -266,8 +266,7 @@ export default function Composer(props) {
                 sx={{
                   minHeight: {
                     xs: "-webkit-fill-available",
-                    md: (theme) =>
-                      `calc(100vh - ${theme.constants.menuHeight}px)`,
+                    md: `calc(100vh - ${theme.constants.menuHeight}px)`,
                   },
                   display: "flex",
                   alignItems: "center",
