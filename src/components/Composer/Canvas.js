@@ -1519,6 +1519,7 @@ const Canvas = (props) => {
     const [refetchRuns, setRefetchRuns] = React.useState(0);
 
     React.useEffect(() => {
+      if (!runModalOpen) return;
       axios
         .get(`/project/${project.token}/${activeFile.file_index}/run`)
         .then((res) => {
