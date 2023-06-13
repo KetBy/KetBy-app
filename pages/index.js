@@ -19,6 +19,8 @@ import {
 import HeroBg from "../public/assets/page/home_hero_bg.svg";
 import axios from "../src/utils/axios";
 import ProjectCard from "../src/components/ProjectCard";
+import ArticleCard from "../src/components/ArticleCard";
+import articles from "../src/utils/articles";
 
 export const Illustration = (props) => {
   const flash = keyframes`
@@ -501,6 +503,40 @@ const Featured = ({ highlightedProjects }) => {
   );
 };
 
+const Articles = () => {
+  return (
+    <>
+      <Box sx={{ py: 3 }}>
+        <Container maxWidth="lg">
+          <Typography variant="h3" sx={{ fontWeight: 700 }}>
+            Textbook articles.
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+            Dive deeper into the realm of quantum computing.
+          </Typography>
+          <Grid container sx={{ mt: 0 }} spacing={3}>
+            {articles.map((article, index) => {
+              return (
+                <Grid item xs={12} md={6} lg={3} key={index}>
+                  <ArticleCard article={article} />
+                </Grid>
+              );
+            })}
+          </Grid>
+          <Button
+            variant="contained"
+            component={Link}
+            href="/discover"
+            sx={{ mt: 3 }}
+          >
+            Discover more articles
+          </Button>
+        </Container>
+      </Box>
+    </>
+  );
+};
+
 export default function HomePage({ data }) {
   return (
     <>
@@ -513,6 +549,7 @@ export default function HomePage({ data }) {
       </Head>
       <Hero />
       <Featured highlightedProjects={data.highlighted} />
+      <Articles />
     </>
   );
 }
