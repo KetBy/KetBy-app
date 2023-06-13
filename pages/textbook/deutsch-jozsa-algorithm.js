@@ -162,11 +162,6 @@ export default function DeutschJozsaAlgorithm({ data }) {
             "In other words, if $f$ is constant, the probability to measure $\\ket{0}^{\\otimes n}$ is 1. Similarly, if $f$ is balanced, then $\\pi$ evaluates to 0, as any value of $(-1)^1$ inside the sum will be canceled out by a value of $(-1)^0$. Therefore, if $f$ is balanced, any state other than $\\ket{0}^{\\otimes n}$ will be measured."
           }
         </Typography>
-        <Typography component={Latex}>
-          {
-            "In other words, if $f$ is constant, the probability to measure $\\ket{0}^{\\otimes n}$ is 1. Similarly, if $f$ is balanced, then $\\pi$ evaluates to 0, as any value of $(-1)^1$ inside the sum will be canceled out by a value of $(-1)^0$. Therefore, if $f$ is balanced, any state other than $\\ket{0}^{\\otimes n}$ will be measured."
-          }
-        </Typography>
         <Typography>
           Check out the following examples implemented in KetBy.
         </Typography>

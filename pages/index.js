@@ -475,7 +475,7 @@ const Featured = ({ highlightedProjects }) => {
       <Box sx={{ py: 3 }}>
         <Container maxWidth="lg">
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Get inspired.
+            Get inspired
           </Typography>
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
             Here are some projects for you to explore.
@@ -509,7 +509,7 @@ const Articles = () => {
       <Box sx={{ py: 3 }}>
         <Container maxWidth="lg">
           <Typography variant="h3" sx={{ fontWeight: 700 }}>
-            Textbook articles.
+            Textbook articles
           </Typography>
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
             Dive deeper into the realm of quantum computing.
@@ -517,7 +517,7 @@ const Articles = () => {
           <Grid container sx={{ mt: 0 }} spacing={3}>
             {articles.map((article, index) => {
               return (
-                <Grid item xs={12} md={6} lg={3} key={index}>
+                <Grid item xs={6} md={4} lg={3} key={index}>
                   <ArticleCard article={article} />
                 </Grid>
               );
