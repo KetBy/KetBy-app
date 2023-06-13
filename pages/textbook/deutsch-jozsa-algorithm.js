@@ -36,7 +36,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
   return (
     <>
       <Head>
-        <title>{article.title} | KetBy</title>
+        <title>The Deutsch-Jozsa algorithm | KetBy</title>
         <meta
           name="og:description"
           value="Free & in-browser quantum composer and quantum computing resources"
