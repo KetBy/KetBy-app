@@ -25,10 +25,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
     <>
       <Head>
         <title>The Deutsch-Jozsa algorithm | KetBy</title>
-        <meta
-          name="og:description"
-          value="Free & in-browser quantum composer and quantum computing resources"
-        />
+        <meta name="og:description" value={article.description} />
         <meta name="og:image" value={DeutschJozsaCircuit.src} />
       </Head>
       <TextbookArticle article={article}>
@@ -240,16 +237,4 @@ export default function DeutschJozsaAlgorithm({ data }) {
       </TextbookArticle>
     </>
   );
-}
-
-export async function getStaticProps({ req, res }) {
-  const result = await axios.get("/page/index");
-  const data = result.data;
-
-  return {
-    props: {
-      data,
-    },
-    revalidate: 10, // In seconds
-  };
 }

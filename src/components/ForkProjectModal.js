@@ -18,7 +18,7 @@ import { LoadingButton } from "@mui/lab";
 import { useAppContext } from "../utils/context";
 import axios from "../utils/axios";
 import { useRouter } from "next/router";
-import { Link } from "next/router";
+import Link from "next/link";
 
 export default function ForkProjectModal(props) {
   const {
@@ -166,6 +166,9 @@ export default function ForkProjectModal(props) {
                   ? `/auth/login?next=/composer/${project.token}`
                   : `/auth/login`
               }
+              onClick={() => {
+                setForkProjectModalOpen(false);
+              }}
             >
               Log in to continue
             </Button>

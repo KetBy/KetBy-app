@@ -15,6 +15,7 @@ import Menu from "../src/components/Menu";
 import ShareProjectModal from "../src/components/ShareProjectModal";
 import ForkProjectModal from "../src/components/ForkProjectModal.js";
 import { AppWrapper } from "../src/utils/context";
+import Footer from "../src/components/Footer.js";
 
 const NextProgressbar = dynamic(
   () => import("./../src/components/custom/NextProgressbar.js"),
@@ -73,6 +74,8 @@ export default function MyApp(props) {
               <ForkProjectModal />
             </Box>
           </Box>
+          {!router.pathname.startsWith("/auth") &&
+            !router.pathname.startsWith("/composer") && <Footer />}
         </AppWrapper>
       </ThemeProvider>
     </CacheProvider>

@@ -13,7 +13,7 @@ const articles = [
     title: "Grover's quantum algorithm",
     path: "/textbook/grover-algorithm",
     thumbnail: GroverThumbnail.src,
-    description: "From O(2^n) to O(1) using quantum speedup.",
+    description: "Quantum quadratic speedup for unstructured search.",
     id: "ga",
   },
 ];

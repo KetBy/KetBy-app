@@ -3,6 +3,8 @@ import { Box, Typography, Container, Grid, Button } from "@mui/material";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import Link from "next/link";
 import theme from "../../themes/default";
+import articles from "../../utils/articles";
+import ArticleCard from "../ArticleCard";
 
 export default function TextbookArticle(props) {
   return (
@@ -26,9 +28,13 @@ export default function TextbookArticle(props) {
               {props.article.title}
             </Typography>
             <Typography
-              variant="body1"
+              variant="subtitle1"
               component="h3"
-              sx={{ mt: 1, mb: 3, lineHeight: 1.2 }}
+              sx={{
+                mt: 1,
+                mb: 3,
+                lineHeight: 1.2,
+              }}
             >
               {props.article.description}
             </Typography>
@@ -40,9 +46,11 @@ export default function TextbookArticle(props) {
                 px: 3,
                 py: 4,
                 borderRadius: `${theme.shape.borderRadius}px`,
-                boxShadow: theme.shadowsCustom[0],
+                boxShadow: theme.shadowsCustom[1],
                 "& .ketby-Typography-root": {
-                  mb: 1.5,
+                  "&:not(:last-child)": {
+                    mb: 1.5,
+                  },
                   textAlign: {
                     xs: "left",
                     sm: "justify",
@@ -73,6 +81,33 @@ export default function TextbookArticle(props) {
             </Box>
           </Grid>
         </Grid>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 700, my: 3 }}>
+            Related articles -{" "}
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                display: "inline",
+                color: theme.palette.primary.main,
+              }}
+              component={Link}
+              href="/discover "
+            >
+              see all
+            </Typography>
+          </Typography>
+          <Grid container spacing={3}>
+            {articles.map((article, index) => {
+              if (index > 3 || props.article.id == article.id) return;
+              return (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <ArticleCard article={article} />
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Box>
       </Container>
     </Box>
   );
