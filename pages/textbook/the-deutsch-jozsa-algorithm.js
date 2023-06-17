@@ -29,6 +29,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
           name="og:description"
           value="Free & in-browser quantum composer and quantum computing resources"
         />
+        <meta name="og:image" value={DeutschJozsaCircuit.src} />
       </Head>
       <TextbookArticle article={article}>
         <Typography>
