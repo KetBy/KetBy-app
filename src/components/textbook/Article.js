@@ -13,7 +13,7 @@ export default function TextbookArticle(props) {
         <Grid container>
           <Grid item xs={12}>
             <Button
-              variant="inline"
+              variant="text"
               startIcon={<ChevronLeftRoundedIcon />}
               component={Link}
               href="/discover"
