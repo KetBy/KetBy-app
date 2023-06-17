@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import Composer from "../../../src/components/Composer/index.js";
 
 export default function ComposerPage() {
-  const { query, isReady } = useRouter();
-  const { projectToken, fileIndex } = query;
+  const router = useRouter();
+  const { projectToken, fileIndex } = router.query;
 
   return (
     <>

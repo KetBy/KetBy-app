@@ -847,6 +847,13 @@ const Right = ({ circuit, statistics, statisticsLoading }) => {
   return (
     <Box
       sx={{
+        width: theme.spacing(1),
+      }}
+    />
+  );
+  return (
+    <Box
+      sx={{
         width: theme.spacing(6),
         px: 1,
         opacity:

@@ -39,7 +39,6 @@ export default function ArticleCard({ article }) {
         component={Link}
         sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
         href={article.path}
-        target="_blank"
       >
         <CardMedia
           component="img"

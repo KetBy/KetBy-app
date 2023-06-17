@@ -88,7 +88,8 @@ const Wrapper = (props) => {
     }
     setStatus("Saving changes...");
 
-    if (!circuit._undone) { // TODO
+    if (!circuit._undone) {
+      // TODO
       /*
       setUndoList((prevUndoList) => [
         ...prevUndoList,

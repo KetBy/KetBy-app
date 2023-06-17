@@ -48,8 +48,10 @@ export default function ForkProjectModal(props) {
       .get(`/project/${project.token}/fork`)
       .then((res) => {
         if (res.data.success) {
-          router.push(`/composer/${res.data.fork.token}`);
-          setShouldUpdateProject(shouldUpdateProject + 1);
+          router.push(`/composer/${res.data.fork.token}`).then(() => {
+            router.reload();
+          });
+          // setShouldUpdateProject(shouldUpdateProject + 1);
           setLoading(false);
           setForkProjectModalOpen(false);
         } else {

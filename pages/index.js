@@ -517,7 +517,7 @@ const Articles = () => {
           <Grid container sx={{ mt: 0 }} spacing={3}>
             {articles.map((article, index) => {
               return (
-                <Grid item xs={6} md={4} lg={3} key={index}>
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <ArticleCard article={article} />
                 </Grid>
               );

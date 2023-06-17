@@ -41,15 +41,21 @@ export default function TextbookArticle(props) {
                 py: 4,
                 borderRadius: `${theme.shape.borderRadius}px`,
                 boxShadow: theme.shadowsCustom[0],
-                "& span.__Latex__": {
-                  mb: 1,
-                  textAlign: "justify",
-                  display: "block",
+                "& .ketby-Typography-root": {
+                  mb: 1.5,
+                  textAlign: {
+                    xs: "left",
+                    sm: "justify",
+                  },
                   maxWidth: "100%",
                   overflowX: "auto",
-                  overflowY: "hidden",
+                  display: "block",
+                  "& img.block-latex": {
+                    display: "block",
+                    maxWidth: "none !important",
+                  },
                 },
-                "& img": {
+                "& img:not(.inline-latex)": {
                   maxWidth: "100%",
                   display: "block",
                   margin: "0 auto",
