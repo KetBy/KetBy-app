@@ -6,6 +6,7 @@ import {
   Grid,
   Button,
   Skeleton,
+  Divider,
 } from "@mui/material";
 import Head from "next/head";
 import ProjectCard from "../../src/components/ProjectCard";
@@ -187,17 +188,8 @@ export default function DeutschJozsaAlgorithm({ data }) {
               input="f_1:\{0,1\}^{2} \rightarrow \{0,1\}, f(x_1,x_2) = x_1 \oplus x_2"
               inline
             />
-          </Typography>
-          <Box
-            component="img"
-            src={DeutschJozsaCircuitEx1.src}
-            alt="Deutsch-Jozsa circuit example 1"
-            sx={{ height: "125px" }}
-          />
-          <Typography sx={{ textAlign: "center !important" }}>
-            <LatexFigure input="f_1" inline /> is balanced{" "}
             <Button
-              variant="contained"
+              variant="text"
               size="small"
               component="a"
               href="https://www.ketby.com/composer/mblgerpis3iueuei/2"
@@ -207,13 +199,33 @@ export default function DeutschJozsaAlgorithm({ data }) {
               open
             </Button>
           </Typography>
+          <Box
+            component="img"
+            src={DeutschJozsaCircuitEx1.src}
+            alt="Deutsch-Jozsa circuit example 1"
+            sx={{ height: "125px" }}
+          />
+          <Typography sx={{ textAlign: "center !important" }}>
+            <LatexFigure input="f_1" inline /> is balanced{" "}
+          </Typography>
         </Box>
-        <Box sx={{ mt: 3 }}>
+        <Divider sx={{ my: 3 }} />
+        <Box>
           <Typography sx={{ textAlign: "center !important" }}>
             <LatexFigure
               input="f_2:\{0,1\}^{3} \rightarrow \{0,1\}, f_2(x_1,x_2,x_3) = x_1 \vee \neg x_1"
               inline
             />
+            <Button
+              variant="text"
+              size="small"
+              component="a"
+              href="https://www.ketby.com/composer/mblgerpis3iueuei/4"
+              target="_blank"
+              endIcon={<OpenInNewRoundedIcon />}
+            >
+              open
+            </Button>
           </Typography>
           <Box
             component="img"
@@ -223,16 +235,6 @@ export default function DeutschJozsaAlgorithm({ data }) {
           />
           <Typography sx={{ textAlign: "center !important" }}>
             <LatexFigure input="f_2" inline /> is constant{" "}
-            <Button
-              variant="contained"
-              size="small"
-              component="a"
-              href="https://www.ketby.com/composer/mblgerpis3iueuei/4"
-              target="_blank"
-              endIcon={<OpenInNewRoundedIcon />}
-            >
-              open
-            </Button>
           </Typography>
         </Box>
       </TextbookArticle>
