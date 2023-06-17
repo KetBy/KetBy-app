@@ -98,10 +98,11 @@ export default function DeutschJozsaAlgorithm({ data }) {
         </Typography>
         <LatexFigure input="\ket{\psi_3} = \frac{1}{\sqrt{2^{n+1}}}\sum_{x=0}^{2^n-1}\ket{x}\left(\ket{0\oplus f(x)}-\ket{1\oplus f(x)}\right)," />
         <Typography>
-          which tells us that the first $n$ qubits are still is the same state
-          as in the case of <LatexFigure input="\ket{\psi_2}" inline />, but the
-          qubit on position <LatexFigure input="n+1" inline /> now successfully
-          encodes <LatexFigure input="y \oplus f(x)" inline />.
+          which tells us that the first <LatexFigure input="n" inline /> qubits
+          are still is the same state as in the case of{" "}
+          <LatexFigure input="\ket{\psi_2}" inline />, but the qubit on position{" "}
+          <LatexFigure input="n+1" inline /> now successfully encodes{" "}
+          <LatexFigure input="y \oplus f(x)" inline />.
         </Typography>
         <Typography>
           We notice how, if <LatexFigure input="f(x)=0" inline />, the state of
