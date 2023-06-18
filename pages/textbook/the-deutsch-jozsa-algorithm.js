@@ -38,12 +38,12 @@ export default function DeutschJozsaAlgorithm({ data }) {
         <Typography>
           The problem statement is as follows: given a boolean function{" "}
           <LatexFigure input="f:\{0,1\}^n\rightarrow\{0,1\}" inline />, we must
-          find out whether{" "}
+          find out whether it is constant (i.e.,{" "}
           <LatexFigure
             input="f(x)=c \in \{0,1\}, \forall x \in \{0,1\}^n"
             inline
-          />{" "}
-          or balanced (i.e., <LatexFigure input="f(x)" inline /> produces 1 on
+          />
+          ) or balanced (i.e., <LatexFigure input="f(x)" inline /> produces 1 on
           exactly half of the inputs <LatexFigure input="x" inline />
           ).
         </Typography>
@@ -59,7 +59,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
           The quantum circuit on which this algorithm runs requires{" "}
           <LatexFigure input="n+1" inline /> qubits. The key of this algorithm
           is to find a way to implement <LatexFigure input="f" inline /> as a
-          quantum oracle <LatexFigure input="U_f" inline />, that maps a state{" "}
+          quantum oracle <LatexFigure input="U_f" inline /> that maps a state{" "}
           <LatexFigure input="\ket{x_1 ,x_2,\ldots,x_n}\ket{y}" inline /> to{" "}
           <LatexFigure
             input="\ket{x_1 ,x_2,\ldots,x_n}\ket{y \oplus f(x_1 ,x_2,\ldots,x_n)}"
@@ -76,7 +76,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
           component="img"
           src={DeutschJozsaCircuit.src}
           alt="Deutsch-Jozsa circuit"
-          sx={{ height: "100px" }}
+          sx={{ width: "350px" }}
         />
         <Typography>
           The quantum circuit has the initial state{" "}
@@ -92,10 +92,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
           <LatexFigure input="n" inline />. We then apply the quantum oracle{" "}
           <LatexFigure input="U_f" inline /> to the circuit, which maps the
           state <LatexFigure input="\ket{x}\ket{y}" inline /> to{" "}
-          <LatexFigure input="\ket{x}(\ket{y} \oplus f(x))" inline />. In our
-          case, <LatexFigure input="x" inline /> is a bitstring of length{" "}
-          <LatexFigure input="n" inline />, while{" "}
-          <LatexFigure input="y" inline /> is a bitstring of length 1. We obtain
+          <LatexFigure input="\ket{x}(\ket{y} \oplus f(x))" inline />. We obtain
         </Typography>
         <LatexFigure input="\ket{\psi_3} = \frac{1}{\sqrt{2^{n+1}}}\sum_{x=0}^{2^n-1}\ket{x}\left(\ket{0\oplus f(x)}-\ket{1\oplus f(x)}\right)," />
         <Typography>
@@ -203,7 +200,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
             component="img"
             src={DeutschJozsaCircuitEx1.src}
             alt="Deutsch-Jozsa circuit example 1"
-            sx={{ height: "125px" }}
+            sx={{ width: "225px" }}
           />
           <Typography sx={{ textAlign: "center !important" }}>
             <LatexFigure input="f_1" inline /> is balanced{" "}
@@ -231,7 +228,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
             component="img"
             src={DeutschJozsaCircuitEx2.src}
             alt="Deutsch-Jozsa circuit example 2"
-            sx={{ height: "160px" }}
+            sx={{ width: "225px" }}
           />
           <Typography sx={{ textAlign: "center !important" }}>
             <LatexFigure input="f_2" inline /> is constant{" "}

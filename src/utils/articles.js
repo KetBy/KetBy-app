@@ -6,7 +6,8 @@ const articles = [
     title: "The Deutsch-Jozsa quantum algorithm",
     path: "/textbook/the-deutsch-jozsa-algorithm",
     thumbnail: DeutschJozsaThumbnail.src,
-    description: "From O(2^n) to O(1) using quantum speedup.",
+    description:
+      "From exponential to constant time complexity using quantum speedup.",
     id: "dja",
   },
   {

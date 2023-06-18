@@ -393,15 +393,9 @@ const Hero = (props) => {
                   mb: 5,
                 }}
               >
-                <b>Wanna know for sure?</b> <br />
                 <b>KetBy</b> allows you to build quantum circuits visually and
                 provides various tools to analyze, simulate and share them with
                 others.
-                <br /> <br />
-                Whether you're interested in exploring the cutting-edge of
-                quantum computing or pushing the boundaries of what's possible,
-                KetBy is the perfect tool to help you unleash your creativity
-                and unlock the potential of superposition.
               </Typography>
               <Box
                 sx={{
