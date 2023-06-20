@@ -686,6 +686,28 @@ const ProjectContent = (props) => {
         });
     };
 
+    const [deleting, setDeleting] = React.useState(false);
+    const [deleteStep, setDeleteStep] = React.useState(1);
+    const { appState } = useAppContext();
+
+    const handleDelete = () => {
+      if (deleteStep == 1) {
+        setDeleteStep(2);
+      } else {
+        setDeleting(true);
+        axios
+          .delete(`/project/${project.token}`)
+          .then((res) => {
+            router.push(`/u/${appState.user.username}?tab=projects`);
+          })
+          .catch((err) => {
+            window.alert("Something went wrong. Please try again later.");
+            setDeleting(false);
+            setDeleteStep(1);
+          });
+      }
+    };
+
     return (
       <>
         <Grid container rowSpacing={2} component="form" onSubmit={handleSubmit}>
@@ -744,6 +766,23 @@ const ProjectContent = (props) => {
               loading={loading}
             >
               Save
+            </LoadingButton>
+          </Grid>
+          <Grid item xs={12}>
+            <LoadingButton
+              variant="outlined"
+              color="error"
+              fullWidth
+              loading={loading}
+              sx={{ mt: 2 }}
+              size="small"
+              onClick={handleDelete}
+            >
+              {deleteStep == 1
+                ? "Delete this project"
+                : deleting
+                ? "Deleting..."
+                : "Click again to confirm"}
             </LoadingButton>
           </Grid>
         </Grid>

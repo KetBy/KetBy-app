@@ -419,7 +419,7 @@ const Hero = (props) => {
                   {appState.user ? `Manage your projects` : `Join for free`}
                 </Button>
                 <Button
-                  variant="inline"
+                  variant="text"
                   sx={{
                     ml: {
                       xs: 0,
@@ -429,6 +429,7 @@ const Hero = (props) => {
                       xs: 2,
                       sm: 0,
                     },
+                    color: theme.palette.text.primary,
                   }}
                   size="large"
                   component={Link}

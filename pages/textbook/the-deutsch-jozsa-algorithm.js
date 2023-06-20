@@ -45,7 +45,7 @@ export default function DeutschJozsaAlgorithm({ data }) {
           />
           ) or balanced (i.e., <LatexFigure input="f(x)" inline /> produces 1 on
           exactly half of the inputs <LatexFigure input="x" inline />
-          ).
+          ). We are promised it is either one or the other.
         </Typography>
         <Typography>
           A classical computer would need{" "}

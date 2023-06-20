@@ -21,7 +21,7 @@ const Footer = (props) => {
             >
               KetBy.com
             </Typography>{" "}
-            | All right reserved.
+            | All rights reserved.
             <Box
               component="br"
               sx={{ display: { xs: "block", md: "none" } }}
