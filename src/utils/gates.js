@@ -17,6 +17,12 @@ const InfoY = React.lazy(() => import("./gates/Y"));
 const InfoT = React.lazy(() => import("./gates/T"));
 const InfoTDagger = React.lazy(() => import("./gates/T+"));
 const InfoU = React.lazy(() => import("./gates/U"));
+const InfoRZ = React.lazy(() => import("./gates/RZ"));
+const InfoRX = React.lazy(() => import("./gates/RX"));
+const InfoRY = React.lazy(() => import("./gates/RY"));
+const InfoSX = React.lazy(() => import("./gates/SX"));
+const InfoSXDagger = React.lazy(() => import("./gates/SX+"));
+const InfoM = React.lazy(() => import("./gates/M"));
 
 const GateInfoWrapper = ({ info }) => {
   return (
@@ -132,7 +138,7 @@ const gates = [
         name: "RZ",
         qubits: 1,
         title: "RZ gate",
-        desc: "Unavailable info.",
+        desc: <GateInfoWrapper info={<InfoRZ />} />,
         parameters: [
           {
             name: "φ",
@@ -177,7 +183,7 @@ const gates = [
         name: "RX",
         qubits: 1,
         title: "RX gate",
-        desc: "Unavailable info.",
+        desc: <GateInfoWrapper info={<InfoRX />} />,
         parameters: [
           {
             name: "φ",
@@ -189,7 +195,7 @@ const gates = [
         name: "RY",
         qubits: 1,
         title: "RY gate",
-        desc: "Unavailable info.",
+        desc: <GateInfoWrapper info={<InfoRY />} />,
         parameters: [
           {
             name: "φ",
@@ -200,14 +206,14 @@ const gates = [
       {
         name: "SX",
         qubits: 1,
-        title: "Unavailable info.",
-        desc: "Unavailable info.",
+        title: "sqrt(X)",
+        desc: <GateInfoWrapper info={<InfoSX />} />,
       },
       {
         name: "SX+",
         qubits: 1,
-        title: "Unavailable info.",
-        desc: "Unavailable info.",
+        title: "sqrt(X) dagger",
+        desc: <GateInfoWrapper info={<InfoSXDagger />} />,
       },
     ],
   },
@@ -221,7 +227,7 @@ const gates = [
         qubits: 1,
         bits: 1,
         title: "Measurement",
-        desc: <>Unavailable info.</>,
+        desc: <GateInfoWrapper info={<InfoM />} />,
       },
     ],
   },
