@@ -382,7 +382,7 @@ const ExportContent = (props) => {
       case "X":
         return `X(${ins.qubits[0]})`;
       case "CX":
-        return `CNOT(${ins.qubits[0]}], qubits[${ins.qubits[1]})`;
+        return `CNOT(${ins.qubits[0]}, ${ins.qubits[1]})`;
       case "Tfl":
         return `TOFFOLI(${ins.qubits[0]}, ${ins.qubits[1]}, ${ins.qubits[2]})`;
       case "SWAP":
@@ -521,7 +521,9 @@ const ExportContent = (props) => {
           </Box>
         </Typography>
         {circuit.instructions.map((ins, index) => {
-          return (
+          return ins.gate == "I" ? (
+            <></>
+          ) : (
             <Typography
               key={index}
               variant="body2"
@@ -580,7 +582,9 @@ const ExportContent = (props) => {
           </Box>
         </Typography>
         {circuit.instructions.map((ins, index) => {
-          return (
+          return ins.gate == "I" ? (
+            <></>
+          ) : (
             <Typography
               key={index}
               variant="body2"
