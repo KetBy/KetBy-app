@@ -316,6 +316,110 @@ const ExportContent = (props) => {
   const { circuit } = props;
   let gatesMap = getGatesMap();
 
+  const qiskitMethod = (_ins) => {
+    const ins = JSON.parse(JSON.stringify(_ins));
+    if (ins.params.length > 0) {
+      for (let i = 0; i < ins.params.length; i++) {
+        ins.params[i] = ins.params[i].replace(".math").replace("pi", "math.pi");
+      }
+    }
+
+    switch (ins.gate) {
+      case "H":
+        return `h(${ins.qubits[0]})`;
+      case "X":
+        return `x(${ins.qubits[0]})`;
+      case "CX":
+        return `c(${ins.qubits[0]}, ${ins.qubits[1]})`;
+      case "Tfl":
+        return `toffoli(${ins.qubits[0]}, ${ins.qubits[1]}, ${ins.qubits[2]})`;
+      case "SWAP":
+        return `swap(${ins.qubits[0]}, ${ins.qubits[1]})`;
+      case "Z":
+        return `z(${ins.qubits[0]})`;
+      case "S":
+        return `s(${ins.qubits[0]})`;
+      case "S+":
+        return `sdg(${ins.qubits[0]})`;
+      case "T":
+        return `t(${ins.qubits[0]})`;
+      case "T+":
+        return `tdg(${ins.qubits[0]})`;
+      case "P":
+        return `p(${ins.params[0]}, ${ins.qubits[0]})`;
+      case "RX":
+        return `rx(${ins.params[0]}, ${ins.qubits[0]})`;
+      case "RY":
+        return `ry(${ins.params[0]}, ${ins.qubits[0]})`;
+      case "RZ":
+        return `rz(${ins.params[0]}, ${ins.qubits[0]})`;
+      case "Y":
+        return `y(${ins.qubits[0]})`;
+      case "U":
+        return `p(${ins.params[0]}, ${ins.params[1]}, ${ins.params[2]}, ${ins.qubits[0]})`;
+      case "SX":
+        return `sx(${ins.qubits[0]})`;
+      case "SX+":
+        return `sxdg(${ins.qubits[0]})`;
+      case "M":
+        return `measure(${ins.qubits[0]}, ${ins.bits[0]})`;
+      default:
+        return "?";
+    }
+  };
+
+  const cirqMethod = (_ins) => {
+    const ins = JSON.parse(JSON.stringify(_ins));
+    if (ins.params.length > 0) {
+      for (let i = 0; i < ins.params.length; i++) {
+        ins.params[i] = ins.params[i].replace(".math").replace("pi", "math.pi");
+      }
+    }
+
+    switch (ins.gate) {
+      case "H":
+        return `H(${ins.qubits[0]})`;
+      case "X":
+        return `X(${ins.qubits[0]})`;
+      case "CX":
+        return `CNOT(${ins.qubits[0]}], qubits[${ins.qubits[1]})`;
+      case "Tfl":
+        return `TOFFOLI(${ins.qubits[0]}, ${ins.qubits[1]}, ${ins.qubits[2]})`;
+      case "SWAP":
+        return `SWAP(${ins.qubits[0]}, ${ins.qubits[1]})`;
+      case "Z":
+        return `Z(${ins.qubits[0]})`;
+      case "S":
+        return `S(${ins.qubits[0]})`;
+      case "S+":
+        return `inverse(S(${ins.qubits[0]}))`;
+      case "T":
+        return `T(${ins.qubits[0]})`;
+      case "T+":
+        return `inverse(T(${ins.qubits[0]}))`;
+      case "P":
+        return `PhasedXPowGate(phase_exponent=${ins.params[0]})(${ins.qubits[0]})`;
+      case "RX":
+        return `rx(rads=${ins.params[0]})(${ins.qubits[0]})`;
+      case "RY":
+        return `ry(rads=${ins.params[0]})(${ins.qubits[0]})`;
+      case "RZ":
+        return `rz(rads=${ins.params[0]})(${ins.qubits[0]})`;
+      case "Y":
+        return `Y(${ins.qubits[0]})`;
+      case "U":
+        return `PhasedXPowGate(phase_exponent=${ins.params[0]})(${ins.qubits[0]})`;
+      case "SX":
+        return `S(${ins.qubits[0]})`;
+      case "SX+":
+        return `inverse(S(${ins.qubits[0]}))`;
+      case "M":
+        return `measure(${ins.qubits[0]}, key='result')`;
+      default:
+        return "?";
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -374,6 +478,123 @@ const ExportContent = (props) => {
               [{ins.qubits.join(",")}]
               {ins.params.length > 0 && `(${ins.params.join(",")})`}
               {ins.bits && ins.bits.length > 0 && `{${ins.bits.join(",")}}`}
+            </Typography>
+          );
+        })}
+      </Box>
+
+      <Typography variant="body2" mb={1} mt={3}>
+        Qiskit
+      </Typography>
+      <Box
+        sx={{
+          background: theme.palette.grey[50],
+          color: theme.palette.grey[700],
+          p: 1,
+          mt: 2,
+          borderRadius: `${theme.shape.borderRadius}px`,
+          boxShadow: theme.shadowsCustom[2],
+          whiteSpace: "nowrap",
+          overflowX: "scroll",
+        }}
+      >
+        <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+          <Box
+            component="span"
+            sx={{
+              color: theme.palette.darkGrey.main,
+              fontWeight: 600,
+            }}
+          >
+            import math <br /> from qiskit import QuantumCircuit
+          </Box>
+        </Typography>
+        <Typography variant="body2" sx={{ fontFamily: "monospace", my: 1 }}>
+          <Box
+            component="span"
+            sx={{
+              color: theme.palette.darkGrey.main,
+              fontWeight: 600,
+            }}
+          >
+            qc = QuantumCircuit({circuit.meta.qubits}, {circuit.meta.bits})
+          </Box>
+        </Typography>
+        {circuit.instructions.map((ins, index) => {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              sx={{ fontFamily: "monospace" }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  color: gatesMap[ins.gate].color.main,
+                  fontWeight: 600,
+                }}
+              >
+                qc.{qiskitMethod(ins)}
+              </Box>
+            </Typography>
+          );
+        })}
+      </Box>
+
+      <Typography variant="body2" mb={1} mt={3}>
+        Cirq
+      </Typography>
+      <Box
+        sx={{
+          background: theme.palette.grey[50],
+          color: theme.palette.grey[700],
+          p: 1,
+          mt: 2,
+          borderRadius: `${theme.shape.borderRadius}px`,
+          boxShadow: theme.shadowsCustom[2],
+          whiteSpace: "nowrap",
+          overflowX: "scroll",
+        }}
+      >
+        <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+          <Box
+            component="span"
+            sx={{
+              color: theme.palette.darkGrey.main,
+              fontWeight: 600,
+            }}
+          >
+            import math <br />
+            import cirq
+          </Box>
+        </Typography>
+        <Typography variant="body2" sx={{ fontFamily: "monospace", my: 1 }}>
+          <Box
+            component="span"
+            sx={{
+              color: theme.palette.darkGrey.main,
+              fontWeight: 600,
+            }}
+          >
+            qc = Circuit()
+          </Box>
+        </Typography>
+        {circuit.instructions.map((ins, index) => {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              sx={{ fontFamily: "monospace" }}
+            >
+              <Box
+                component="span"
+                sx={{
+                  color: gatesMap[ins.gate].color.main,
+                  fontWeight: 600,
+                }}
+              >
+                qc.{cirqMethod(ins)}
+              </Box>
             </Typography>
           );
         })}
